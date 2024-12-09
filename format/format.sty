@@ -1,0 +1,137 @@
+\usepackage{titlesec}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+
+% Korean
+\usepackage{kotex}
+% Quotation
+\usepackage{csquotes}
+% Hyperlink
+\usepackage{hyperref}
+\hypersetup{
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+% Code
+\usepackage{listings}
+% Math
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+% List
+\usepackage{enumitem}
+% Table
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage{caption}
+
+% -------- Spacing ---------
+\usepackage{setspace}
+\setstretch{1.1}
+% --------------------------
+
+% ---------- Title ---------
+\makeatletter
+\def\@maketitle{
+  \newpage
+  \null
+  \vskip 2em
+  \begin{center}
+    \let\footnote\thanks
+    {\huge\bfseries \@title \par}
+    \vskip 1.5em
+    {\large \@author\par}
+    \vskip 1em
+    {\large \@date\par}
+  \end{center}
+  \par
+  \vskip 1.5em}
+\makeatother
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries}
+  {\thesection}
+  {1em}
+  {}
+% --------------------------
+
+% -------- Geometry --------
+\usepackage{geometry}
+\geometry{
+%   a4paper,
+%   left=30mm,
+%   right=30mm,
+%   top=30mm,
+%   bottom=40mm
+}
+% --------------------------
+
+% --------- Header ---------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{0.5em}
+\usepackage{titlefoot}
+% --------------------------
+
+% ----------- Box ----------
+\usepackage[most]{tcolorbox}
+
+\definecolor{color-red}{HTML}{ba4562}
+\definecolor{color-blue}{HTML}{3740c8}
+\definecolor{color-green}{HTML}{3b7d02}
+\definecolor{color-yellow}{HTML}{f0a500}
+\definecolor{color-purple}{HTML}{7a00a3}
+\definecolor{color-orange}{HTML}{ff7f00}
+\definecolor{color-cyan}{HTML}{00a3a3}
+\definecolor{color-pink}{HTML}{ff007f}
+
+\tcbset{
+  style-box/.style={
+    enhanced jigsaw,
+    breakable,
+    sharp corners,
+    toprule=0pt, rightrule=0pt, bottomrule=0pt, leftrule=2.5pt,
+    colback=#1!12!black!7, colframe=#1!80, coltitle=#1!80,
+  },
+}
+
+\tcbset{
+  style-mini-box/.style={
+%   breakable,
+    sharp corners,
+    toprule=0pt, rightrule=0pt, bottomrule=0pt, leftrule=2.5pt,
+    colback=#1!12!black!7, colframe=#1!80, coltitle=#1!80,
+  },
+}
+
+\newcommand{\tbox}[2]{\begin{tcolorbox}
+  [style-box=color-blue]
+  \textbf{#1}
+  \vspace{0.2em}\\
+  {#2}
+\end{tcolorbox}}
+
+\newcommand{\ttbox}[2]{\begin{tcolorbox}
+  [style-box=color-blue,left skip=10mm,right skip=10mm]
+  \textbf{#1}
+  \vspace{0.5em}\\
+  {#2}
+\end{tcolorbox}}
+
+\newcommand{\tminibox}[2]{\begin{tcolorbox}
+  [style-mini-box=color-blue]
+  \textbf{#1}
+  \vspace{0.5em}\\
+  {#2}
+\end{tcolorbox}}
+% --------------------------
+

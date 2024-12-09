@@ -1,0 +1,57 @@
+\makeatletter
+\def\thm@space@setup{
+  \thm@preskip=\parskip \thm@postskip=0pt
+}
+\makeatother
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{bigtheorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+
+\newtheorem{remark}{Remark}[section]
+\newtheorem{note}{Note}[section]
+
+\newtheorem{proof}{Proof}[section]
+
+\newcommand{\Complex}{\mathbb{C}}
+\newcommand{\ComplexNumbers}{\mathbb{C}}
+\newcommand{\Integers}{\mathbb{Z}}
+\newcommand{\ImaginaryNumbers}{\mathbb{I}}
+\newcommand{\NaturalNumbers}{\mathbb{N}}
+\newcommand{\Quaterions}{\mathbb{H}}
+\newcommand{\Rational}{\mathbb{Q}}
+\newcommand{\RationalNumbers}{\mathbb{Q}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\RealNumbers}{\mathbb{R}}
+
+\newcommand{\conjugate}[1]{\overline{ #1 }}
+\newcommand{\abs}[1]{\left| #1 \right|}
+\newcommand{\argmax}{\operatorname{argmax}}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\setbuild}[2]{\left\{ #1 \;\middle|\; #2 \right\}}
+\newcommand{\setbuildl}[2]{\left\{ #1 \;\middle|\; #2 \right.}
+\newcommand{\setbuildr}[2]{\left. #1 \;\middle|\; #2 \right\}}
+\newcommand{\setlr}[1]{\left\{ #1 \right.}
+\newcommand{\setrr}[1]{\left. #1 \right\}}
+\newcommand{\tuple}[1]{\left( #1 \right)}
+\newcommand{\tuplebuild}[2]{\left( #1 \;\middle|\; #2 \right)}
+\newcommand{\tuplebuildl}[2]{\left( #1 \;\middle|\; #2 \right.}
+\newcommand{\tuplebuildr}[2]{\left. #1 \;\middle|\; #2 \right)}
+\newcommand{\tuplelr}[1]{\left( #1 \right.}
+\newcommand{\tuplerr}[1]{\left. #1 \right\}}
+\newcommand{\trace}{\operatorname{Tr}}
+\newcommand{\transpose}[1]{{ #1 }^T}
+\newcommand{\image}{\operatorname{Im}}
+\newcommand{\kernel}{\ker}
+\newcommand{\imaginarypart}{\operatorname{Im}}
+\newcommand{\realpart}{\operatorname{Re}}
+\newcommand{\innerproduct}[2]{\langle #1 , #2 \rangle}
