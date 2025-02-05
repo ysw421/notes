@@ -58,6 +58,6 @@ jobs:
           
           git add **/*.pdf
           
-          git commit -m "Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git commit -m "New-PDF: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git remote set-url origin https://x-access-token:$GH_PAT@github.com/${{ github.repository }}
           git push origin main
