@@ -12,36 +12,39 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install packages
+      - name: Install LaTeX
         run: |
           sudo apt-get update
           sudo apt-get install -y \
               texlive-full \
-              latexmk \
-              fonts-nanum*
-          echo "✅ 패키지 설치 완료"
+              latexmk
+          echo "✅ LaTeX 패키지 설치 완료"
 
-      - name: Create symlinks
+      - name: Compile All Notes
         run: |
-          # format 디렉토리 심볼릭 링크 생성
-          ln -s $GITHUB_WORKSPACE/format $GITHUB_WORKSPACE/example/format
-          echo "🔗 심볼릭 링크 생성 완료"
+          find . -name 'note.tex' -exec sh -c '
+            NOTE_DIR=$(dirname "$1")
+            OUTPUT_DIR="$NOTE_DIR/output"
+            FORMAT_LINK="$NOTE_DIR/format"
 
-      - name: Compile LaTeX
-        run: |
-          cd example
-          mkdir -p output
-          latexmk -xelatex \
-            -interaction=nonstopmode \
-            -pdf \
-            -output-directory=output \
-            note.tex
-          echo "📄 생성된 파일 목록:"
-          ls -lh output/
+            ln -s "$GITHUB_WORKSPACE/format" "$FORMAT_LINK"
 
-      - name: Upload Results
+            mkdir -p "$OUTPUT_DIR"
+
+            cd "$NOTE_DIR"
+            latexmk -xelatex \
+              -interaction=nonstopmode \
+              -pdf \
+              -output-directory="./output" \
+              note.tex
+
+            echo "📄 생성된 PDF: $OUTPUT_DIR/note.pdf"
+          ' _ {} \;
+
+      - name: Upload All PDFs
         uses: actions/upload-artifact@v4
         with:
-          name: compiled-pdfs
-          path: example/output/note.pdf
+          name: all-notes
+          path: |
+            **/note.pdf
           retention-days: 7
