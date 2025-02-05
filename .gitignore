@@ -1,5 +1,19 @@
 # Custom
 **/*_type == 'sh'
+**/*.aux
+**/*.bbl
+**/*.bcf
+**/*.blg
+**/*.fdb_latexmk
+**/*.fls
+**/*.idx
+**/*.ilg
+**/*.ind
+**/*.log
+**/*.out
+**/*.run.xml
+**/*.synctex.gz
+**/*.toc
 
 # Created by https://www.toptal.com/developers/gitignore/api/tex,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=tex,latex
