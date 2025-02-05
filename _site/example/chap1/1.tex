@@ -1,0 +1,190 @@
+\documentclass[../example.tex]{subfiles}
+
+\begin{document}
+
+\section{Introduction}
+This is an example of a document using the \href{https://www.github.com/ysw421}{siwon}'s personal \LaTeX{} format.
+
+\subsection{Language}
+\begin{itemize}
+	\item English
+	\item 한글
+\end{itemize}
+
+\begin{definition}[Siwon's Theorem]
+  This is a definition.
+  This is a amazing definition. Because this is a definition.
+  I say this is a definition. This is a definition.
+  This is a amazing definition. Because this is a definition.
+  $a^2 + b^2 = c^2$ is not a definition.
+  \begin{equation}
+    a^3 + b^3 = c^3, \quad a,b,c \in \NN
+  \end{equation}
+\end{definition}
+\begin{definition}[Subabababa i've been spending way]
+  This is a definition.
+\end{definition}
+\begin{example}[하위!]
+  This is an example.
+\begin{center}
+  \small
+  \begin{spacing}{0.8}
+    \begin{BVerbatim}
+
+Variable Linked List :
+
+       .--------------- Called ---------------.
+      /                                       |
+     |                                        |
+     v   +-------+-+     +-------+-+     +-------+-+     +-------+-+
+Head---> | Var 1 | |---> | Var 2 | |---> | Var 3 | |---> | Var 4 | |---> NULL
+     ^   +-------+-+     +-------+-+     +-------+-+     +-------+-+
+     |
+     |       +--------------+-+
+      \______| New Variable | |
+             +--------------+-+
+
+    \end{BVerbatim}
+  \end{spacing}
+\end{center}
+\end{example}
+\begin{exercise}
+  This is an exercise.
+  \[\begin{tikzcd}
+    \mathcal C \arrow[dd, "F"'] &  & A \arrow[rr, "f"] \arrow[rrdd, "g\circ f"'] &  & B \arrow[dd, "g"] &  & F(A) \arrow[rr, "F(f)"] \arrow[rrdd, "F(g \circ f)"'] &  & F(B) \arrow[dd, "F(g)"] \\
+                                &  &                                             &  &                   &  &                                                       &  &                         \\
+    \mathcal D                  &  &                                             &  & C                 &  &                                                       &  & F(C)                   
+  \end{tikzcd}\]
+\end{exercise}
+\begin{remark}
+  This is a remark.
+\end{remark}
+\begin{note}
+  This is a note.
+\end{note}
+\begin{lemma}
+  This is a lemma.
+\end{lemma}
+\begin{corollary}
+  This is a corollary.
+\end{corollary}
+\begin{proof}
+  This is a proof.
+\end{proof}
+\begin{theorem}
+  This is a theorem.
+\end{theorem}
+\begin{proposition}
+  This is a proposition.
+\end{proposition}
+\begin{conjecture}
+  This is a conjecture.
+\end{conjecture}
+
+안녕 footnotes\footnote{hello}, 나는 배고파, 3.44 am :/
+
+참조: \cite{DeterministicNonperiodicFlow}
+
+안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 클레오파트라 세상에서 제일가는 포테이토칩 안녕 
+
+\subsection{How to import}
+HEY JUDE, DON'T MAKE IT BAD, TAKE A SAD SONG AND MAKE IT BETTER, REMEMBER TO LET HER INTO YOUR HEART, THEN YOU CAN START TO MAKE
+
+$\conjugate{c}$
+$\CC$
+$\II$
+$\imaginarypart$
+$\NN$
+$\QQ$
+$\RR$
+$\realpart$
+$\abs{a}$
+$\argmax$
+$\argmin$
+$\ceil{a}$
+$\floor{a}$
+$\norm{a}$
+$\set{a}$
+$\setbuild{a}{b}$
+$\setbuildl{a}{b}$
+$\setbuildr{a}{b}$
+$\setlr{a}$
+$\setrr{a}$
+$\tuple{a}$
+$\tuplebuild{a}{b}$
+$\tuplebuildl{a}{b}$
+$\tuplebuildr{a}{b}$
+$\tuplelr{a}$
+$\tuplerr{a}$
+$\trace$
+$\transpose{a}$
+$\image$
+$\kernel$
+$\imaginarypart$
+$\realpart$
+$\innerproduct{a}{b}$
+\hyphenquote{english}{I am the king of the world!}
+\begin{texttheorem}
+	$a^2 + b^2 = c^2$
+\end{texttheorem}
+\begin{textexample}
+	This is an example.
+\end{textexample}
+\begin{enumerate}
+	\item \textbf{Bold}
+	\item \textit{Italic}
+	\item \texttt{Typewriter}
+	\item \textsc{Small Caps}
+	\item \textbf{\textit{Bold Italic}}
+	\item item 1
+	\item item 2
+	\item item 3
+\end{enumerate}
+\lipsum[1]
+\tbox{Title}{\lipsum[1] \tbox{Title}{\lipsum[1]}}
+\lipsum[1]
+\ttbox{Title}{Content}
+\tminibox{Title}{Content}
+\lipsum[1]
+\subsection{Subsection}
+\lipsum[2]
+
+\lipsum[3]
+\lipsum[4]
+\subsubsection{Subsubsection}
+\lipsum[3]
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\thead{Header 1} & \thead{Header 2} & \thead{Header 3} \\
+		\hline
+		1                & 2                & 3                \\
+		4                & 5                & 6                \\
+		7                & 8                & 9                \\
+		\hline
+	\end{tabular}
+	\caption{Table 1}
+\end{table}
+\subsection{Subsection}
+\lipsum[2]
+\subsubsection{Subsubsection}
+\lipsum[3]
+\subsubsection{Subsubsection}
+\lipsum[3]
+
+\section{Method}
+\lipsum[4]
+\subsection{Subsection}
+\lipsum[5]
+\subsubsection{Subsubsection}
+\lipsum[6]
+
+\section{Result}
+\lipsum[7]
+\subsection{Subsection}
+\lipsum[8]
+\subsubsection{Subsubsection}
+\lipsum[9]
+
+\end{document}
