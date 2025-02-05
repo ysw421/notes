@@ -1,131 +1,46 @@
-\documentclass[]{article}
-\usepackage{../format/format}
-\usepackage{../format/math}
+\documentclass[openany]{book}
+\usepackage{import}
+\inputfrom{../format/}{format}
+\inputfrom{../format/}{math}
+% \input{../format/format}
+% \input{../format/math}
 \usepackage{lipsum}
 
 % Document Information
-\title{I hate your watch that's\\
-        always 5 minutes late.}
-\date{\today}
+\title{i hate that your watch is always 5 minutes late.}
 \author{Siwon Yun}
+\date{\today}
 
 \begin{document}
 
 \maketitle
+
+\toctrue
 \tableofcontents
+\tocfalse
 
-\section{Introduction}
-This is an example of a document using the \href{https://www.github.com/ysw421}{siwon}'s personal \LaTeX{} format.
+\newpage
 
-\subsection{Language}
-\begin{itemize}
-  \item English
-  \item 한글
-\end{itemize}
+\chapter{Hello, World!}
 
-\subsection{How to import}
-\texttt{$\backslash{}$usepackage{format/format}}
+\epigraph{나는 젤리가 없어도 달콤한 냄새가 나}{---ㅇㅊㅈ}
+\foreach \n in {1,2}
+{
+	\subfile{chap1/\n}
+}
 
-$\conjugate{c}$
-$\Complex$
-$\ComplexNumbers$
-$\Integers$
-$\imaginarypart$
-$\ImaginaryNumbers$
-$\NaturalNumbers$
-$\Quaterions$
-$\Rational$
-$\RationalNumbers$
-$\Real$
-$\RealNumbers$
-$\realpart$
-$\abs{a}$
-$\argmax$
-$\argmin$
-$\ceil{a}$
-$\floor{a}$
-$\norm{a}$
-$\set{a}$
-$\setbuild{a}{b}$
-$\setbuildl{a}{b}$
-$\setbuildr{a}{b}$
-$\setlr{a}$
-$\setrr{a}$
-$\tuple{a}$
-$\tuplebuild{a}{b}$
-$\tuplebuildl{a}{b}$
-$\tuplebuildr{a}{b}$
-$\tuplelr{a}$
-$\tuplerr{a}$
-$\trace$
-$\transpose{a}$
-$\image$
-$\kernel$
-$\imaginarypart$
-$\realpart$
-$\innerproduct{a}{b}$
-\hyphenquote{english}{I am the king of the world!}
-\begin{theorem}
-  $a^2 + b^2 = c^2$
-\end{theorem}
-\begin{example}
-  This is an example.
-\end{example}
-\begin{itemize}
-  \item \textbf{Bold}
-  \item \textit{Italic}
-  \item \texttt{Typewriter}
-  \item \textsc{Small Caps}
-  \item \textbf{\textit{Bold Italic}}
-  \item item 1
-  \item item 2
-  \item item 3
-\end{itemize}
-\lipsum[1]
-\tbox{Title}{\lipsum[1] \tbox{Title}{\lipsum[1]}}
-\lipsum[1]
-\ttbox{Title}{Content}
-\tminibox{Title}{Content}
-\lipsum[1]
-\subsection{Subsection}
-\lipsum[2]
+\chapter{HUHA}
+\foreach \n in {1}
+{
+  \subfile{chap2/\n}
+}
 
-\lipsum[3]
-\lipsum[4]
-\subsubsection{Subsubsection}
-\lipsum[3]
-\begin{table}[h]
-  \centering
-  \begin{tabular}{|c|c|c|}
-    \hline
-    \thead{Header 1} & \thead{Header 2} & \thead{Header 3} \\
-    \hline
-    1 & 2 & 3 \\
-    4 & 5 & 6 \\
-    7 & 8 & 9 \\
-    \hline
-  \end{tabular}
-  \caption{Table 1}
-\end{table}
-\subsection{Subsection}
-\lipsum[2]
-\subsubsection{Subsubsection}
-\lipsum[3]
-\subsubsection{Subsubsection}
-\lipsum[3]
+\toctrue
+\bibliography{../format/ref}
+* All charts, graphs and figures created by \printauthor{} unless otherwise noted.
+\bibliographystyle{unsrt}
 
-\section{Method}
-\lipsum[4]
-\subsection{Subsection}
-\lipsum[5]
-\subsubsection{Subsubsection}
-\lipsum[6]
-
-\section{Result}
-\lipsum[7]
-\subsection{Subsection}
-\lipsum[8]
-\subsubsection{Subsubsection}
-\lipsum[9]
+\definitionindex
+\tocfalse
 
 \end{document}
