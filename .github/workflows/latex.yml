@@ -1,0 +1,33 @@
+name: Compile Korean LaTeX Notes
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Korean LaTeX packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-lang-korean fonts-nanum*
+
+      - name: Compile all note.tex files with XeLaTeX
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: note.tex
+          latexmk_use_xelatex: true  # XeLaTeX 활성화
+          args: "-pdf -xelatex -interaction=nonstopmode -cd -outdir=./output"
+
+      - name: Upload PDF artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: korean-notes-pdf
+          path: |
+            **/output/note.pdf
+            !**/*.tex
