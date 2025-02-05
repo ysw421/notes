@@ -16,42 +16,32 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-              texlive-latex-base \
-              texlive-xetex \
+              texlive-full \
               latexmk \
-              texlive-lang-korean \
               fonts-nanum*
           echo "✅ 패키지 설치 완료"
 
-      - name: Setup directories
+      - name: Create symlinks
         run: |
-          mkdir -p example/format
-          cp -r format/* example/format/
-          echo "📁 디렉토리 구조 생성 완료"
+          # format 디렉토리 심볼릭 링크 생성
+          ln -s $GITHUB_WORKSPACE/format $GITHUB_WORKSPACE/example/format
+          echo "🔗 심볼릭 링크 생성 완료"
 
       - name: Compile LaTeX
         run: |
-          find "$GITHUB_WORKSPACE" -name 'note.tex' -exec sh -c '
-            echo "🛠️ 컴파일 시작: $1"
-            dir=$(dirname "$1")
-            output_dir="$dir/output"
-            mkdir -p "$output_dir"
-            
-            latexmk -xelatex \
-              -interaction=nonstopmode \
-              -pdf \
-              -output-directory="$output_dir" \
-              "$1"
-              
-            echo "📄 생성된 파일:"
-            ls -lh "$output_dir"
-          ' _ {} \;
+          cd example
+          mkdir -p output
+          latexmk -xelatex \
+            -interaction=nonstopmode \
+            -pdf \
+            -output-directory=output \
+            note.tex
+          echo "📄 생성된 파일 목록:"
+          ls -lh output/
 
       - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
           name: compiled-pdfs
-          path: |
-            **/output/note.pdf
-            **/output/*.pdf
-          if-no-files-found: error
+          path: example/output/note.pdf
+          retention-days: 7
