@@ -12,26 +12,35 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Korean LaTeX packages
+      - name: Install packages
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive-lang-korean fonts-nanum*
+          echo "✅ 패키지 설치 완료"
 
-      - name: Setup directory structure
+      - name: Setup directories
         run: |
           mkdir -p example/format
           cp -r format/* example/format/
+          echo "📁 디렉토리 구조 생성 완료"
 
-      - name: Compile all note.tex files
+      - name: Compile LaTeX
         run: |
           find . -name 'note.tex' -exec sh -c '
+            echo "🛠️ 컴파일 시작: $1"
             dir=$(dirname "$1")
             cd "$dir"
+            mkdir -p output
             latexmk -xelatex -interaction=nonstopmode -pdf -output-directory=./output note.tex
+            echo "📄 출력 파일 확인:"
+            ls -lh ./output
           ' _ {} \;
 
-      - name: Upload PDF artifacts
+      - name: Upload Results
         uses: actions/upload-artifact@v4
         with:
-          name: korean-notes-pdf
-          path: "**/output/note.pdf"
+          name: compiled-pdfs
+          path: |
+            **/output/note.pdf
+            **/output/*.pdf
+          retention-days: 7
