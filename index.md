@@ -1,5 +1,5 @@
 ---
-layout: home
+layout: default
 title: "Siwon's Notes"
 ---
 # Notes
