@@ -48,10 +48,16 @@ jobs:
           path: |
             **/note.pdf
           retention-days: 7
+
       - name: Commit PDFs
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add **/output/*.pdf
-          git commit -m "Auto-commit compiled PDFs"
-          git push
+          
+          git add **/*.pdf
+          
+          git commit -m "Auto-commit: $(date +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git remote set-url origin https://x-access-token:$GH_PAT@github.com/${{ github.repository }}
+          git push origin main
