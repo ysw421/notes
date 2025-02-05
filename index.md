@@ -2,7 +2,6 @@
 layout: default
 title: "Siwon's Notes"
 ---
-# Notes
+# Siwon's Notes
 
-## 1. [Introduction](#introduction)
-## 2. [Test](/example/example.pdf)
+## 1. [Test](/example/example.pdf)
