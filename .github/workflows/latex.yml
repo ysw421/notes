@@ -15,7 +15,12 @@ jobs:
       - name: Install packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive-lang-korean fonts-nanum*
+          sudo apt-get install -y \
+              texlive-latex-base \
+              texlive-xetex \
+              latexmk \
+              texlive-lang-korean \
+              fonts-nanum*
           echo "✅ 패키지 설치 완료"
 
       - name: Setup directories
@@ -26,14 +31,20 @@ jobs:
 
       - name: Compile LaTeX
         run: |
-          find . -name 'note.tex' -exec sh -c '
+          find "$GITHUB_WORKSPACE" -name 'note.tex' -exec sh -c '
             echo "🛠️ 컴파일 시작: $1"
             dir=$(dirname "$1")
-            cd "$dir"
-            mkdir -p output
-            latexmk -xelatex -interaction=nonstopmode -pdf -output-directory=./output note.tex
-            echo "📄 출력 파일 확인:"
-            ls -lh ./output
+            output_dir="$dir/output"
+            mkdir -p "$output_dir"
+            
+            latexmk -xelatex \
+              -interaction=nonstopmode \
+              -pdf \
+              -output-directory="$output_dir" \
+              "$1"
+              
+            echo "📄 생성된 파일:"
+            ls -lh "$output_dir"
           ' _ {} \;
 
       - name: Upload Results
@@ -43,4 +54,4 @@ jobs:
           path: |
             **/output/note.pdf
             **/output/*.pdf
-          retention-days: 7
+          if-no-files-found: error
