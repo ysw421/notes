@@ -1,4 +1,4 @@
-name: Compile Korean LaTeX Notes
+name: Compile LaTeX
 
 on:
   push:
@@ -21,13 +21,13 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: note.tex
-          latexmk_use_xelatex: true  # XeLaTeX 활성화
+          latexmk_use_xelatex: true
           args: "-pdf -xelatex -interaction=nonstopmode -cd -outdir=./output"
 
       - name: Upload PDF artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: korean-notes-pdf
           path: |
-            **/output/note.pdf
+            output/**/*.pdf
             !**/*.tex
