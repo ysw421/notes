@@ -20,16 +20,17 @@ jobs:
       - name: Compile all note.tex files recursively
         run: |
           find . -name 'note.tex' -exec sh -c '
-            dir=$(dirname "{}")
+            dir=$(dirname "$1")
+            echo "🛠️ Compiling: $dir/note.tex"
             cd "$dir"
             latexmk -xelatex -interaction=nonstopmode -pdf note.tex
+            echo "📄 Generated files:"
+            ls -l *.pdf
             cd -
-          ' \;
+          ' _ {} \;
 
       - name: Upload PDF artifacts
         uses: actions/upload-artifact@v4
         with:
           name: korean-notes-pdf
-          path: |
-            **/note.pdf
-            !**/*.tex
+          path: "**/note.pdf"
