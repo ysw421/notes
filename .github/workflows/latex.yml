@@ -17,20 +17,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y texlive-lang-korean fonts-nanum*
 
-      - name: Compile all note.tex files recursively
+      - name: Setup directory structure
+        run: |
+          mkdir -p example/format
+          cp -r format/* example/format/
+
+      - name: Compile all note.tex files
         run: |
           find . -name 'note.tex' -exec sh -c '
             dir=$(dirname "$1")
-            echo "🛠️ Compiling: $dir/note.tex"
             cd "$dir"
-            latexmk -xelatex -interaction=nonstopmode -pdf note.tex
-            echo "📄 Generated files:"
-            ls -l *.pdf
-            cd -
+            latexmk -xelatex -interaction=nonstopmode -pdf -output-directory=./output note.tex
           ' _ {} \;
 
       - name: Upload PDF artifacts
         uses: actions/upload-artifact@v4
         with:
           name: korean-notes-pdf
-          path: "**/note.pdf"
+          path: "**/output/note.pdf"
