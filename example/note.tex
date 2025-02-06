@@ -2,6 +2,7 @@
 \usepackage{import}
 \inputfrom{../format/}{format}
 \inputfrom{../format/}{math}
+\inputfrom{../format/}{code}
 \usepackage{lipsum}
 
 % Document Information
@@ -32,6 +33,14 @@
 {
   \subfile{may/\n}
 }
+
+\begin{appendices}
+\chapter{Appendix}
+\foreach \n in {1}
+{
+  \subfile{appendix/\n}
+}
+\end{appendices}
 
 \toctrue
 \bibliography{../format/ref}
