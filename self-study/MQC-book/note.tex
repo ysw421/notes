@@ -1,0 +1,58 @@
+\documentclass[openany]{book}
+\usepackage{import}
+\inputfrom{../../format/}{format}
+\inputfrom{../../format/}{math}
+\usepackage{lipsum}
+
+% Document Information
+\title{Book: Mathematicas of Quantum Computing}
+\author{Siwon Yun}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\toctrue
+\tableofcontents
+\tocfalse
+
+\newpage
+
+\chapter{들어가며}
+\subfile{1/1}
+
+\chapter{양자역학의 기본 개념}
+\subfile{2/1}
+
+\chapter{Hello, World!}
+
+\epigraph{나는 젤리가 없어도 달콤한 냄새가 나}{---ㅇㅊㅈ}
+% \foreach \n in {1,2}
+% {
+% 	\subfile{apr/\n}
+% }
+
+\chapter{HUHA}
+% \foreach \n in {1}
+% {
+%   \subfile{may/\n}
+% }
+
+\begin{appendices}
+\chapter{Appendix}
+% \foreach \n in {1}
+% {
+%   \subfile{appendix/\n}
+% }
+\end{appendices}
+
+\toctrue
+\bibliography{./ref}
+* All charts, graphs and figures created by \printauthor{} unless otherwise noted.
+\bibliographystyle{unsrt}
+
+\definitionindex
+\tocfalse
+
+\end{document}

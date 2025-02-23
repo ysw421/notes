@@ -1,0 +1,60 @@
+\documentclass[./note.tex]{subfiles}
+
+\begin{document}
+
+\section{일반론}
+\begin{definition}[양자역학]
+  양자역학은 (전자, 양성자, 원자 등) 미세한 물체의 통계를 예측해 때때로 거시적 현상에 미치는 영향을 파악하는 이론이다.
+\end{definition}
+이러한 미세한 물체에 대하여 특정 물리량을 관측\textsuperscript{measurment}할 수 있으며, 그 관측값은 실수여야 한다고 한다.
+\begin{note}
+  왜 실수여야 할까? 디렉 표기법\textsuperscript{Dirac notation}을 통해 양자 상태를 표현하면, 복소수를 사용하게 된다. 얼핏 생각하면 복소수를 다루는 분양에서 관측값은 실수여야 한다는 제약이 모순되어 보일 수 있지만, `대소 관계가 정의되지 아니한 복소수'의 값이 물리`량'이 된다면 이 또한 모순일 것이다. 또 한편으로는 관측이 양자역학에서는 중첩 상태를 붕괴시킨다는 점을 고려하면 복소수의 상태가 실수의 값으로 투영되는 것은 마치 중첩 붕괴와 같이 느껴진다.\\
+
+  추후, 관측과 관련된 에르미트 연산자\textsuperscript{Hermitian operator}에 대해 다루는데 에르미트 연산자 $A$는 다음을 만족한다.
+  \begin{equation}
+    \braket{A^*\psi}{\phi} = \braket{\psi}{A\phi} \quad \forall \ket{\psi}, \ket{\phi} \in \hilbert
+  \end{equation}
+  $\ket{\psi}$와 $\ket{\phi}$가 힐베르트 공간에 속하므로 에르미트 연산자 $A$의 고윳값 $\lambda$에 대하여 다음을 만족한다.
+  \begin{align}
+    \braket{\lambda\psi}{\phi} &= \braket{\psi}{\lambda\phi} \\
+    \lambda\braket{\psi}{\phi} &= \conjugate{\lambda}\braket{\psi}{\phi} \\
+    \lambda &= \conjugate{\lambda} \label{eq:hermitian eigenvalue}
+  \end{align}
+  \eqref{eq:hermitian eigenvalue}에서 $\lambda$가 실수임을 알 수 있다. 이러한 에르미트 연산자는 양자역학에서 관측값을 나타내는데 사용된다.
+\end{note}
+동일하게 준비된 대상의 관측은 결괏값이 상대빈도\textsuperscript{relative frequency}를 가진다. 상대빈도를 토해 평균값\textsuperscript{mean value}을 계산할 수 있다.
+\index{relative frequency}
+\begin{definition}[상대빈도]
+  \begin{equation}
+    \text{상대빈도} := \frac{\text{(특정 결과의 관측 횟수)}}{\text{(전체 관측 횟수)}}
+  \end{equation}
+\end{definition}
+\index{mean value}
+\begin{definition}[평균값]
+  \begin{equation}
+    \text{평균값} := \sum_{a\in\text{(모든 관측값)}} a \times \text{(a의 상대빈도)}
+  \end{equation}
+\end{definition}
+양자역학에서는 `준비 $\rightarrow$ 관측 $\rightarrow$ 상대빈도 및 평균값 계산'의 과정을 거친다. 이 과정에 대한 개념을 정리하면 다음과 같다.
+\begin{note}
+  양자역학에서의 주요 개념
+  \begin{itemize}
+    \item
+      관측 가능량\textsuperscript{observable} : 관측 가능한 물리량
+    \item
+      확률\textsuperscript{probability} : 상대빈도에 대한 예측
+    \item
+      기대값\textsuperscript{expectation value} : 관측값의 평균값에 대한 예측
+    \item
+      상태\textsuperscript{state} : 관측 결과의 분포와 관측 가능랴의 평균값을 결정하는 통계적 앙상블을 생성하는 객체의 준비
+  \end{itemize}
+\end{note}
+
+
+\section{수학 개념: 힐베르트 공간과 연산자}
+\index{Hilbert space}
+\begin{definition}[힐베르트 공간]
+  다음을 만족하는 벡터 공간 $\hilbert$을 힐베르트 공간이라 한다.
+\end{definition}
+
+\end{document}
