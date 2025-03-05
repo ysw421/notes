@@ -29,19 +29,19 @@
   filecolor=magenta,      
   urlcolor=cyan,
 }
-% Code
+  % Code
 \usepackage{listings}
-% Diagram
+  % Diagram
 \usepackage{tikz}
 \usepackage{tikz-cd}
-% Math
+  % Math
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsfonts}
 \usepackage{mathtools}
-% List
+  % List
 \usepackage{enumitem}
-% Table
+  % Table
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{tabularx}
@@ -51,17 +51,19 @@
 \usepackage{threeparttable}
 \usepackage{threeparttablex}
 \usepackage{caption}
-% Subfile
+\usepackage{float}
+\floatplacement{table}{H}
+  % Subfile
 \usepackage{subfiles}
-% Epigraph
+  % Epigraph
 \usepackage{epigraph}
-% Index
+  % Index
 \usepackage{imakeidx}
 \usepackage{etoolbox}
 \makeindex[intoc, title=Index]
-% Quote
+  % Quote
 \usepackage{upquote}
-% Ruby
+  % Ruby
 \usepackage{ruby}
 
 \usepackage{hyperref}
@@ -69,7 +71,7 @@
 
 \renewcommand{\normalsize}{\fontsize{11pt}{13.2pt}\selectfont}
 
-% ------ Default Title -----
+  % ------ Default Title -----
 \definecolor{wikipediadarkblue}{rgb}{0.023, 0.270, 0.676}
 \providecommand{\pdftitle}{notes}
 \hypersetup{
@@ -81,17 +83,17 @@
   pdftitle={\pdftitle},
   pdfauthor={Swion Yun}
 }
-% --------------------------
+  % --------------------------
 
 \makeatletter
 \let\oldauthor\author
 \renewcommand{\author}[1]{
-    \oldauthor{#1}
-    \gdef\printauthor{#1}
+  \oldauthor{#1}
+  \gdef\printauthor{#1}
 }
 \makeatother
 
-% -------- Variable --------
+  % -------- Variable --------
 \newif\iftoc
 \tocfalse
 \newif\ifinappendix
@@ -121,14 +123,14 @@
     }%
   \fi
 }
-% --------------------------
+  % --------------------------
 
-% -------- Spacing ---------
+  % -------- Spacing ---------
 \usepackage{setspace}
 \setstretch{1.1}
-% --------------------------
+  % --------------------------
 
-% ---------- Title ---------
+  % ---------- Title ---------
 \makeatletter
 \def\@maketitle{
   \newpage
@@ -151,17 +153,17 @@
 {\thesection}
 {1em}
 {}
-% --------------------------
+  % --------------------------
 
-% -------- Geometry --------
+  % -------- Geometry --------
 \usepackage[margin=1in, marginparwidth=2cm, headheight=15pt]{geometry}
-% --------------------------
+  % --------------------------
 
-% -------- Titlesec --------
+  % -------- Titlesec --------
 \usepackage{titlesec}
 \newif\iftoc
 
-% Formatting of part
+  % Formatting of part
 \titleformat
 {\part}
 [display]
@@ -174,9 +176,9 @@
 ]
 \titlespacing*{\part}{0mm}{30mm}{30mm}
 \titleclass{\part}{top}
-% --------------------------
+  % --------------------------
 
-% --------- Header ---------
+  % --------- Header ---------
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
@@ -188,9 +190,9 @@
   \fancyfoot[C]{\thepage}
   \renewcommand{\headrulewidth}{0pt}
 }
-% --------------------------
+  % --------------------------
 
-% --------- Index ----------
+  % --------- Index ----------
 \newcounter{indexcounterlabel}
 \newcommand{\indexlabel}[1]{\label{indexentry:#1}}
 \let\oldindex\index
@@ -203,9 +205,9 @@
 }
 
 \newcommand{\definitionindex}{\newpage\printindex}
-% --------------------------
+  % --------------------------
 
-% ----------- Box ----------
+  % ----------- Box ----------
 
 \definecolor{color-red}{HTML}{ba4562}
 \definecolor{color-blue}{HTML}{3740c8}
@@ -295,42 +297,42 @@
 
 \usepackage{ifthen}
 \newcommand{\createtheoremstyle}[3]{
-        \mdfdefinestyle{#1box}{
-        backgroundcolor=#3,
-        linecolor=#2,
-        linewidth=2pt,
-        topline=false,
-        bottomline=false,
-        rightline=false,
-        innertopmargin=5pt,
-        innerbottommargin=8pt,
-        innerleftmargin=8pt,
-        skipabove=10pt,
-        skipbelow=10pt
-    }
+  \mdfdefinestyle{#1box}{
+    backgroundcolor=#3,
+    linecolor=#2,
+    linewidth=2pt,
+    topline=false,
+    bottomline=false,
+    rightline=false,
+    innertopmargin=5pt,
+    innerbottommargin=8pt,
+    innerleftmargin=8pt,
+    skipabove=10pt,
+    skipbelow=10pt
+  }
 
-   \ifthenelse{\equal{#1}{definition}}{
-        \declaretheoremstyle[
-            headfont=\bfseries\color{#2},
-            bodyfont=\normalfont,
-            mdframed={style=#1box},
-            headformat={\NAME~\NUMBER\NOTE\ifx##3\empty\else\llap{\index{##3}}\fi\text{.}},
-            headpunct={},
-            numbered=yes
-        ]{#1style}
-    }{
-        \declaretheoremstyle[
-            headfont=\bfseries\color{#2},
-            bodyfont=\normalfont,
-            mdframed={style=#1box}
-        ]{#1style}
-    }
+  \ifthenelse{\equal{#1}{definition}}{
+    \declaretheoremstyle[
+    headfont=\bfseries\color{#2},
+    bodyfont=\normalfont,
+    mdframed={style=#1box},
+    headformat={\NAME~\NUMBER\NOTE\ifx##3\empty\else\llap{\index{##3}}\fi\text{.}},
+    headpunct={},
+    numbered=yes
+    ]{#1style}
+  }{
+    \declaretheoremstyle[
+    headfont=\bfseries\color{#2},
+    bodyfont=\normalfont,
+    mdframed={style=#1box}
+    ]{#1style}
+  }
 
-    \declaretheorem[
-        style=#1style,
-        name={\MakeUppercase{#1}},
-        numberwithin=chapter
-    ]{#1}
+  \declaretheorem[
+  style=#1style,
+  name={\MakeUppercase{#1}},
+  numberwithin=chapter
+  ]{#1}
 }
 
 \createtheoremstyle{definition}{darkblue}{lightblue}
@@ -350,39 +352,39 @@
 
 % -------- Display ---------
 \titleformat
-  {\chapter}
-  [display]
-  {\cabin}
-  {}
-  {2in}
-  {
-    \raggedleft
-    \iftoc
-      \vspace{2in}
+{\chapter}
+[display]
+{\cabin}
+{}
+{2in}
+{
+  \raggedleft
+  \iftoc
+    \vspace{2in}
+  \else
+    \ifinappendix
+      {\LARGE\textsc{Appendix}~{\thechapter}}\\
     \else
-      \ifinappendix
-        {\LARGE\textsc{Appendix}~{\thechapter}}\\
-      \else
-        {\LARGE\textsc{Theme}~{\cantarell\thechapter}}\\ 
-      \fi
-      \fi
-      \Huge\scshape\bfseries
-    }
-    [
-    \vspace{-18pt}
-    \rule{\textwidth}{0.1pt}
-    \vspace{0.0in}
-    ]
-    \titlespacing{\chapter}
-    {0pt}
-    {
-      \iftoc
-        -103pt+1in
-      \else
-        -127pt+1in
-      \fi
-    }
-    {0pt}
+      {\LARGE\textsc{Theme}~{\cantarell\thechapter}}\\ 
+    \fi
+  \fi
+  \Huge\scshape\bfseries
+}
+[
+\vspace{-18pt}
+\rule{\textwidth}{0.1pt}
+\vspace{0.0in}
+]
+\titlespacing{\chapter}
+{0pt}
+{
+  \iftoc
+    -103pt+1in
+  \else
+    -127pt+1in
+  \fi
+}
+{0pt}
 % --------------------------
 
 % -------- Epigraph --------
@@ -393,10 +395,10 @@
 \pretocmd{\@epitext}{\em}{}{}
 \apptocmd{\@epitext}{\em}{}{}
 \patchcmd{\epigraph}
-	{\@epitext{#1}\\}
-	{\vspace{-0.3in+20pt}\@epitext{#1}\\[\epitextskip]}
-	{}
-	{}
+{\@epitext{#1}\\}
+{\vspace{-0.3in+20pt}\@epitext{#1}\\[\epitextskip]}
+{}
+{}
 \makeatother
 
 \setlength\epigraphrule{0pt}
