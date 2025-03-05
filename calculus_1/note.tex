@@ -1,0 +1,27 @@
+\documentclass[openany]{book}
+\usepackage{import}
+\inputfrom{../format/}{format}
+\inputfrom{../format/}{math}
+
+\title{Calculus (1)}
+\author{Siwon Yun}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\toctrue
+\tableofcontnets
+\tocfalse
+
+\newpage
+
+\chapter{앞으로 사용할 수학 표현}
+\foreach \n in {4}
+{
+  \index{-mar \n}
+  \subfile{mar/\n}
+}
+
+\end{document}
