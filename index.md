@@ -12,7 +12,7 @@ title: "Siwon's Notes"
 - 프로그래밍입문<sup>Introduction to Programming</sup>
 - 자료구조<sup>Data Structure</sup>
 - [대학수학(1)<sup>Calculus(1)</sup>](/calculus/note.pdf)
-- Academic English</sup>
+- Academic English
 - 확률및통계<sup>Probability and Statics</sup>
 
 ## Self study
