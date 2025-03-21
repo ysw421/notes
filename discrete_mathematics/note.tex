@@ -1,0 +1,30 @@
+\documentclass[openany]{book}
+\usepackage{import}
+\inputfrom{../format/}{format}
+
+\title{Discrete Mathematics}
+\author{Siwon Yun}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\toctrue
+\tableofcontents
+\tocfalse
+
+\newpage
+
+\chapter{강의에 들어가며}
+\foreach \n in {7}
+{
+  \index{-mar \n}
+  \subfile{mar/\n}
+}
+
+\toctrue
+\definitionindex
+\tocfalse
+
+\end{document}

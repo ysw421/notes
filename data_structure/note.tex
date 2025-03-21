@@ -1,0 +1,30 @@
+\documentclass[openany]{book}
+\usepackage{import}
+\inputfrom{../format/}{format}
+\inputfrom{../format/}{math}
+
+\title{Data Structure}
+\author{Siwon Yun}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\toctrue
+\tableofcontents
+\tocfalse
+
+\newpage
+
+\foreach \n in {20}
+{
+  \index{-mar \n}
+  \subfile{mar/\n}
+}
+
+\toctrue
+\definitionindex
+\tocfalse
+
+\end{document}
