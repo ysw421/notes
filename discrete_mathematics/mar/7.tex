@@ -1,0 +1,215 @@
+\documentclass[../note.tex]{subfiles}
+
+\begin{document}
+
+\epigraph{컴퓨터 공학 전공하지 마라. 생물학 배우고파}{--- Jensen Huang, NVIDIA CEO}
+
+\section{이산 수학이란}
+\begin{definition}[이산 수학]
+  이산 수학\textsuperscript{discrete mathematics}은 연속적인 대상이 아닌 이산적인 대상을 다루는 수학의 한 분야이다.
+\end{definition}
+여기서 이산이란 분리 혹은 불연속으로 서로 구별될 수 있는 것을 의미하는데, 예컨대 graph는 모든 node와 edge는 서로 구별 가능하며 집합으로 표현 가능하다. 즉, 이산 수학은 \textbf{finite}하고 \textbf{countable}한 것을 다루게 된다.
+
+\section{이산 수학을 왜 배우는가?}
+강의 자료에는 2가지 이유를 들고 있다. 1) 수학적 논리를 익혀 현실 세계에 대한 문제 해결력 향상. 2) 컴퓨터 분야의 자료 구조, 알고리즘 등 개념 확립.
+
+\epigraph{이거 ChatGPT가 적은 것일까요, 아닐까요?}{--- 교수님}
+
+개인적으로 결과에는 원인과 동기가 굉장히 중요하다고 생각한다. 내가 이산 수학을 배우는 것은(결과) 공부의 필요성을 느끼고 중요함을 인지한(원인, 동기) 이후이길 바란다. 내가 요컨대 이산 수학을 배우는 이유는 다음과 같다:
+\begin{note}
+  이산 수학을 배우는 이유:
+  \begin{enumerate}
+    \item
+      컴퓨터는 이산적인 문제 해결에 특화되어 있음.
+    \item
+      때문에 컴퓨터를 활용한 문제 해결을 위해 이산 수학을 공부해야함.
+    \item
+      추가적으로 이산 수학 학습은 문제 해결 능력 향상에 필요함.
+  \end{enumerate}
+\end{note}
+컴퓨터를 좋아하는 컴퓨터 공학부 학생에게 이정도면 이 과목을 배우는 충분한 이유가 될 듯 하다.
+
+\section{이산 수학 예시}
+강의에서 2가지 이산 수학 예시가 소개 되었다. 1) 쾨니스베르트의 다리 문제. 2) 하노이의 탑 문제.
+
+\begin{enumerate}
+  \item
+    마치 한붓 그리기와 같은 문제이다. 오일러가 해당 문제를 풀며 그래프 이론이 탄생했다고 알려져 있다. 고등학교 자료시간에 발표하며 다루었던 내용\footnote{발표 자료: https://www.siwonsw.com/files/paper/graph/graph.pdf}이다. 교수님께서 이 문제를 어디서 들어 보았냐고 물으셨다. 나는 수학 교과서에서 보았다고 말했다. `재미있는 수학 이야기가 있어요!'와 같은 맥락에서 나왔었는데, 고등학교 교육 과정에 포함 되어 있다는 말로 이해하신 듯 하다...
+  \item
+    3개의 기둥에 크기가 각기 다른 원반을 옮기는 문제이다. 고등학교 1학년, 함지연 선생님의 플밍 강의에서 재귀로 해결했던 것이 기억난다. 그 때가 그립습니다. :)
+\end{enumerate}
+
+\section{배울 내용}
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ c | c | c }
+    논리와 명제 & 수학적 귀납법 & 집합, 데카르트 곱, 함수 \\
+    \hline
+    재귀 & 행렬 & Counting(세기), 순열, 조합 \\
+    \hline
+    알고리즘 & 확률, 베이즈 정리 & 함수 복잡도, 알고리즘 복잡도 \\
+    \hline
+    점화 관계 및 응용 & 정수, 소수, 해시, 암호 & 그래프, 트리
+  \end{tabular}
+\end{table}
+고백컨대 암호를 제외하면 모두 한번쯤은 배웠던 내용이다. 가장 기대되는 내용이라면 집합 $\rightarrow$ 데카르트 곱 $\rightarrow$ 함수로 이어지는 부분인데, 이 개념이 인공지능부터 양자 컴퓨팅, (특히) data base 등 방대한 분야를 망라하고 표현법에 중요한 역할을 했다고 믿기 때문이다.
+
+\chapter{논리}
+\section{정의}
+\begin{definition}[논리]
+  논리\textsuperscript{logic}란 명제\textsuperscript{proposition, statements}의 진리값\textsuperscript{truth value}을 결정하는 학문이다.
+\end{definition}
+
+\begin{note}[proposition과 statements의 차이]
+  전지전능하신 llm에게 물어 보았다:\\
+
+  "Proposition"과 "statement"는 수학, 논리학, 철학 등에서 비슷하게 사용되지만, 미묘한 차이가 있습니다.
+
+  \begin{itemize}
+    \item
+      \textbf{Proposition (명제):}
+        정의: 어떤 진리값을 갖는 의미 있는 문장을 의미합니다. 즉, 참(True) 또는 거짓(False)으로 평가할 수 있는 문장입니다.\\
+        예시: "2는 짝수이다."는 참인 명제이고, "3은 짝수이다."는 거짓인 명제입니다.\\
+        특징: 명제는 논리적 사고에서 중요한 역할을 하며, 논리 연산자와 결합하여 복잡한 논리 구조를 만들 수 있습니다.
+
+    \item
+      \textbf{Statement (진술):}
+        정의: 진술은 어떤 주장이나 설명을 나타내는 문장으로, 보통 의미를 전달하는 언어적 표현입니다. 진술은 반드시 참 또는 거짓일 수 있는 것은 아니며, 논리적 문맥에서 명제와 같은 의미로 사용될 수 있습니다.\\
+        예시: "오늘 날씨가 좋다."라는 진술은 진리값이 필요하지만, 때로는 사실 여부를 판별하기 어려울 수 있습니다.
+  \end{itemize}
+
+  차이점: Proposition은 반드시 참 또는 거짓일 수 있는 문장이지만, statement는 일반적인 의미에서 주장, 설명, 질문 등 모든 형태의 문장일 수 있습니다.
+  수학이나 논리학에서 "proposition"은 주로 참 또는 거짓으로 평가할 수 있는 내용만을 의미하며, "statement"는 일상 언어나 철학적 맥락에서 좀 더 넓은 의미로 사용될 수 있습니다.
+
+  따라서 "proposition"은 논리적 분석에서 명확히 진리값을 갖는 표현을 가리키며, "statement"는 그보다 포괄적인 의미로 사용될 수 있습니다.
+\end{note}
+
+\section{논리가 컴퓨터에서 왜 중요한가?}
+\begin{enumerate}
+  \item
+    알고리즘의 특징은 명확성이다. 논리를 통해 명확성을 확보하자.
+  \item
+    컴퓨터는 논리적인 기계이다. 트렌지스터는 논리 게이트에 기반해 작동한다.
+  \item
+    논리를 활용해 더 효율적인 알고리즘 제작이 가능하다.
+\end{enumerate}
+
+\section{명제}
+\begin{definition}[명제]
+  명제\textsuperscript{proposition}란 참 또는 거짓으로 평가할 수 있는 문장이다.
+\end{definition}
+일반적으로 명제는 문자 $p$, $q$, $r$, $s$ 등으로 표현한다. 문제 상황에서 명제를 옳게 설정하는 것은 매우 중요하며, 논리를 따지는 첫 단계이다. 명제의 진리값은 명확성을 요구하여 주관성과는 거리가 멀다. 예컨대 $1+2=3$이 명제의 예이며, 진리 값은 참이다.
+
+\epigraph{우리집 고양이 구름이는 누구에 물어도 귀엽다고 말하는데, 왜 `구름이는 귀엽다'가 명제가 아니지?}{--- 나의 생각 중}
+
+명제의 진리값은 다음과 같이 표현한다:
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ c | c }
+    true & false \\
+    \hline
+    T & F \\
+    1 & 0
+  \end{tabular}
+\end{table}
+
+$x=2$는 명제일까? x의 값에 따라 진리 여부가 결정될 때, 우리는 이를 `명제 함수'라고 부른다.
+
+\section{논리 연산자}
+\begin{definition}[논리 연산자]
+  논리 연산자\textsuperscript{logical operator}란 명제를 연결하여 새로운 명제를 만드는 연산자이다.
+\end{definition}
+
+`도서관이 9시에 개장하고 해는 서쪽에서 뜬다.'와 같이 논리적 상황을 자연어로 표현하는 것은 어려운 일이다. 때문에 논리적 상황을 단순화하여 수식으로 표현할 필요가 있다.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{ c | c | c | c | c | c | c | c }
+    p & q & $\neg p$ & $p \land q$ & $p \lor q$ & $p \rightarrow q$ & $p \oplus q$ & $p \longleftrightarrow q$ \\
+    \hline
+    T & T & F & T & T & T & F & T \\
+    T & F & F & F & T & F & T & F \\
+    F & T & T & F & T & T & T & F \\
+    F & F & T & F & F & T & F & T
+  \end{tabular}
+  \caption{대표적인 논리 연산자}
+  \label{table:logicnal-operator}
+\end{table}
+
+table \ref{table:logicnal-operator}와 같이 명제의 모든 경우의 수를 모아둔 표를 \index{진리표}진리표라고 부른다.
+
+진리표의 논리 연산자는 각각 not, and, or, implies, xor(exclusive or), iff(if and only if)를 의미한다.
+\subsection{not}
+\begin{itemize}
+  \item
+    기호: $\neq p$
+  \item
+    읽는 법: not p
+\end{itemize}
+\subsection{and}
+\begin{itemize}
+  \item
+    기호: $p \land q$
+  \item
+    읽는 법: p and q
+\end{itemize}
+\subsection{or}
+\begin{itemize}
+  \item
+    기호: $p \lor q$
+  \item
+    읽는 법: p or q
+\end{itemize}
+\subsection{implies}
+\begin{itemize}
+  \item
+    기호: $p \rightarrow q$
+  \item
+    읽는 법: p implies q
+\end{itemize}
+\subsection{xor}
+\begin{itemize}
+  \item
+    기호: $p \oplus q$
+  \item
+    읽는 법: p xor q
+\end{itemize}
+\subsection{iff}
+\begin{itemize}
+  \item
+    기호: $p \longleftrightarrow q$
+  \item
+    읽는 법: p iff q
+\end{itemize}
+
+논리 연산자에 우선 순위가 존재하지만, 경험으로 모두 알 수 있다. 종이를 아끼자.
+
+\begin{note}
+  왜 implies, iff라는 이름을 사용할까? \LaTeX에서 \verb|\implies|는 $\implies$, \verb|\iff|는 $\iff$로 표현된다. 이는 수학에서 참임을 검증 가능할 때 사용되는데, 명제에서는 그저 조건을 나타낼 때 표현된다. llm이 여러가지 이야기를 해주는데, 이유를 모르겠다. 그저 엄격성이 더욱 요구되는 수학과 컴퓨터 과학을 배우는 학생의 차이라고 생각하자.
+\end{note}
+
+\section{복합 명제}
+\begin{definition}[복합 명제]
+  복합 명제\textsuperscript{compound proposition}란 둘 이상의 명제를 논리 연산자로 연결한 명제이다.
+\end{definition}
+당연하게도 우리는 복합 명제를 다루어야 한다. 보다 복잡하고 생산성 있는 일을 하기 위해서 이다.
+
+\section{동치}
+\begin{definition}[동치]
+  두 명제 $p$와 $q$가 동치\textsuperscript{equivalent}라는 것은 두 명제가 항상(다른 말로 모든 경우에서) 같은 진리값을 갖는다는 것이다. 다음과 같이 표시한다:
+
+  \begin{equation}
+    p \equiv q
+  \end{equation}
+\end{definition}
+물론 $\iff$도 사용하겠다. 비단, 수업에 맞춰 가능하면 $\equiv$를 사용한다.
+
+\section{드모르간 법칙}
+\begin{definition}[드로모르간 법칙]
+  다음이 성립한다:
+  \begin{align}
+
+  \end{align}
+\end{definition}
+
+\end{document}

@@ -1,0 +1,116 @@
+\documentclass[../note.tex]{subfiles}
+
+\begin{document}
+
+\section{연쇄법칙}
+
+\subsection{라이프니츠 표현을 사용한 음함수의 미분법}
+\begin{example}
+  $y^2$을 $x$에 대하여 미분하자, $y$를 미분가능한 $x$의 함수라고 가정하면:
+  \begin{align}
+    &V = y^2 \\
+    &y = f(x) \\
+    &V = (f(x))^2 \\
+    &\frac{dV}{dx} = \frac{dV}{dy} \cdot \frac{dy}{dx} = 2y \cdot \frac{dy}{dx}
+  \end{align}
+\end{example}
+
+\begin{note}
+  $y$를 미분가능한 $x$의 함수로 가정한다? 사실 존재성을 확인한 후 미분을 시작해야 한다고 한다.
+\end{note}
+
+\subsection{함수를 나누어서 풀기}
+\begin{example}
+  $x^2+y^2=25$를 미분하자:
+  $y=\pm\sqrt{25-x^2}$으로 2개의 함수로 나누어 생각할 수 있다.
+\end{example}
+참고로 $x=-5, x=5$는 domain에 속하지 아니한다. 미분값이 각각 $\mp \infty$로 가기 때문이다. 본 example에서는 2개의 함수로 나누었지만, 실제로는 domain이 다르면 다른 함수이기 때문에 무한히 많은 함수로 나눌 수 있다. 편의상 domain이 가장 큰 함수를 고려하자.
+
+라이프니츠 표현을 추구하자... example로 등장하는 데카르트 엽선 등 그래프가 복잡해지면 함수를 여러개로 나누기란 쉽지 아니하다. 또한 경우의 수를 나누는 것도 쉽지 아니하다.
+
+\begin{theorem}
+  $r$은 유리수이다. 다음이 성립한다:
+  \begin{equation}
+    \frac{d}{dx}(x^r) = rx^{r-1}
+  \end{equation}
+\end{theorem}
+가능한 경우만을 생각한다: domain에 속한 부분만을 고려하면 된다.
+
+\begin{proof}
+  핵심 아이디어: 음함수 미분법
+
+  유리수의 정의에 따라 유리수 $r=\frac{m}{n} (m,n \in \ZZ, n \neq 0)$라 하자. $y=x^{\frac{m}{n}} \Rightarrow y^n=x^m$이다. 이를 $x$에 대하여 음함수 미분을 하면 다음과 같다:
+  \begin{align}
+    ny^{n-1}\frac{dy}{dx} &= mx^{m-1} \\
+    \frac{dy}{dx} &= \frac{mx^{m-1}}{ny^{n-1}} = \frac{mx^{m-1}}{nx^{\frac{m}{n}-1}} = \frac{m}{n}x^{\frac{m}{n}-1} \\
+                  &= rx^{r-1}
+  \end{align}
+\end{proof}
+
+\section{로그함수와 역삼각함수의 도함수}
+전반부: 로그함수, 후반부: 역삼각함수에 대하여 학습한다.
+
+\begin{definition}{일대일함수}
+  임의의 $x_1, x_2 \in X$에 대하여
+  \begin{equation}
+    x_1 \neq x_2 \rightarrow f(x_1) \neq f(x_2)
+  \end{equation}
+  이면 함수 $f: X \rightarrow Y$를 일대일 함수\textsuperscript{one to one function, injection function}라고 부른다.
+\end{definition}
+수평선 판정법을 활용해 판단할 수 있다. ToDo.
+
+\begin{definition}{역함수}
+  함수 $f: X\rightarrow Y$가 일대일 함수이면 역함수\textsupersecript{inverse function} $f^{-1}: Y\rightarrow X$로 정의한다.
+  \begin{equation}
+    f^{-1}(y) = x \leftrightarrow f(x) = y
+  \end{equation}
+\end{definition}
+
+\begin{remark}
+  \begin{itemize}
+    \item
+      domain과 range가 서로 바뀜.
+    \item
+      뉘양쓰에 따라 종속변수를 변환함.
+      \begin{equation}
+        f^{-1}(x)=y \leftrightarrow f(y)=x
+      \end{equation}
+    \item
+      \begin{align}
+        f^{-1}(f(x)) = x \\
+        f(f^{-1}(x)) = x
+      \end{align}
+    \item
+      $y=x$에 대칭꼴.
+  \end{itemize}
+\end{remark}
+
+\begin{remark}
+  일대일 함수의 특성
+  \begin{enumerate}
+    \item
+      $f$가 일대일이고  연속이면 역함수도 연속이다.
+    \item
+      $f$가 일대일이고 미분가능하면 역함수는 `수직접선'을 갖는 점을 제외하고 모든점에서 미분가능하다. 
+  \end{enumerate}
+\end{remark}
+2번째에 더하면, 함수의 미분값이 0일때 역함수의 미분값의 절댓값은 $\infity$ 즉 수직선을 가지게 된다. 따라선 역함수가 수직접선을 가지면 그 점에서 미분 불가하다.
+
+\begin{theorem}
+  \begin{align}
+    \frac{d}{dx}(\log_a{x})=\frac{1}{x\ln{a}} \\
+    \frac{d}{dx}(\ln{x})=\frac{1}{x}
+  \end{align}
+\end{theorem}
+
+\begin{proof}
+  핵심 아이디어: 음함수 미분법 사용.
+
+  $y=\log_a{x}$라 하자. $a^y=x$이다. 이를 $x$에 대하여 음함수 미분을 하면 다음과 같다:
+  \begin{align}
+    a^y\ln{a}\frac{dy}{dx} &= 1 \\
+    \frac{dy}{dx} &= \frac{1}{a^y\ln{a}} = \frac{1}{x\ln{a}}
+  \end{align}
+\end{proof}
+
+\end{doucement}

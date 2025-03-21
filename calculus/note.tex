@@ -12,13 +12,20 @@
 \maketitle
 
 \toctrue
-\tableofcontnets
+\tableofcontents
 \tocfalse
 
 \newpage
 
 \chapter{앞으로 사용할 수학 표현}
 \foreach \n in {4, 6}
+{
+  \index{-mar \n}
+  \subfile{mar/\n}
+}
+
+\chapter{미분법}
+\foreach \n in {20}
 {
   \index{-mar \n}
   \subfile{mar/\n}
