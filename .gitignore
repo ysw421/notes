@@ -15,6 +15,8 @@ ck --lost-foun
 **/*.run.xml
 **/*.synctex.gz
 **/*.toc
+**/*.out
+a.out
 
 # Created by https://www.toptal.com/developers/gitignore/api/tex,latex
 # Edit at https://www.toptal.com/developers/gitignore?templates=tex,latex

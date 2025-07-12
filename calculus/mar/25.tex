@@ -1,0 +1,32 @@
+\documentclass[../note.tex]{subfiles}
+
+\begin{document}
+
+\section{로그 미분법}
+로그 미분법은 음함수 미분법의 일부로 log를 취해 미분하는 것을 말한다.
+
+\begin{align}
+  \ln{x}&:(0, \infity) \to \RR \\
+  \ln{\abs{x}}&: \RR_{\\\{0\}} \to \RR \\
+\end{align}
+
+양수 구간만 log를 취할 수 있다. 다만, $y=f(x)$가 어떤 구간에서 음수일 경우 $-y = -f(x)$로 변환한 후 로그를 취할 수 있다. 일반화하여 절댓값에 대하여 로그를 취하면 된다.
+
+\begin{note}
+  log의 정의역에는 0이 포함되지 아니한다. 따라서 로그 미분법을 사용한다면 0인 경우를 따로 계산한다.
+\end{note}
+
+\begin{theorem}
+  $n$이 임의의 실수이고 $f(x) = x^n$이면 다음을 만족한다:
+  \begin{equation}
+    f'(x)=nx^{n-1}
+  \end{equation}
+\end{theorem}
+
+\begin{theorem}
+  \begin{equation}
+    \lim_{x \to 0}(1+x)^{1/x}=e
+  \end{equation}
+\end{theorem}
+
+\end{document}

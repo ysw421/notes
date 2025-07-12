@@ -25,7 +25,33 @@
     upquote=true
 }
 
-\lstset{style=mystyle}
+\lstdefinestyle{CStyle}{
+    backgroundcolor=\color{backgroundColour},   
+    commentstyle=\color{mGreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{mGray},
+    stringstyle=\color{mPurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=C
+}
+
+% \lstset{
+%   style=mystyle,
+%   basicstyle=\ttfamily,
+%   breaklines=true,
+%   postbreak=\mbox{\textcolor{red}{$\hookleftarrow$}},
+%   literate={#}{\#}{1}
+% }
 
 % \lstinline[language=Python]{print("hello")}
 % \lstinputlisting[language=Python, caption=NEURON module, label=lst:neuron_example]{examples/neuron_example.py}
