@@ -1,77 +1,117 @@
 \documentclass[openany]{book}
 \usepackage{import}
 \inputfrom{../format/}{format}
-
 % Document Information
 \title{Cognitive Neuroscience of Memory}
 \author{BCSC}
 \date{\today}
-
 \begin{document}
-
 \maketitle
-
 \newpage
 \thispagestyle{empty}
-
 \vspace*{2cm}
-
 \begin{center}
     {\Large \textbf{일러두기}}
 \end{center}
-
 \vspace{1.5cm}
-
 하나. 본 문서는 Cognitive Neuroscience of Memory의 정리본임.
-
 \vfill
-
 \noindent
 \rule{5cm}{0.5pt}
 \\
 \textbf{윤시원} \\
 \textit{BCSC 2025} \\
 \today
-
 \toctrue
 \tableofcontents
 \tocfalse
-
 \newpage
-
-\foreach \n in {ch1, ch3, ch4, ch6}
+\foreach \n in {ch1, ch3, ch4, ch6, ch8}
 {
 	\subfile{chapters/\n}
 }
-
-% \chapter{Hello, World!}
-
-% \epigraph{나는 젤리가 없어도 달콤한 냄새가 나}{---ㅇㅊㅈ}
-% \foreach \n in {1,2}
-% {
-% 	\subfile{apr/\n}
-% }
-
-% \chapter{HUHA}
-% \foreach \n in {1}
-% {
-%   \subfile{may/\n}
-% }
-
-% \begin{appendices}
-% \chapter{Appendix}
-% \foreach \n in {1}
-% {
-%   \subfile{appendix/\n}
-% }
-% \end{appendices}
-
 \toctrue
-\bibliography{.ref}
-% * All charts, graphs and figures created by \printauthor{} unless otherwise noted.
+\bibliography{ref}
 \bibliographystyle{unsrt}
-
 \definitionindex
 \tocfalse
-
 \end{document}
+
+% \documentclass[openany]{book}
+% \usepackage{import}
+% \inputfrom{../format/}{format}
+
+% % Document Information
+% \title{Cognitive Neuroscience of Memory}
+% \author{BCSC}
+% \date{\today}
+
+% \begin{document}
+
+% \maketitle
+
+% \newpage
+% \thispagestyle{empty}
+
+% \vspace*{2cm}
+
+% \begin{center}
+%     {\Large \textbf{일러두기}}
+% \end{center}
+
+% \vspace{1.5cm}
+
+% 하나. 본 문서는 Cognitive Neuroscience of Memory의 정리본임.
+
+% \vfill
+
+% \noindent
+% \rule{5cm}{0.5pt}
+% \\
+% \textbf{윤시원} \\
+% \textit{BCSC 2025} \\
+% \today
+
+% \toctrue
+% \tableofcontents
+% \tocfalse
+
+% \newpage
+
+
+% \foreach \n in {ch1, ch3, ch4, ch6, ch8}
+% {
+% 	\subfile{chapters/\n}
+% }
+
+% % \chapter{Hello, World!}
+
+% % \epigraph{나는 젤리가 없어도 달콤한 냄새가 나}{---ㅇㅊㅈ}
+% % \foreach \n in {1,2}
+% % {
+% % 	\subfile{apr/\n}
+% % }
+
+% % \chapter{HUHA}
+% % \foreach \n in {1}
+% % {
+% %   \subfile{may/\n}
+% % }
+
+% % \begin{appendices}
+% % \chapter{Appendix}
+% % \foreach \n in {1}
+% % {
+% %   \subfile{appendix/\n}
+% % }
+% % \end{appendices}
+
+% \toctrue
+% \bibliography{.ref}
+% % * All charts, graphs and figures created by \printauthor{} unless otherwise noted.
+% \bibliographystyle{unsrt}
+
+% \definitionindex
+% \tocfalse
+
+% \end{document}

@@ -1,6 +1,21 @@
 \documentclass[../note.tex]{subfiles}
 
+\providecommand{\mainfile}{standalone}
+
+\ifx\mainfile\empty\else
+    \usepackage{import}
+    \title{Chapter 1 - Types of Memory and Brain Regions of Interest}
+    \author{BCSC}
+    \date{\today}
+\fi
+
 \begin{document}
+\ifx\mainfile\empty\else
+    \maketitle
+    \newpage
+\fi
+
+
 \chapter{Types of Memory and\\Brain Regions of Interest}
 
 \section{Cognitive Neuroscience}

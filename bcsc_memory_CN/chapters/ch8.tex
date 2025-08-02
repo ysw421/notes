@@ -1,0 +1,475 @@
+\documentclass[../note.tex]{subfiles}
+
+\providecommand{\mainfile}{standalone}
+
+\ifx\mainfile\empty\else
+    \usepackage{import}
+    \title{Chapter 8 - Memory and Other Cognitive Processes}
+    \author{BCSC}
+    \date{\today}
+\fi
+
+\begin{document}
+\ifx\mainfile\empty\else
+    \maketitle
+    \newpage
+\fi
+
+\setcounter{chapter}{7}
+\chapter{Memory and Other Cognitive Processes}
+
+이 장에서는 memory의 인지 과정과 뇌 영역과 attention\footnote{Attention은 모든 explicit memory의 
+내용에 집중된다.}, imagery, language, and emotion의 인지 과정과 뇌 영역을 비교한다.
+
+\begin{itemize}
+  \item Section \ref{sec:attention}: attention
+  \item Section \ref{sec:imagery}: imagery
+  \item Section \ref{sec:language}: language
+  \item Section \ref{sec:emotion}: emotion
+\end{itemize}
+
+
+\section{Attention and Memory\index{attention}}
+\label{sec:attention}
+Behavioral research: attention은 item의 처리 과정을 향상 시킴 $\longrightarrow$ 정확하고 빠른 반응.\\
+e.g., 화살표를 통해 attention할 부분을 표시(L | R) $\rightarrow$ 표시된 부분을 더 빠르게 탐지\\
+
+\paragraph{관련 영역}
+sensory regions and control regions
+
+\begin{definition}{gain model of attention}\\
+  attention이 감각 처리 영역의 활동의 강도를 증진시키는 model
+\end{definition}
+
+gain model of attention에서는 attention이 item의 처리 과정을 향상 시키는 것의 원인이 될 수 있다.\\
+
+\tbox{sensory effects of attention의 실험 방법}{
+  양쪽 visual field를 동시에 자극함으로써 연구한다.
+  피험자는 항상 중앙을 바라보며 왼쪽 또는 오른쪽에 제시된 것을 attention하라는 지시를 받는다.
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{image/ch8_blueprint1}
+    \captionof{figure}{Spatial attention paradigm and fMRI results. (A) Attention stimulus display with
+two overlapping arrowheads at the central fixation point and a flashing checkerboard
+stimulus within each visual field. When one arrowhead briefly turns red, participants shift
+attention to the corresponding visual field/stimulus (illustrated by the dotted circle).
+Participants press a button when they detect a small red square within the attended location/
+stimulus and ignore the unattended location/stimulus. (B) Contralateral attention activity in
+early visual regions (axial view, occipital pole at the bottom). The contrast of attention to the
+right visual field and attention to the left visual field (Right > Left) produced activity in the left
+extrastriate cortex (in purple/cyan), while the contrast of attention to the left visual field and
+attention to the right visual field (Left > Right) produced activity in the right extrastriate
+cortex (in red/yellow). (C) Attention control activity in the dorsolateral prefrontal cortex (the
+rightmost activation) and the parietal cortex (the leftmost activation) of the right hemisphere
+(in purple/yellow; lateral-posterior view, occipital pole to the left).}
+    \label{fig:ch8_blueprint1}
+  \end{center}
+  \paragraph{청사진(Figure \ref{fig:ch8_blueprint1}-A의 각 panel 순으로):}
+  \begin{enumerate}
+    \item
+      중앙에 겹쳐진 화살표(L, R)가 존재한다. 이 중 하나가 붉은색\footnote{claude 왈, 붉은색: V8 영역(색상 처리 영역)에서 strong response}으로 변하면, 피험자는 해당 부분에 attention한다.
+    \item
+      양쪽에 체크보드(!! Chapter 6)가 존재한다. attention하고 있는 부분서 가끔 체크보드가 붉은색으로 변하면 피험자는 버튼을 누른다.
+    \item
+      다른 화살표가 붉은색으로 변하였다. 이는 피험자가 새로운 부분에 attention하라는 지시이다.
+    \item
+      피험자는 지시에 따라 새로운 부분에 attention한다.
+  \end{enumerate}
+
+  \paragraph{fMRI 결과(Figure \ref{fig:ch8_blueprint1}-B):}
+  \begin{itemize}
+    \item
+      왼쪽 visual field에 attention할 때, 오른쪽 extrastriate cortex가 활성화 된다.
+    \item
+      오른쪽 visual field에 attention할 때, 왼쪽 extrastriate cortex가 활성화 된다.
+  \end{itemize}
+  $\Longrightarrow$ contralateral attention effects(early visual regions, including V1, V2, and V3) 
+  $\approx$ contralateral attention effects in visual processing regions(Chapter 1)\\
+
+  + attention은 특징 영역을 강화함: e,g., color $\longrightarrow$ the color processing region within the ventral visual processing stream
+
+  \paragraph{Thakral & Slotnick, 2009의 실험}\\
+
+  \url{https://www.sciencedirect.com/science/article/pii/S0006899309019337?dgcid=api\_sd\_search-api-endpoint}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{image/ch8_bp2}
+    \captionof{figure}{The flicker protocol was a circular
+checkerboard that reversed in contrast during attention and perception periods, with no flicker during stationary periods.
+During attention periods, participants were instructed to press a button each time a red square briefly appeared.}
+    \label{fig:ch8_bp2}
+  \end{center}
+  \paragraph{Attention과 perception 비교(Figure \ref{fig:ch8_blueprint1}-C):}
+  dorsolateral prefrontal cortex and parietal cortex control regions(Chapter 6: working memory와 동일)\\
+  working memory contralateral visual sensory effects $\approx$ spatial attention(L \| R)과 관련된 contralateral visual sensory effects
+}
+
+\subsection{working memory와 attention}
+DL-PFC와 parietal cortex는 working memory와 attention 과정 모두에서 활성화 된다.
+이는 두 인지 과정이 연결되어 있다는 증거로 사용되곤 하다.
+
+\tbox{Ikkai & Curtis, 2011}{
+  \url{https://pmc.ncbi.nlm.nih.gov/articles/PMC3081523/pdf/nihms260559.pdf}
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{image/ch8_bp3}
+    \captionof{figure}{Task and results summary from working memory (WM), attention studies.}
+    \label{fig:ch8_bp3}
+  \end{center}
+  delay/sustained attention period 동안, PFC와 PPC에서 비슷한 pattern이 보인다!\\
+  비단, 차이점도 존재합니다. working memory, 복잡한 자극(얼굴들과 집들), 반면 attention, 아니 복잡한 자극(체크보드 패턴)\\
+}
+
+\subsection{long-term memory와 attention}
+long-term memory 이야기를 해요.
+
+\paragraph{청사진}
+\begin{itemize}
+  \item study phase:\\
+    to-be-remembered stimuli들 있는 리스트가 있다. 이를 보여준다.
+  \item test phase:\\
+    학습이 끝났는가? old와 new 항목이 보여진다. 피험자는 ``old''-``new'' 판단을 한다. 경우에 따라 context memory도 판단할 수 있다.
+\end{itemize}
+
+2개의 long-term memory 종류(Episodic memory and item memory)와 관련된 sensory processing regions은 다음과 같다:
+the dorsolateral prefrontal cortex, the parietal cortex, and the medial temporal lobe\\
+MTL을 제외한 타 영역, attention과 동일하다!\\
+$\longrightarrow$ 여러 과학자 왈, 이는 attention이 retieval할 때 attention이 item에 대하여 내부 표현(internal representation)을 조정할 수 있기 때문이다.\\
+예컨대, `나는 차 키를 어디에 두었는가?' $\longrightarrow$ 키에 주의 집중한다.\\
+
+동일한 same sensory effects에 대하여 long-term memory와 attention이 관련되어 있다는 증거를 살펴본다.
+\tbox{Slotnick, 2009\footnote{\url{https://www.sciencedirect.com/science/article/pii/S0006899309004582?via\%3Dihub}}}{
+  추상적인 모양을 짜극으로 하는\footnote{앞선 연구에서 verbal memory를 통해 모양을 기억하는 것을 막고자 추상적인 모양을 사용한 적이 있다!} fMRI-ERP 연구이다.
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{image/ch8_bp4}
+    \captionof{figure}{(A) During the study phase, shapes were presented to
+the left or right of fixation. (B) During the test phase, old
+shapes from the study phase (previously on the left, old-left,
+or previously on the right, old-right) or new shapes were
+presented at fixation and participants classified each shape
+as old and on the “left”, old and on the “right”, or “new”
+(correct responses are shown to the right).}
+    \label{fig:ch8_bp4}
+  \end{center}
+  \paragraph{청사진}
+  \begin{itemize}
+    \item study phase:\\
+      central fixation point로 부터 왼쪽 또는 오른쪽에 추상적인 모양이 존재한다.
+    \item test phasE:\\
+      fixation point에 old 또는 new item이 나타난다. 피험자는 구분한다:
+      ``old이고 이전에 왼쪽에 있었습니다'', ``old이고 이전에 오른쪽에 있었습니다'', ``$\mathfrak{new}$''.\\
+      참고로 피험자에게 ``old'', ``new''처럼 언어적 전략을 활용한 기억보다 시각적 전략을 활용한 기억을 권장한다.
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{image/ch8_result1}
+    \captionof{figure}{(A) During the study phase, shapes were presented to
+the left or right of fixation. (B) During the test phase, old
+shapes from the study phase (previously on the left, old-left,
+or previously on the right, old-right) or new shapes were
+presented at fixation and participants classified each shape
+as old and on the “left”, old and on the “right”, or “new”
+(correct responses are shown to the right).}
+    \label{fig:ch8_result1}
+  \end{center}
+
+  \paragraph{결과}\\
+  \begin{itemize}
+    \item (old-left-hits) - (old-right-hits) = right extrastriate cortex
+    \item (old-right-hits) - (old-left-hits) = left extrastriate cortex
+  \end{itemize}
+
+  contralateral P1\footnote{P1: positive $\sim$100ms, FN400: frontal negative $\sim$400ms} effect가 보인다.
+  즉, 자극을 주고 100에서 200ms 후에 반대쪽 반구서 반응이 발생하였다.\\
+
+  $\longrightarrow$ 이러한 이유로 long-term memory와 attention은 동일한 메카니즘을 가진다.\\
+
+  ??\\
+
+  추론컨대, 책은 해당 실험서 long-term memory와 관련된 부분만을 다루고, 이전 attention 실험들과 비교하여 패러다임의 동일성을
+  말하는 듯 한다.
+
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{image/ch8_result2}
+    \captionof{figure}{B) Toward the center, posterior view of differential ERP voltage scalp topographies (with ROIs
+delimited by black ovals) are shown illustrating encoding-related retinotopic activation at the mean timepoint within select
+lateralized epochs from above (color scale at center). Corresponding occipital dipole sources underlying these voltage
+topographies are also shown (dipoles in the right and left hemispheres are colored red and blue, respectively). (C) Toward the
+center, spatial encoding-related fMRI activity in retinotopic visual regions projected onto a cortical surface representation
+(posterior view, with the right hemisphere to the right; gyri and sulci colored light and dark gray, respectively). Retinotopic
+encoding effects were isolated by contrasting encoding-left > encoding-right (significant activity shown in red) and
+encoding-right > encoding-left (significant activity shown in blue). Corresponding event-related timecourses extracted from
+two regions of activity are also shown.}
+    \label{fig:ch8_result2}
+  \end{center}
+
+  Figure \ref{fig:ch8_result2}는 논문에 포함된 다른 Figure인데, 양쪽 영역을 contrast하는 것을 보아 attention과 관련되어 있다.
+  아닌가, encoding이라고 적혀있다.\\
+  
+  + contralateral early visual region activity during long-term memory encoding에서도 동일한 패러다임이 보인다고 한다.
+}
+
+long-term memory가 작동하는 동안 attention이 작동하는 것처럼 보이지만, long-term memory는 MTL과 관련 있다.
+따라서 둘은 독립이고, attention은 내부 기억 표현을 강화한다.
+이러한 이유를 말미암아 둘의 관계를 밝히기 위해 개별 참가자의 활동을 비교하는 것이 필요함다.
+
+
+\section{Imagery and Memory\index{imagery}}
+\label{sec:imagery}
+Stephen Kosslyn, $\mathfrak{a\;\textbf{\textit{brilliant}}\;cognitive\;neuroscientist}$는 imagery애 많은 관심이 있다.\\
+`German Shephard(?)의 귀는 어떤 모양인가?'라는 질문에 사람들이 어떻게 답변할 수 있는지 궁금하다.\\
+$\longrightarrow$ 대부분의 사람들: German Shephard의 visual mental image 상상하기
+$\rightarrow$ 귀를 ``looking'' 하기\\
+$\Longrightarrow$ V1 and extrastriate cortex regions 뿐 아니라 DL-PFC와 parietal cortex control regions도 관련 있다!
+
+\tbox{fMRI 실험}{
+  visual perception, visual imagery, and visual attention과 관련된 sensory regions and control regions 비교하기\footnote{https://academic.oup.com/cercor/article/15/10/1570/396851?login=true}\\
+
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{image/ch8_bp5}
+    \captionof{figure}{Visual perception, imagery, and attention paradigms and fMRI results. (A) Left,
+perception stimulus display, with flashing checkerboards rotating around the central fixation
+point. Right, imagery and attention stimulus display with only the outer arcs of the flashing
+checkerboards rotating around the central fixation point. During the perception and imagery
+condition, participants determined whether a briefly flashed small red square was“inside”
+or
+“outside” of the stimuli. During the attention condition, participants determined whether the
+small red square was in the“left” visual field or the“right” visual field. (B) Perception,
+imagery, and attention retinotopic maps for a representative participant (posterior view;
+colors correspond to different spatial locations in the visual field as shown by the semi-circle
+key between the perception and imagery retinotopic maps). Early visual regions are labeled
+(in black) and cyan ovals show the regions where imagery produced greater retinotopic
+activity than attention. The repeating patters (?????) of colors (e.g., yellow to red to yellow to red in
+the upper left hemisphere) correspond to repeated visual field representations in early visual
+areas (e.g., the lower right quadrant in the visual field has a unique representation in dorsal
+V1, V2, and V3 of the left hemisphere). (C) Activity associated with both perception and
+imagery (in green) and activity associated with both imagery and attention (in orange; key to
+the right).}
+    \label{fig:ch8_bp5}
+  \end{center}
+
+  \paragraph{청사진: Figure \ref{fig:ch8_bp5}-A}
+  \begin{itemize}
+    \item visual perception:\\
+      좌측 그림, 회전하는 체크박스가 있고 그 안에 빨간점, ``inside'' 또는 ``outside''를 판단한다.
+    \item visual imagery:\\
+      우측 그림(짜짜 크게 확대하여 보아), 끝 부분에 윤각 호만 존재하여, ``완전한 체크보드를 상상해 보아!''
+      $\longrightarrow$ 빨간점은 ``inside'' 또는 ``outside''를 판단한다.
+    \item visual attention:\\
+      우짜 그림, ``절대 완전한 체크보드를 상상 안해 보아''
+      $\longrightarrow$ 빨간점은 왼쪽 또는 오른쪽을 판단한다.
+  \end{itemize}
+
+  \paragraph{결과: Figure \ref{fig:ch8_bp5}-B}\\
+  \begin{definition}{retinotopic maps}
+    visual field에 인접한 위치에 early visual regions가 cortex에 인접한 위치에 매핑되는 활성화이다.
+    이는 망막이 visual field에 매핑되는 방법이다.
+  \end{definition}
+  attention과 비교했을 때, imagery는 perception과 유사하다.\\
+  cyan 타원은 attention서 발현되지 아니한 곳이와요, 참가자들서 전체적으로 일어나는 현상이다.\\
+  $\rightarrow$ imagery는 perception과 유사하지만 더 약한 듯하다.
+
+  \paragraph{결과: Figure \ref{fig:ch8_bp5}-C}\\
+  \begin{itemize}
+    \item green:\\
+      perception and imagery: included visual processing regions
+    \item orange:\\
+      imagery and attention: included the dorsolateral prefrontal cortex and the parietal cortex
+  \end{itemize}
+
+  $\Longrightarrow$
+  \begin{itemize}
+    \item visual perception and visual imagery: 중복된 sensory regions
+    \item visual imagery and visual attention: 같은 control regions
+  \end{itemize}
+}
+
+Visual imagery와 visual working memory는 떼려야 뗄 수 없는 친구이다.\footnote{Chapter 6서 working memory는 imagery의 다른 이름일지도 모른다는 논의를 하였다!}\\
+delay period를 측정하고, V1 포함한 visual sensory processing regions, dorsolateral prefrontal cortex and parietal cortex control regions 관련,\\
+비단 MTL은 아냐\\
+
+\paragraph{working memory와 imagery의 차이}
+\begin{itemize}
+  \item working memory literature: delay period 동안 자극이 `유지'된다.
+  \item imagery literature: delay period 동안 짜극이 `상상'된다.
+\end{itemize}
+$\longrightarrow$ 만약 미래에 이 둘이 서로 다른 뇌 영역과 관련있을 보이면 둘이 다름을 말할 수 있지만, 책 왈, 할 수 있겠니??(This seems unlikely)
+
+\paragraph{long-term memory와 imagery의 *이}
+\begin{itemize}
+  \item long-term memory: 첫 encoding 이후 mind에 없던 정보를 retrieval해야 한다.
+  \item visual imagery: mind에 유지해야 한다.
+\end{itemize}
+$\longrihgtarrow$ MTL(hippocampus를 포함한): LTM ㅇㅇ, imagery ㄴㄴ\\
+
+\tbox{fMRI 실험}{
+  visual recollection and visual imagery의 공통 관련된 뇌 영역과 구별된 뇌 영역 구하고파.\footnote{\url{https://kosslynlab.fas.harvard.edu/sites/g/files/omnuum10906/files/kosslynlab/files/slotnick\_et\_al\_cogn\_neurosci\_2012.pdf}}
+
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{image/ch8_bp6}
+    \captionof{figure}{(a) During familiarization, pictures of objects were memorized, imagined, and then the mental image was compared to the picture of the
+object and corrected (words in parentheses were not shown during the experiment). (b) During both memory and imagery study phases, pictures of
+objects from familiarization were presented. During the memory-test phase, words corresponding to old (studied) objects, new words, and control
+words were presented at fixation. Participants responded “remember” (R, 1 key), “know” (K, 2 key), or “new” (N, 3 key) to old-item words and new-
+item words, and responded with the corresponding response key to control words (“left,” “center,” or “right”). Example responses and the
+corresponding event types are shown to the right of each word. (c) During the imagery-test phase, the same word types were presented and participants
+responded “high vividness” (H, 1 key), “moderate vividness” (M, 2 key), or “low vividness” (L, 3 key) to old-item words and new-item words in
+addition to the same control responses. Example responses and the corresponding event types are shown to the right of each word.}
+    \label{fig:ch8_bp6}
+  \end{center}
+
+  \paragraph{청사진}
+  \begin{itemize}
+    \item familiarization phase:\\
+      zebra and a feather 등 물체로 이루어진 list가 존재한다. 예컨대 처음은 얼룩말이다.
+      피험자는 얼룩말을 본다. 피험자가 button을 누른다. 얼룩말이 사라졌다. 피험자는 얼룩말을 상상한다.
+      피험자가 button을 다시 누른다. 다시 얼룩말이 나온다. 다음 물체로 넘어간다. 해당 list는 3번 반복한다.\\
+      $\Rightarrow$ imagery studies서 많이 쓰이는 방법이다.
+    \item study phase:\\
+      각 항목을 기억하라고 지시한다. claude 왈, long-term memory를 위한 과정이다.
+    \item memory test phase:\\
+      old objects, new objects, or control responses (`left', `center', or `right')가 있다.
+      old가 나오면 피험자는 ``remember''\footnote{디테일해부려}–``know''–``new''를 판다, new가 나오면 new, control responses가 나오면 지시에 따라 left면 left 버튼 눌러야 한다.\footnote{claude 왈, control words는 순수한 motor response 측정,
+Memory/Imagery processing과 구분,
+Baseline 활성화 설정을 위해 필요하다. 이후 책: which required word processing and motor processing
+}
+    \item imagery test phase:\\
+      ``High vividness'' - ``Medium vividness'' - ``Low vividness''를 판단한다.
+  \end{itemize}
+
+  \paragraph{결과}
+  memory-old-``remember''와 imagery-old-``high vividness''의 반응은 control responses와 비교할 때 dorsolateral prefrontal cortex, the parietal cortex, and visual sensory regions, including V1를 활성화한다.\\
+  memory-old-``remember''와 imagery-old-``high vividness''의 반응을 비교하면 visual sensory regions는 memory 과제와 더 큰 관련이 있다.\\
+  $\longrightarrow$ long-term memory와 imagery는 많은 영역을 공유한다. 비단, 동일한 인지 가정 아냐
+  
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{image/ch8_result3}
+    \captionof{figure}{Common activity associated with memory-old-
+remember and imagery-old-high vividness projected onto an inflated
+cortical surface representation (gyri and sulci are shown in light and
+dark gray, respectively; top, superior view; bottom, posterior-inferior
+view; key at center).
+Differential activity associated with memory-old-
+remember and imagery-old-high vividness projected onto an inflated
+cortical surface representation (key at center).}
+    \label{fig:ch8_result3}
+  \end{center}
+}
+
+\paragraph{autobiogrphical memory와 imagined autobiographical memory}
+\begin{itemize}
+  \item autobiographical memory:\\
+    과거 사건과 관련되어 있다.
+  \item imagined autobiographical memory:\\
+    미래 사건과 관련되어 있다.
+\end{itemize}
+
+fMRI 실험을 하였다.\\
+visual regions, the dorsolateral prefrontal cortex, the parietal cortex,
+and the medial temporal lobe (including the hippocampus)가 활성화 된다.\\
+$\longrightarrow$ imagery가 MTL과 관련되어 보일 수 있다. 비단!! 상상하면서 과거 정보를 가져오고 이 과정서 MTL이 활성화 된 것일 수도 있다.
+
+
+\section{Language and Memory\index{language}}
+\label{sec:language}
+환자가 있다.
+\begin{itemize}
+  \item lesion in the left inferior dorsolateral prefrontal cortex $\longrightarrow$ isolated word production deficit\\
+    말할 수 없지만 말을 이해할 수 있다. $\longrightarrow$ Broca’s area
+  \item lesion in the left posterior superior temporal cortex $\longrightarrow$ isolated comprehension deficit\\
+    이해할 수 없지만 말할 수 있다. $\longrightarrow$ Wernicke’s area
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image/ch8_language}
+  \caption{Language processing regions (lateral view, occipital pole to the right).
+Regions (in different shades of gray) are labeled and arrows indicate the direction of
+information flow between regions. + angular gyrus = BA39, inferior parietal cortex}
+  \label{fig:ch8_language}
+\end{figure}
+
+language processing과 관련된 영역이에요.
+
+\paragraph{the classic model of language processing}
+\begin{table}[htb]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+    \thead{기능} & \thead{관련된 것} & \thead{위치} \\
+		\hline
+    Word production & Broca’s area & inferior and anterior to the motor cortex \\
+    visual word comprehension\footnote{시각적인 단어 이해??, 긁 읽기} & visual cortex, angular gyrus, Wernicke’s area \\
+		\hline
+	\end{tabular}
+	\caption{각 브로드만 영역의 매핑}
+\end{table}
+Broca’s area $\longrightarrow$ 언어 생성\\
+Wernicke’s area $\longrightarrow$ 언어 이해
+
+\paragraph{최근 증거}
+언어 생성과 이해는 Broca's area와 Wernicke's area와 관련되어 있다.\\
+단어 뜻 처리(언어 분야서 semantic processing라고 부름요)는 Broca’s area, Wernicke’s area, the angular gyrus, and more anterior
+superior temporal cortex를 활성화한다.\\
+중요한 점: semantic/conceptual processing는 the left inferior dorsolateral prefrontal
+cortex and the left posterior superior temporal cortex를 활성화 한다;;
+
+\paragraph{언어와 memory}
+언어 처리(특히 단어 처리)는 memory studies에서 중요한 면이다:
+단어를 짜극으로 주는 경우 허다하고, 의미있는 물체는 semantic processing과 관련있다.\\
+에컨대 양을 보여 주었다. 떠올린다, 무엇을?:
+\begin{itemize}
+  \item 소리: `bah'
+  \item 위치: 농장
+  \item 사람에게 어떻게 유용한지(꺄 잔인쓰;;): 양모
+\end{itemize}
+$\Longrightarrow$ semantic processing $\rightarrow$ language processing regions(the left inferior dorsolateral prefrontal cortex and
+the left posterior superior temporal cortex (i.e., Broca’s area and
+Wernicke’s area, respectively))
+
+memory 연구서 language processing 사례:
+\begin{itemize}
+  \item Semantic memory: the left dorsolateral prefrontal cortex (Ch 3)
+  \item False memory: the left dorsolateral prefrontal cortex and the left posterior superior
+temporal cortex (Ch 5)
+  \item Conceptual priming: the left dorsolateral prefrontal cortex and the
+left posterior superior temporal cortex (Ch 7)
+\end{itemize}
+
++ left DL-PFC가 활성화 되었다고 해서 꼭 언어처리인 것은 아니다.
+
+
+\section{Emotion and Memory\index{emotion}}
+\label{sec:emotion}
+정서 신경과학(affective neuroscience)은 emotional processing과 관련된 뇌 영역을 다루며 인지 신경과학과 다르다.
+그런데! 인지 신경과학서 감정(e.g., fear, disgust, or happiness)을 유발하는 자극을 사용할 때 중복되는 부분이 생긴다.\\
+거미, 해골, 총(감정 유발! $\rightarrow$ neutral stimuli가 아님) $\longrightarrow$ the amygdala(편도체), the orbitofrontal cortex (눈/안구 바로 앞 frontal cortex), and the dorsolateral prefrontal cortex 활성화
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{image/ch8_amygdala}
+  \caption{The amygdala and the hippocampus. The amygdala (in dark gray) and the
+hippocampus (in light gray) in each hemisphere are shown within a semi-transparent brain
+(lateral-anterior view, occipital pole to the right).}
+  \label{fig:ch8_amygdala}
+\end{figure}
+
+편도체이다. 감정과 관련되어 중요오오오하고 뇌 많은 부분과 연결되어 hub 역할 하는 것 같다고 한다.\\
+
++ DL-PFC가 활성화 되었다고 해서 하나아ㅢ 인지 과정이 발생했다고 생각하면 아니된다. 책에서 DL-PFC가 하는 역할에 대한 2가지 가설(1. inhibition \& Selection 2. flexible region that reorganizes its
+function)을 제시하는데 궁금하면 Box 8.2 ㄱㄱ\\
+
++ 감정과 관련된 것이 더 뇌에서 학습되고 강화된 부분과 관련되어 있는 것 같다고 한다.
+
+\section{quiz}
+\begin{itemize}
+  \item
+Which brain regions have been associated with visual attention and visual working memory?
+  \item
+How do the brain regions associated with visual attention and visual long-term memory differ?
+  \item
+Are imagery and working memory different cognitive processes?
+  \item
+What are the two primary brain regions associated with language
+processing?
+  \item
+Which brain region interacts with the hippocampus during memory for emotional information?
+\end{itemize}
+
+\end{document}
