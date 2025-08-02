@@ -1,6 +1,20 @@
 \documentclass[../note.tex]{subfiles}
 
+\providecommand{\mainfile}{standalone}
+
+\ifx\mainfile\empty\else
+    \usepackage{import}
+    \title{Chapter 3 - Brain Regions Associated with Long-Term Memory}
+    \author{BCSC}
+    \date{\today}
+\fi
+
 \begin{document}
+\ifx\mainfile\empty\else
+    \maketitle
+    \newpage
+\fi
+
 \setcounter{chapter}{2}
 \chapter{Brain Regions Associated with Long-Term Memory}
 

@@ -1,6 +1,21 @@
 \documentclass[../note.tex]{subfiles}
 
+
+\providecommand{\mainfile}{standalone}
+
+\ifx\mainfile\empty\else
+    \usepackage{import}
+    \title{Chapter 4 - Brain Timing Associated with Long-Term Memory}
+    \author{BCSC}
+    \date{\today}
+\fi
+
 \begin{document}
+\ifx\mainfile\empty\else
+    \maketitle
+    \newpage
+\fi
+
 \chapter{Brain Timing Associated with Long-Term Memory}
 
 temporal dynamics of activity $\rightarrow$ understand the brain mechanisms underlying memory

@@ -1,6 +1,20 @@
 \documentclass[../note.tex]{subfiles}
 
+\providecommand{\mainfile}{standalone}
+
+\ifx\mainfile\empty\else
+    \usepackage{import}
+    \title{Chapter 6 - Working Memory}
+    \author{BCSC}
+    \date{\today}
+\fi
+
 \begin{document}
+\ifx\mainfile\empty\else
+    \maketitle
+    \newpage
+\fi
+
 \setcounter{chapter}{5}
 \chapter{Working Memory}
 Working memory는 actively\footnote{actively는 의식적임을 뜻하나요? : Working memory refers to actively holding information in mind during
