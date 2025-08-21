@@ -1,0 +1,494 @@
+\documentclass{beamer}
+% Theme choice:
+\usetheme{CambridgeUS}
+\usecolortheme{dolphin}
+\usepackage{kotex}
+\usepackage{moreenum}
+\usepackage{amsmath}
+\usepackage{polynom}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{subfig}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\setitemize{label=\usebeamerfont*{itemize item}%
+    \usebeamercolor[fg]{itemize item}
+    \usebeamertemplate{itemize item}}
+
+\usepackage{scrextend}
+\changefontsizes{8pt}
+
+\usepackage[font=tiny]{caption} % ,labelfont=bf]{caption}
+\setbeamertemplate{caption}[numbered]
+
+\setbeamercolor{block title}{bg=blue!15}
+\setbeamercolor{block body}{bg=blue!5}
+
+\usepackage{fontawesome}
+
+
+% \newcommand\blfootnote[1]{%
+% \begingroup
+% \renewcommand\thefootnote{}%
+% \footnote{\footnotesize#1}%
+% \addtocounter{footnote}{-1}%
+% \endgroup
+% }
+% 
+% \renewcommand{\footnotesize}{\footnotesize}
+
+% \usecolortheme{beaver}
+% Title page details: 
+\title{MEA를 사용한 in vitro 연구와 컴퓨터 연결}
+%\subtitle{Chapter 6. Visualizing Nervous System Structure\\신경계 구조 시각화}
+\author{Siwon Yun}
+\institute{BCSC 2025}
+\date{\today}
+
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Contents}
+  \tableofcontents
+\end{frame}
+
+\section{imagery vs memory}
+\begin{frame}{이야기를 시작하기 전, imagery vs memory}
+  2주 전, 잘 못 정리한\footnote{띄어쓰기에 집중할 것} 실험이 있어요! 미안해요 ㅠㅠㅠ\\
+  Chapter 8 $\rightarrow$ MEMORY AND OTHER COGNITIVE PROCESSES $\rightarrow$ Imagery and Memory\\
+  imagery: 심상 $\rightarrow$ mental image\\
+
+  \begin{itemize}
+    \item \textbf{long-term memory}: 첫 encoding 이후 mind에 없던 정보를 retrieval해야 한다.\\
+      $\longrightarrow$ 마음속에 없는 것 떠올려요.
+    \item \textbf{imagery}: mind에 유지해야 한다.\\
+      $\longrightarrow$ 마음속에 있는 것 떠올려요. 따라서 짜 짧은 시간이에요오오오오옹
+  \end{itemize}
+
+  + 보라색 사과: \url{https://claude.ai/share/1de1600b-278a-437e-9458-3be803ae8b23}\\
+  훌륭한 통찰 \faThumbsOUp
+\end{frame}
+
+\section{Memory in AI}
+\begin{frame}{Memory in AI - basic}
+  \subsection{basic}
+  목표: ai의 현재 기억 구현 방법의 전문가가 되어보자 ㄴㄴ\\
+  $\;\;\;\;\;\;\;\;$ ai의 기억이란? 다시 뇌의 기억과 관련해 놓친 것은 없을까? 뇌와 ai 기억의 차이는? 앞으로 ai의 기억은 어떻게 발전해야 하지?
+  anthropic의 claude와 같은 LLM 모델들은 어떻게 기억할까?
+  \begin{itemize}
+    \item 스펙을 보고 ai 개발자의 실력을 추측하는 단순한 ml 모델을 생각해 보자.\\
+      e.g., (중궈런 또는 인디언, 애니 프사, 극적인 거북목, 어눌한 말, 희박히 보이는 광눈, 왜소한 체격, 컴퓨팅적 관상) $\longrightarrow$ 상위 0.00001\%\\
+      `기억'이라는 요소가 필요하지 아니함\footnote{Machine Learning, 즉 ML은 최적의 매핑(또는 함수라 부름)을 찾는 것}
+    \item `나는 시원, 시장에 가서 오이도 사고, ... , 블루베리도 샀어. 나의 장바구니를 본 꼬마가 깜짝 놀라 내 이름을 크게 부르며, 말했어. 뭐라고?'
+      $\rightarrow$ `시원아, 블라라...' 나의 이름 기억하였다.\footnote{(고민거리) 과연 기억한 것이 맞을까?}
+    \item 기본적으로 컴퓨터에는 메모리가 존재한다.\\
+      메모리에 올라와 있는 정보들을 가지고 연산 가능하다(working memory는 이와 다른가?).\\
+      또는 하나의 encoding과 decoding을 위한 정보로 활용되기도 한다. 예컨대 LLM에서 각 word는 vector화 한다. word와 vector의 mapping 관계를 저장하고 있는다.
+      연산에 유리한 vector는 실질적 연산에 활용되고, 결과는 우리의 이해에 유리한 word로 표현된다(이 또한 우리의 뇌라고 다를까?).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \begin{itemize}
+    \item 언어 모델의 변천사: RNN $\longrightarrow$ Transformer\\
+      $\longrightarrow$ 필요하다면 내 컴퓨터에 자료
+    \item RNN의 cell: $h_t = \tanh(W_{hh}h_{t-1}+W_{xh}x_t+b_h)$: 재귀적 요소로 `시퀀스'를 모델링하였다.\\
+      시퀀스 모델서 기억의 손실은 어떻게 발생하는가?
+      \begin{itemize}
+        \item 입력된 정보의 과도한 변형
+        \item backpropagation의 미분에서 기울기 소실\\
+          $\longrightarrow$ LSTM
+      \end{itemize}
+    \item Transformer: attention is all u need... 절대적 attention에 의존\\
+      \begin{itemize}
+        \item 사용자의 입력이 `끝난 후' $\rightarrow$ 연산 및 출력, 즉 시퀀스 모델 아냐
+        \item 이름을 말해야 하는 상황서 나의 이름 `시원'은 attention 될 것이다. 과연 우리가 생각하는 의미의 기억일까?(또는 우리의 기억은 이러하지 아니한가?)
+        \item 이전 prompt? context (절단, 요약, 검색...)
+        \item 책 정리본 note서: `새로운 의견: Curtis and D’Esposito (2003)왈, DL-PFC는 sensory cortical regions에 저장된 정보를 attention해주는 memory control processes해.'
+        \item sequence적이지 아니하다 $\rightarrow$ loop에 어려움이 있다\footnote{i.e., 신경망에 변화가 없다} $\rightarrow$ 어떤 문제가 발생할까??\\
+          `One prominent problem that both biological and artificial neural networks face is the interference between previously stored and newly
+          acquired memories, as it can lead to catastrophic forgetting' {- neuroinsight 논문 B}\\
+          + Appendix Theme C 생성재생 참고
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Memory in AI - advanced}
+  \section{advanced}
+  여기서 advanced란 뭐랄까, 우리 뇌 $\rightarrow$ AI, 즉 우월한 시스템에 영감을 받아 AI를 진보시킨다 랄까?
+  \begin{block}{The memory systems of the human brain and generative artificial intelligence}
+    Appendix D. 인간 뇌의 기억 시스템과 생성형 인공지능 참고.\\
+    episodic memory를 중점적으로 생성형 인공지능과 우리 뇌 시스템을 비교한다.\\
+    인공지능의 현재 문제점을 지적하고, 앞으로의 발전 방향을 제시한다.
+  \end{block}
+
+  \begin{block}{Genie}
+    neocortex는 시뮬레이션 한다? 헬름흘츠? world model?\\
+    google의 genie를 보아.\footnote{발행 년도도 함께 살표 봅시다.}\\
+    \begin{itemize}
+      \item Genie 1: \url{https://sites.google.com/view/genie-2024/home}
+      \item Genie 2: \url{https://deepmind.google/discover/blog/genie-2-a-large-scale-foundation-world-model/}
+      \item Genie 3: \url{https://deepmind.google/discover/blog/genie-3-a-new-frontier-for-world-models/}
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{Genie}
+    살펴보고 생각하기:
+    \begin{itemize}
+      \item 기억? Environmental consistency over a long horizon 부분을 보자.
+      \item 영상길이: 각 버전의 영상 길이는?
+      \item 블랜더 등 3d 툴로 실제 가상세계를 컴퓨터서 만드는 것인가? (ㅋ)
+      \item ST-attention? 우리 뇌와 genie가 받는 input의 차이는?
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+
+
+
+
+
+
+% \section{The Neurally Controlled Animat}
+% \begin{frame}{The Neurally Controlled Animat\\\large: Biological Brains Acting
+% with Simulated Bodies}
+%   목표 및 특징:
+%   \begin{itemize}
+%     \item 배양하는 뇌로 가상 생물 (명명하여 Animat) 만들기
+%     \item 실제 생물 아냐 $\rightarrow$ sensory와 motor regions가 정해져 있지 아니함\footnote{본 연구서 어떤 영향을 주는지 살펴보기}
+%   \end{itemize}
+%   \begin{figure}[htb!]
+%     \centering
+%     \includegraphics[width=0.4\textwidth]{image/ch1_blueprint}
+%     \caption{Scheme for the Neurally Controlled Animat. A network of hundreds or thousands of dissociated mammalian cortical cells (neurons
+% and glia) are cultured on a transparent multi-electrode array. Their activity is recorded extracellularly to control the behavior of an artificial
+% animal (the Animat) within a simulated environment. Sensory input to the Animat is translated into patterns of electrical stimuli sent back into
+% the network.}
+%     \label{fig:ch1_blueprint}
+%   \end{figure}
+% \end{frame}
+
+% \subsection{MEA}
+% \begin{frame}{multi-electrode array (MEA)}
+%   \begin{itemize}
+%     \item uses multi-electrode array (MEA) culture dishes
+%     \item to record
+% neural activity from populations of neurons and use
+% that activity to control an artificial animal\\
+%       : 측정 \& 입력
+%     \item $8 \times 8$ grid of 60- 10 {\textmu m}-electrodes separated by 200 {\textmu m}\\
+%       : $8 \times 8 - 4\text{(귀퉁이)} = 60$
+%     \item the 1.5-mm electrode region of the MEAs\footnote{\url{https://www.sciencedirect.com/science/article/pii/S0165027001004125}}\\
+%       : $200 \times 7 + 10 \times 8 = 1480$\textmu m $\sim$ 1.5mm
+%   \end{itemize}
+% \end{frame}
+
+% \begin{frame}{multi-electrode array (MEA)}
+%   \begin{figure}
+%     \centering
+%     \subfloat[Paper]
+%       {\includegraphics[height=3cm]
+%       {image/ch1_mea1}}
+%     \subfloat[Thomas et al., 1972]
+%       {\includegraphics[height=3cm]
+%       {image/ch1_mea2}}
+%     \caption{MEA 사진}
+%   \end{figure}
+%   \begin{itemize}
+%     \item 뉴런들 투명 배양기 (clear substrate)서 자라 $\rightarrow$ MEAs allow detailed (submicron) optical investigation of neural connectivity (e.g., using 2-photon time-lapse microscopy) or submillisecond
+% distributed activity (e.g., using voltage-sensitive dyes
+% and a high-speed camera)
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{Neural-Computer Interface}
+% \begin{frame}{Neural-Computer Interface}
+%   \begin{itemize}
+%     \item \textbf{구성}(참고: Figure \ref{fig:ch1_blueprint}):
+%       \begin{itemize}
+%         \item \textbf{MEA culture}: animat의 뇌
+%         \item \textbf{virtual environment}: animat의 서식지
+%         \item \textbf{simulation system}: sensory 전달 시스템
+%       \end{itemize}
+%     \item \textbf{animat 행동}: move forward, back, left or right\footnote{아마도 왼쪽, 오른쪽 회전? 아니 진짜 말 짜짜 모호해;;}
+%     \item \textbf{뉴런 활동 측정}:\\
+%       \begin{itemize}
+%         \item 증폭기와 A/D 변환기 측정
+%         \item real-time data stream\\
+%           2.95 MB per second (60 channels sampled at 25 KHZ)\\
+%           : $2.95 \times 10^6 \times 8 / (60 \times 25000) = 15.733 \rightarrow$ 아마도 16bit로 샘플링?
+%       \end{itemize}
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{Controlling the Animat in its Virtual Environment}
+% \begin{frame}{Controlling the Animat in its Virtual Environment}
+%   A \textbf{clustering algorithm}\footnote{!!! 일반적인 clustering algorithm을 사용하지 아니한 이유를 고민해 보아요오} was trained \textbf{to recognize spatio-temporal patterns} in the spike train, to use as \textbf{motor commands} for the Animat\\
+%   \begin{equation}
+%     A_n(t_i) = A_n(t_{i-1})e^{-\beta(t_i-t_{i-1})}+1
+%   \end{equation}
+%   \begin{itemize}
+%     \item \textbf{$i$}: each spike
+%     \item \textbf{$t_i$}: the time of the current spike
+%     \item \textbf{$n$}: the MEA channel number from 1 to 60
+%     \item \textbf{$\beta$}: a decay constant, $\beta = 1s^{-1}$
+%     \item vector $A$: the current spatial activity on the MEA
+%   \end{itemize}
+%   The activity vector A was then sent through a squashing function
+%   \begin{equation}
+%     P_n(t_i) = \tanh(\delta A_n(t_i))
+%   \end{equation}
+%   \begin{itemize}
+%     \item \textbf{$\delta$}: a gain factor, $\delta = 0.1$
+%   \end{itemize}
+% \end{frame}
+
+% \begin{frame}
+%   Every 200 ms, the computer sampled the current pattern of normalized activity \textbf{$P$} (pattern)\footnote{200ms마다? decay 요소인 $\beta$를 포함한 $e$의 지수 연산이 사용된 이유를 생각해 보아}
+
+%   A pattern was grouped with the nearest cluster $M_k$ if the Euclidean distance to that cluster was less than a threshold $\Delta$, where $\Delta = 0.9$.\\
+%   $\rightarrow$ $M_k$는 $k$번째 cluster의 중심이겠구나!
+%   \begin{align}
+%     &M_k \Leftarrow \left( \frac{N_k}{N_k+1} \right) + \left( \frac{P}{N_k+1} \right)\\
+%     &N_k \Leftarrow N_k + 1
+%   \end{align}
+%   \begin{itemize}
+%     \item \textbf{$N_k$}: the number of occasions this pattern has matched\\
+%       $\longrightarrow$ 점점 안정적인 $M_k$값이 만들어 질 거야
+%     \item init value $M_0$: the null cluster (all elements were set to zero) $\rightarrow$ No movement
+%     \item 각 cluster는 animat 행동을 임의로 지정함
+%     \item threshold값 보다 다 큼? $\rightarrow$ 해당 pattern으로 새로운 cluster 만듦
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{Sensory Information and Feedback}
+% \begin{frame}{Sensory Information and Feedback}
+%   cluster에 기반한 motor $\rightarrow$ virtual environment에서 naimat을 조정
+%   \prargraph{sensory}
+%   \begin{itemize}
+%     \item 5개의 전극을 고르게 sensory 전극으로 설정\\
+%       $\rightarrow$ 충돌 전극, 앞, 뒤, 좌, 우 전극
+%     \item delivered four +/-400 mV, 200 {\textmu s} pulses
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{The Activity of the Animat}
+% \begin{frame}{The Activity of the Animat}
+%   \begin{itemize}
+%     \item 처음 8분: 피드백 없이 (sensory 없이) 그냥 클러스터링 진행
+%     \item 8분 이후: sensory 자극으로 피드백 (50분 진행, 비단 더 할 수 있음)
+%   \end{itemize}
+%   \begin{figure}[htb!]
+%     \centering
+%     \includegraphics[width=0.5\textwidth]{image/ch1_plot}
+%     \caption{Movement and results of the session in which the Animat was online. Top left: Trajectory of movement of the Animat in a simulated
+% room. Top right: The frequency that different patterns would recur. Bottom left: Examples of the four most common patterns. Bottom right:
+% Number of novel patterns that the clustering algorithm detected as the session progressed (total 51). Bottom left: Examples of the four most
+% common patterns.}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   ???:
+%   \begin{itemize}
+%     \item 왜 map서 장애물을 넘어서 갈 수 있지?\footnote{논문서 object는 4개라고 한 적이 있었었었음}
+%     \item 200ms마다 패턴 측정 $\rightarrow$ 클러스터링: 즉, 1초에 최대 5개의 새로운 클러스터가 만들어 질 수 있음\\
+%       $\longrightarrow$ 비단! 13초를 봐
+%   \end{itemize}
+%   \vspace{1em}
+%   패턴은 가끔씩 2$\sim$3개의 순서로 발생하며, 몇 초 동안 반복 후 새로운 패턴이 만들어짐\\
+%   $\rightarrow$ 저자는 자연스럽게 또는 피드백에 따라 신경망이 진화하는 것이라고 해석
+% \end{frame}
+
+% \section{Biological Neural Cultures}
+% \begin{frame}{Dynamic Network Plasticity and Sample
+% Efficiency in Biological Neural Cultures\\\large: A
+% Comparative Study with Deep Reinforcement
+% Learning}
+%   \paragraph{일러두기}
+%   \begin{itemize}
+%     \item 판단컨대, 논문 내용 짜짜해 :( 근거가 부실부실합니다.
+%     \item 논문서 제시하는 근거를 비판적으로 바라보면 잼있을 것 같아요.
+%     \item Published 4 August 2025 (!!!)
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{Free Energy Priciple}
+% \begin{frame}{Free Energy Priciple}
+%   \begin{columns}
+%     \begin{column}{0.4\textwidth}
+%       \begin{figure}
+%         \includegraphics[width=\textwidth]{image/ch2_free_energy}
+%         \caption{Free Energy Framework}
+%         \label{fig:ch2_free_energy}
+%       \end{figure}
+%     \end{column}
+%     \begin{column}{0.6\textwidth}
+%       \tiny
+%       \paragraph{part a}:
+%       \begin{itemize}
+%         \item $\mu(t)$: 뇌의 (내부) 상태
+%         \item $\tilde{s}(t)$: sensory signals: $\tilde{s}(t) = \begin{bmatrix}s, s', s'', \cdots\end{bmatrix}^T$\\
+%           $\rightarrow$ $s'$은 이전 감각보다는 미분값인 것 같음(추정)
+%         \item $a(t)$: action
+%         \item $\vartheta \subset \{\tilde{x}, \theta, \gamma\}$: causes
+%         \item $\tilde{x}(t)$: hidden states, $\theta$: parameters
+%         \item $\tilde{w}, \tilde{z}$: random fluctuations, $\gamma$: amplitude of $\tilde{w}, \tilde{z}$
+%         \item 윗첨자 $\tilde$는 vector, $\cdot$은 미분을 표현하는 것 같음(추정)
+%         \item $F$: free energy $\rightarrow$ surprise의 상한으로 생각해 보아
+%       \end{itemize}
+%       Figure \ref{fig:ch2_free_energy} credit: \url{https://pubmed.ncbi.nlm.nih.gov/20068583/}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+
+% \begin{frame}{Free Energy Priciple}
+%   \begin{columns}
+%     \begin{column}{0.4\textwidth}
+%       \begin{figure}
+%         \includegraphics[width=\textwidth]{image/ch2_free_energy}
+%         \caption{Free Energy Framework}
+%       \end{figure}
+%     \end{column}
+%     \begin{column}{0.6\textwidth}
+%       \tiny
+%       \paragraph{part b}:
+%       \begin{itemize}
+%         \item $q(\vartheta \mid \mu)$: recognition density: 뇌의 상태 $\rightarrow$ 원인 (!!!)
+%         \item $p(\tilde{s}, \vartheta \mid m)$: generates sensory samples and their causes, $m$: generative model (???)
+%         \item surprise(self-information): $I(x)=\log{1/P(x)}=-\log{P(x)}$
+%         \item entropy: $\mathbb{E}[I(x)]$
+%         \item surprise: $-\ln p(\tilde{s},\mid m) = -\ln \int p(\tilde{s}, \vartheta \mid m) d\vartheta \rightarrow$ 뭔지 모를 복잡한 계산 $\rightarrow$  
+%           상한 $F$
+%         \item KL divergence: divergence(차이), entropy의 비교: $D(P\mid\mid Q)$\\
+%           $F$를 KL divergence를 사용하여 전개
+%         \item Action minimizes prediction errors\\
+%           \begin{itemize}
+%             \item KL divergence 부분: recognition density(prior의 표현을 생각해 보아!) an approximate posterior probability의 차이\\
+%             \item $-\langle\ln p(\tilde{s}(a) \mid \vartheta, m)\rangle_q$: cross entropy! $F$가 $arg\;min$연산에 따라 action은 cross entropy 값만을 바꿀 수 있음\\
+%               현재 믿음 vs 이상적 사후확률
+%               $\rightarrow$ cross entropy 값이 감소하며 실제 상한 값과 점점 가까워지고 Accuracy 증가해
+%           \end{itemize}
+%         \item Perception optimizes predictions
+%           \begin{itemize}
+%             \item $-\ln{p(\tilde{s}\mid m)}$: surprise, perception으로 인한 $F$ 최소화에선 $\mu$가 없어서 변화하지 아니해
+%             \item KL divergence 부분: 최대화 되어 $\rightarrow$ divergence(차이)가 최대화 되어\\
+%               현재 믿음 vs 사전 믿음\\
+%               $\longrightarrow$ 차이가 큰 것은 구별이 용이한 것, 즉 불확실하고 에측 불가하는 것보다 확실한 믿음을 만들 수 있는 예측 가능한 것을 의미함
+%           \end{itemize}
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+
+% \subsection{Dishbrain}
+% \begin{frame}{Dishbraine}
+%   \begin{columns}
+%     \begin{column}{0.4\textwidth}
+%       \begin{figure}
+%         \includegraphics[width=\textwidth]{image/ch2_blueprint}
+%         \caption{Dishbrain arichitecture\footnote{Kagan, Brett J. et al. 2022}}
+%       \end{figure}
+%     \end{column}
+%     \begin{column}{0.6\textwidth}
+%       \tiny
+%       \begin{itemize}
+%         \item free energy priciple에 기반하여 in vitro로 dishbrain을 학습시켜 pong 게임을 성공적으로 학습함
+%           (\href{https://www.cell.com/cms/10.1016/j.neuron.2022.09.001/attachment/bb13a45e-c582-424d-b623-426c35683bb3/mmc2.mp4}{시청각 자료 여기 클릭})
+%         \item free energy priciple 요소:
+%           \begin{itemize}
+%             \item $\mu$: in vitro neurons
+%             \item $a$: action: from motor regions
+%             \item $x$: simulated environment stats: pong game
+%             \item $s$: sensory: to sensory regions
+%             \item 학습 요소: sensory에 predictable or unpredictable feedback 전달 $\rightarrow$ 게임 결과에 따른 divergence 조절
+%           \end{itemize}
+%       \end{itemize}
+%       \begin{figure}
+%         \includegraphics[width=0.8\textwidth]{image/ch2_blueprint2}
+%         \caption{Schematic illustration of the DishBrain feedback loop}
+%       \end{figure}
+%       \begin{itemize}
+%         \item Predictable feedback: 150 mV and a frequency of 5 Hz
+%         \item Unpredictable feedback: 4초 동안 8개 모두에
+%       \end{itemize}
+%     \end{column}
+%   \end{columns}
+% \end{frame}
+
+% \begin{frame}
+%   \begin{figure}
+%     \centering
+%     \subfloat[1024개의 전극\footnote{HD-MEA의 전극 수}의 스파이크 여부\footnote{시청각 자료 보면 끝 부분 맞는 것도 약간의 불확실성을 주어야 할 듯..}]
+%       {\includegraphics[height=3cm]
+%       {image/ch2_spikes}}
+%     \subfloat[dishbrain과 RL 기법에서의 정보 입력 방법]
+%       {\includegraphics[height=3cm]
+%       {image/ch2_input_illustration}}
+%     \caption{Dishbrain을 이해하기 좋은 figure들}
+%   \end{figure}
+%   좌측 그림서 공을 정확히 바로 맞춘 경우(hit)와 그렇지 아니한 경우(miss)의 스파이크를 비교하면 입력의 예측 가능성의 의미를 알 수 있음\\
+%   우짜 그림서 Dishbrain 부분을 보면 virtual environment(즉, pong gmae)의 상태가 어떻게 dishbrin으로 전달 되는지 알 수 있음
+% \end{frame}
+
+% \subsection{Network construction}
+% \begin{frame}{Network construction}
+%   목표: 스파이크들을 가지고 네트워크를 추정\\
+%   $\rightarrow$ 해당 네트워크를 rest 상태 및 RL 모델들의 네트워크와 비교 (???)
+%   \begin{figure}
+%     \includegraphics[width=0.8\textwidth]{image/ch2_blueprint3}
+%     \caption{A schematic illustration of the overall network construction framework}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   \begin{itemize}
+%     \item embedding: t-distributed stochastic neighbor embedding (t-SNE): 3d로 변환 (차원 축소)
+%     \item 여러 culture서 나온 데이터를 embedding한 것을 합쳐서 tensor로
+%     \item Tucker decomposition로 행렬 분해
+%     \item K-medoids algorithm으로 30개 군집화
+%     \item Pearson correlation로 node간 weight 결정
+%   \end{itemize}
+% \end{frame}
+
+% \subsection{Result}
+% \begin{frame}{Result}
+%   \paragraph{Gameplay vs Rest}
+%   \begin{figure}
+%     \includegraphics[width=0.5\textwidth]{image/ch2_r1}
+%     \caption{Result 1}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   \begin{figure}
+%     \includegraphics[width=0.8\textwidth]{image/ch2_r2}
+%     \caption{Result 2}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}
+%   \paragraph{Dishbrain vs RL}
+%   \begin{figure}
+%     \includegraphics[width=0.6\textwidth]{image/ch2_r3}
+%     \caption{Result 3}
+%   \end{figure}
+% \end{frame}
+
+% \begin{frame}{나의 생각}
+%   해당 figure 말고도 관련 result와 관련된 자료는 많이 있음. 비단!
+%   \begin{itemize}
+%     \item vs Rest: rest 상태는 sensory regions에 전압을 주지 아니함. 차이가 있는 것이 당연함.
+%     \item vs RL: 차원 축소 등 특징적인 요소만을 가져오고 변환해 만든 네트워크. 뇌가 가지는 인공지능과 다른 요소를 반영하지 아니하며,
+%       실제로는 800,000개의 뉴런이 dishbrain에 있다고 함. 즉 RL과 node, edge, weight을 비교하는 것은 아무런 의미가 없음.
+%   \end{itemize}
+% \end{frame}
+
+
+\end{document}
+
