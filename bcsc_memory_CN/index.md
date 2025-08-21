@@ -11,6 +11,4 @@ title: "BCSC Memory CN"
 - [Chapter 4](/compressed/ch4-compressed.pdf)
 - [Chapter 6](/compressed/ch6-compressed.pdf)
 - [Chapter 8](/compressed/ch8-compressed.pdf)
-
-## ohmyolive_iloveolive
-- [appendix](/ohmyolive_iloveolive/)
+- [ohmyolive_iloveolive](/notes/bcsc_memory_CN/ohmyolive_iloveolive/)
