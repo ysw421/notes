@@ -3,22 +3,27 @@
 \usetheme{CambridgeUS}
 \usecolortheme{dolphin}
 \usepackage{kotex}
-\usepackage{moreenum}
+% \usepackage{moreenum}
 \usepackage{amsmath}
 \usepackage{polynom}
-\usepackage{enumitem}
+% \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{tabularx}
 \usepackage{subfig}
-\usepackage{enumitem}
 \usepackage{siunitx}
 \usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{array}
+\usepackage{paralist}
 
-\setitemize{label=\usebeamerfont*{itemize item}%
-    \usebeamercolor[fg]{itemize item}
-    \usebeamertemplate{itemize item}}
+% \setitemize{label=\usebeamerfont*{itemize item}%
+%     \usebeamercolor[fg]{itemize item}
+%     \usebeamertemplate{itemize item}}
+
+
+% \setenumerate{label=\usebeamerfont*{enumerate item}%
+%     \usebeamercolor[fg]{enumerate item}
+%     \usebeamertemplate{enumerate item}}
 
 \usepackage{scrextend}
 \changefontsizes{8pt}
@@ -182,16 +187,35 @@
 \subsection{기억의 종류}
 \begin{frame}{기억의 종류}
   % {\huge{\textbf{기억의 종류}}}\\
-  \begin{table}
-    \begin{tabular}{l}
-      Consciousness?\\
-      Kept in mind during `delay period'?\\
-      Involve previous episode?\\
-      Task performance:\\
-      Subjective experience:\\
-      General term:
-    \end{tabular}
-  \end{table}
+  % \begin{table}
+  %   \begin{tabular}{l}
+  %     Consciousness?\\
+  %     Kept in mind during `delay period'?\\
+  %     Involve previous episode?\\
+  %     Task performance:\\
+  %     Subjective experience:\\
+  %     General term:
+  %   \end{tabular}
+  % \end{table}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{image/memory_tree_2}
+    % \begin{tikzpicture}
+    %   \node[anchor=south west,inner sep=0] (image) at (0,0) {
+    %     \includegraphics[width=0.8\textwidth]{image/memory_tree}%
+    %   }
+    %   \node[red] at (0,5.1) {\large{Consciousness?}};
+    %   %\node[red, align=left] at (0,4.5) {\large {Kept in mind during\\`delay period'?}};
+    %   \node[red, align=left] at (0,3.5) {\large {Involve previous\\episode?}};
+    %   \node[red, align=left] at (0,2.5) {\large {Task\\performance:}};
+    %   \draw<2->[red,very thick] (4.55,0.35) circle (0.29cm);
+    %   \draw<3->[red,very thick] (0.9,1.3) circle (0.29cm);
+    %   \draw<4->[red,very thick] (2.2,1.1) circle (0.29cm);
+    %   \draw<5->[red,very thick] (4.3,1.47) circle (0.29cm);
+    % \end{tikzpicture}
+    \caption{Organization of Memory types}
+  \end{figure}
 
   % \begin{tikzpicture}[remember picture, overlay]
   %   \node (image) 
@@ -254,11 +278,7 @@
   \textbf{Retrieval 시 활성화 뇌 영역}:\\
   감각 영역, 통제 영역(Medial Temporal Lobe\textsuperscript{MTL}, \\\qquad dorsolateral Prefrontal Cortex\textsuperscript{dl-PFC}, Parietal Cortex)
   \vspace{-3.5em}
-  \newsavebox{\rightfigure}
-\savebox{\rightfigure}{%
-    \subfloat[Model of MTL sub-region function]
-    {\includegraphics[height=3.2cm]{image/hippocampus_binding}}%
-}
+
   \begin{figure}
     \centering
     \only<1-5>{\vspace{-1em}}
@@ -266,7 +286,7 @@
       {
         \begin{tikzpicture}
           \node[anchor=south west,inner sep=0] (image) at (0,0) {
-            \includegraphics[height=2cm]{image/brain_regions_1}%
+            \includegraphics[height=2cm]{image/brain_regions}%
           }
           \draw<2->[red,very thick] (4.55,0.35) circle (0.29cm);
           \draw<3->[red,very thick] (0.9,1.3) circle (0.29cm);
@@ -384,7 +404,9 @@
       % \large
       \textbf{Used Paradigm}:
       \vspace{-0.5em}
-      \begin{itemize}[itemsep=0pt, parsep=0pt]
+      \begin{itemize}
+        \setlength{\itemsep}{0em}
+        \setlength{\parskip}{0em}
         \small
         \item \textbf{initial study phase}: word pairs(category+examplar) presented
         \item \textbf{intermediate retrieval practice phase}: subset of categories(category+two-letter word cue)\\
@@ -394,7 +416,9 @@
       \vspace{0.5em}
       \textbf{Examplar 분류}:
       \vspace{-0.5em}
-      \begin{itemize}[itemsep=0pt, parsep=0pt]
+      \begin{itemize}
+        \setlength{\itemsep}{0em}
+        \setlength{\parskip}{0em}
         \small
         \item 대조군(non-practiced categories): low freq. (\textbf{C+}), high freq. (\textbf{C-})
         \item 실험군(practiced categories): low freq. but practiced (\textbf{P+}), high freq. but not practiced (\textbf{P-})
@@ -402,7 +426,9 @@
       \vspace{0.5em}
       \textbf{Result}:
       \vspace{-0.5em}
-      \begin{itemize}[itemsep=0pt, parsep=0pt]
+      \begin{itemize}
+        \setlength{\itemsep}{0em}
+        \setlength{\parskip}{0em}
         \small
         \item P-는 P+에 의해 억제되어 대조군보다 낮은 연상 빈도를 보임
         \item P+은 연습의 결과로 대조군보다 높은 연상 빈도를 보임
@@ -516,7 +542,7 @@
 \subsubsection{Baddeley's Model}
 \begin{frame}{Baddeley's Model of Working Memory}
   \begin{columns}
-    \begin{column}{0.28\textwidth}
+    \begin{column}{0.38\textwidth}
       \centering
       \begin{figure}
         \centering
@@ -525,7 +551,8 @@
       \end{figure}
     \end{column}
     \hfill
-    \begin{column}{0.72\textwidth}
+    \hspace{-5em}
+    \begin{column}{0.62\textwidth}
       \vspace{-2em}
       \large
       \begin{itemize}
@@ -611,15 +638,21 @@
 
 \subsubsection{실험 패러다임}
 \begin{frame}{실험 패러다임}
-  정보를 \textbf{(1) 활성화된 상태로 유지}하고 \textbf{(2) 처리}하는 능력을 측정함\\
-  대부분의 패러다임은 공통적으로 [학습 $\rightarrow$ 지연 $\rightarrow$ 검사]의 3단계 구조를 따름\\~\\~\\
-
-  \textbf{실험 패러다임}:
-  \begin{itemize}
+  정보를 \textbf{(1) 활성화된 상태로 유지}하고 \textbf{(2) 처리}하는 능력을 측정함\\~\\
+  대부분의 패러다임은 공통적으로 [학습 $\rightarrow$ 지연 $\rightarrow$ 검사]의 3단계 구조를 따름
+  \begin{enumerate}
     \item \textbf{학습 단계 (Study Phase)}: 참가자에게 기억해야 할 정보를 제시
     \item \textbf{지연 기간 (Delay Period)}: 몇 초 $\sim$ 몇십 초 동안 아무것도 안 보여줌\\
       $\rightarrow$ 참가자는 이 시간 동안 \textbf{학습한 정보를 마음속으로 적극적으로 유지}해야 함(작업 기억의 핵심적인 측정 구간)
     \item \textbf{검사 단계 (Test Phase)}: 학습한 정보에 대해 질문하여 정확도를 측정함
+  \end{enumerate}
+
+  \vspace{0.5em}
+  \textbf{패러다임 예시}:
+  \vspace{-0.5em}
+  \begin{itemize}
+    \item \textbf{N-Back Task}: 연속된 자극(예: 자음 문자열)을 듣거나 보면서, 현재 자극이 N개 전에 제시된 자극과 일치하는지 여부를 판단
+    \item \textbf{Operation Span Task}: 산술 문제를 풀면서(정보 조작) 동시에 단어를 기억해야하는(정보 유지) 과제
   \end{itemize}
 \end{frame}
 
@@ -661,11 +694,239 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}{작업 기억 실험의 예시 (Harrison, S., Tong)}
+  \textbf{실험 목표}: 작업 기억에 유지되는 시각 정보가 뇌의 초기 시각 피질(V1)에도 저장되는지 확인\\~\\
+
+  \begin{columns}
+    \begin{column}{0.38\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/Harrison}
+        \caption{실험 패러다임}
+      \end{figure}
+    \end{column}
+    \hfill
+    \begin{column}{0.62\textwidth}
+      \textbf{실험 과정}
+      \vspace{-0.5em}
+      \begin{itemize}
+        \setlength{\itemsep}{0em}
+        \setlength{\parskip}{0em}
+        \item \textbf{자극 제시}: 서로 다른 방향의 격자무늬 두 개를 순차적으로 제시
+        \item \textbf{단서 제시}: 두 자극을 모두 본 후, `1' or `2' 단서로 기억할 대상을 지정
+        \item \textbf{기억 유지}: 11초 동안 빈 회색 화면 제시\\
+          $\rightarrow$ 지시 받은 방향들을 적극적으로 유지 \textbf{(핵심 측정 구간)}\\
+          $\rightarrow$( 다중 복셀 패턴 분석 (MVPA)를 이용)
+        \item \textbf{test}: 새로운 검사 격자무늬 제시\\
+          $\rightarrow$ 참가자는 자신이 기억하던 것보다 더 시계 방향 or 반시계 방향으로 돌아갔는지를 판단함
+      \end{itemize}
+    \end{column}
+  \end{columns}\\~\\~\\
+
+  \textbf{결론}: 작업 기억의 정보가 고위피질뿐만 아니라 정보를 처음 처리한 초기 감각 영역(V1 등)에도 저장된다
+\end{frame}
+
+\subsection{암묵 기억}
+\begin{frame}{암묵 기억\textsuperscript{Implicit Memory}\\\normalsize : 과거의 경험을 \textbf{의식적인 자각 없이} 현재의 과제 수행에 사용하는 기억}
+  \textbf{특징}
+  \vspace{-0.5em}
+  \begin{itemize}
+    \item 비의식적: 기억하려는 노력 없이 자동적으로 발현
+    \item 반응시간 감소 및 정확도 증가
+    \item 피질 영역의 활동 감소\\
+    $\Rightarrow$ repetition suppression: 뇌가 해당 정보를 처리하는 데 더 적은 신경 자원을 사용함으로써 처리 효율이 높아짐
+  \end{itemize}\\~\\
+  \textbf{주요 유형}
+  \vspace{-0.5em}
+  \begin{itemize}
+    \item \textbf{Skills}: 반복 연습을 통해 의식적 회상 없이 자동화되는 절차적 수행 능력
+    \item \textbf{Repetition Priming (반복점화)}: 반복적으로 특정 항목에 노출될 때, 해당 항목에 대해 더욱 효율적이거나 유창하게  처리가 일어나는 현상
+      \begin{itemize}
+        \item Perceptual Priming (지각 점화): 동일하거나 유사한 특징이 반복될 때 처리 효율이 올라감
+        \item conceptual repetition priming (개념 점화): 의미, 범주, 연관성 차원에서 반복되거나 관련 단서가 있을 때 판단이 빨라짐
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsubsection{Repetition Priming}
+\begin{frame}{대표적인 실험 패러다임: Repetition Priming\\\normalsize : 참가자에게 의식적으로 무언가를 기억해내라고 직접적으로 요구하지 않고, 간접적인 과제를 통해 기억의 효과를 측정하는 것}
+  \large
+  \textbf{기본 단계}
+  \vspace{-0.5em}
+  \begin{enumerate}
+    \item \textbf{학습 단계}: 피험자에게 여러 항목들을 제시하고, 각 항목에 대해 지각적 or 개념적 판단을 
+    최대한 빨리 내리도록 지시한다.\\
+    \textit{이때 나중에 기억해야 한다고 말하지 않는다.}
+  \item \textbf{검사 단계}: 학습 단계에서 제시된 `오래된(old)' 항목과 `새로운(new)' 항목을 섞어 제시하고, 
+    동일한 지각적 또는 개념적 판단을 빠르게 내리도록 한다.
+  \end{enumerate}\\~\\
+
+  \textbf{결과}
+  \vspace{-0.5em}
+  \begin{itemize}
+    \item 행동: 반복된 항목(old)에 대해 반응 시간이 단축함
+    \item 뇌 활동: 반복된 항목(old)이 새로운 항목(new)에 비해 뇌의 피질 활동이 감소했다.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}{실험 예시 (Koutstaal et al., 2001)}
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/Koutstaal}
+        \caption{실험 패러다임}
+      \end{figure}
+      \vspace{-1em}
+      \textbf{학습}: 가로세로 13인치 상자보다 큰지 작은지에 대해 최대한 빨리 답변\\~\\
+
+      \textbf{검사}: 새로운 항목을 추가하여 학습 때와 같은 판단 과제를 지시
+      \vspace{-0.5em}
+      \begin{itemize}
+        \setlength{\itemsep}{0em}
+        \setlength{\parskip}{0em}
+        \item same: 기존 / novel: 아예 다름
+        \item different: same과 이름은 동일. 생긴 게 다름 (same name, perceptually diff)
+      \end{itemize}
+    \end{column}
+    \hfill
+    \begin{column}{0.58\textwidth}
+      \begin{columns}
+        \begin{column}{0.55\textwidth}
+          \begin{figure}
+            \centering
+            \includegraphics[width=\textwidth]{image/Koutstaal_fmri}
+            \caption{fMRI}
+          \end{figure}
+        \end{column}
+        \begin{column}{0.45\textwidth}
+          \textbf{dlPFC / Ventral occipital temporal cortex / right posterior lateral temporal cortex (그림에 X)에서 활성 감소}
+        \end{column}
+      \end{columns}
+      \vspace{-1em}
+      \begin{columns}
+        \begin{column}{0.6\textwidth}
+          \begin{figure}
+            \centering
+            \includegraphics[width=\textwidth]{image/Koutstaal_graph}
+            \caption{Fusiform의 활성화}
+          \end{figure}
+          \vspace{-1em}
+        \end{column}
+        \hspace{-0.2em}
+        \begin{column}{0.4\textwidth}
+          \textbf{L/R Fusiform의 조건별 뇌 활동 변화}\\
+          {\small
+          L: Novel $>$ Diff $\approx$ Same\\
+          R: Novel $\approx$ Diff $>$ Same
+          }
+        \end{column}
+      \end{columns}
+    \end{column}
+  \end{columns}
+  \hfill
+\end{frame}
+
+\subsubsection{뇌 활동 패턴}
+\begin{frame}{뇌 활동 패턴}
+  \begin{itemize}
+    \item \textbf{\color{blue} Repetition Suppression/adaptation\\: 반복할수록 피질의 활동이 감소}\\
+      \textbf{$\rightarrow$ 반복된 물체에 대한 처리를 효율적으로 하기 위한 메커니즘으로 해석}\\~\\
+        
+    \begin{minipage}{0.85\textwidth}
+    \item \textbf{fMRI 활동 $\longrightarrow$ 피질영역 활동 감소}\\
+      \vspace{-1em}
+      \begin{itemize}
+        \item \textbf{DLPFC & Posterior lateral temporal cortex}\\
+          \textbf{$\Rightarrow$ 개념적/언어적 정보에 대한 repetition priming}
+        \item \textbf{Ventral occipital-temporal cortex (VOTC)}\\
+          \textbf{$\Rightarrow$ 지각적인(시각) 정보에 대한 repetition priming}\\
+          left-VOTC - perceptual \& conceptual repetition priming\\
+          right-VOTC - perceptual repetition priming
+      \end{itemize}
+    \end{minipage}%
+    \hspace{-16em}
+    \begin{minipage}{0.4\textwidth}
+      \begin{figure}
+        \subfloat[dlPFC]
+          {\includegraphics[height=1.5cm]
+          {image/dlpfc}}\qquad
+        \subfloat[PLTC]
+          {\includegraphics[height=1.5cm]
+          {image/pltc}}\\
+        \vspace{-1em}
+        \subfloat[VOTC]
+          {\includegraphics[height=1.5cm]
+          {image/votc}}
+        \vspace{-0.5em}
+        \caption{관련 뇌 영역}
+      \end{figure}
+    \end{minipage}%
+
+  \end{itemize}
+\end{frame}
+
+\subsubsection{관련 Frequency Band}
+\begin{frame}{Brain Activity Related to Implicit Memory}
+    \begin{columns}
+    \begin{column}{0.62\textwidth}
+      \large
+      \textbf{Gamma Activity} (25$\sim$80 Hz):\\
+      자극이 반복될수록 posterior 영역에서 활동이 감소하는 경향을 보임\\
+      {\color{blue} $\Rightarrow$ visual processing region에서 gamma activity가 \underline{감소}하는 경향 有}
+    \end{column}
+    \hfill
+    \begin{column}{0.38\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/gamma_im}
+        \caption{Gamma Activity}
+      \end{figure}
+    \end{column}
+  \end{columns}
+  \begin{columns}
+    \begin{column}{0.62\textwidth}
+      \large
+      \textbf{Alpha Activity} (8$\sim$12 Hz):\\
+      자극이 반복될수록 inferior temporal cortex (특히 fusiform cortex)와 dlPFC 영역의 활동이 증가하는 경향 有\\
+      {\color{blue} $\Rightarrow$ visual processing regions \& dlPFC에서 alpha activity가 \underline{증가}하는 경향 有}
+    \end{column}
+    \hfill
+    \begin{column}{0.38\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/alpha_im}
+        \caption{Alpha Activity at rFFG}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \begin{block}{}
+    \large\\~\\~\\
+    \begin{itemize}
+      \item Gamma activity는 시각 피질의 처리를 반영한다.\\
+        $\rightarrow$ {\color{red} 반복 점화 시 시각 처리 영역에서의 gamma activity 감소는 시각 피질 활성의 감소를 반영한다!}\\~\\
+
+      \item Alpha activity는 억제적인 처리와 연관된다.\\
+        $\rightarrow$ 반복 점화 시 dlPFC 및 시각 피질 영역에서의 {\color{red} alpha activity 증가와 phase lag는 시각 피질 활동 억제를 매개하는, dlPFC로부터의 top-down 신호라고 볼 수 있다!}
+    \end{itemize}\\~\\~\\
+  \end{block}
+\end{frame}
+
+
+
 
 
 \section{발표를 맺으며}
 \subsection{발표서 다루지 아니한 부분}
 \begin{frame}{발표에서 다루지 않았지만 공부한 것들}
+  \large
   \textbf{교재}:
   \begin{itemize}
     \item 기술들
@@ -688,10 +949,28 @@
   \begin{itemize}
     \large
     \item 단순히 학습 자료에서 얘기하는 바를 그대로 받아들이기보다는 `왜 그럴까'하고 더 생각해보았고, 조원들과 3시간이 부족할 만큼 열정적으로 의견을 주고 받았다. 
-      이를 통해 조금 더 깊은 생각과 확장된 시야를 얻을 수 있었다.
+      이를 통해 조금 더 깊은 생각과 확장된 시야를 얻을 수 있었다.\\~\\
     \item 스터디를 완주했다고 해도 기억에 대해 완벽히 이해한 것도 아니며, 오히려 아직도 이해가 안 된 부분과 궁금한 점이 많다. 하지만 본 스터디를 통해 기억에 대해 조금 더 다가갈 수 있었고, 기억을 앞으로 더 심화적으로 공부할 수 있게 해줄 밑거름을 쌓은 것 같다. 기억에 관하여 몰랐던 것들을 많이 알게 되어 정말 유익했던 스터디였다.
   \end{itemize}
 \end{frame}
+
+\section{References}
+\begin{frame}{References}
+  Byrne, J. H. (Ed.). (2017). *Learning and memory: A comprehensive reference* (2nd ed.). Elsevier.\\
+  Slotnick, S. D. (2025). *Cognitive Neuroscience of Memory* (2nd ed.). Cambridge: Cambridge University Press.\\
+  Harrison, S. A., \& Tong, F. (2009). Decoding reveals the contents of visual working memory in early visual areas. Nature, 458(7238), 632–635. https://doi.org/10.1038/nature07832\\~\\~\\
+
+
+  \url{https://books.byui.edu/bio\_264\_anatomy\_phy\_I/1111\_cerebral\_cortex}\\
+  \url{https://en.wikipedia.org/wiki/Electroencephalography#Wave\_patterns}\\
+  \url{https://commons.wikimedia.org/w/index.php?curid=1676555}\\
+  \url{https://brainstimulationclinic.squarespace.com/dlpfc/}
+
+
+
+\end{frame}
+
+
 
 
 
