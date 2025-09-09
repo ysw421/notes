@@ -1,0 +1,714 @@
+\documentclass{beamer}
+% Theme choice:
+\usetheme{CambridgeUS}
+\usecolortheme{dolphin}
+\usepackage{kotex}
+\usepackage{moreenum}
+\usepackage{amsmath}
+\usepackage{polynom}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{subfig}
+\usepackage{enumitem}
+\usepackage{siunitx}
+\usepackage{subcaption}
+\usepackage{multirow}
+\usepackage{array}
+
+\setitemize{label=\usebeamerfont*{itemize item}%
+    \usebeamercolor[fg]{itemize item}
+    \usebeamertemplate{itemize item}}
+
+\usepackage{scrextend}
+\changefontsizes{8pt}
+
+\usepackage[font=tiny]{caption} % ,labelfont=bf]{caption}
+\setbeamertemplate{caption}[numbered]
+
+\setbeamercolor{block title}{bg=blue!15}
+\setbeamercolor{block body}{bg=blue!5}
+
+\usepackage{fontawesome}
+
+\usepackage{caption}
+\captionsetup{font=normalsize}
+\usepackage{wrapfig}
+
+
+% \newcommand\blfootnote[1]{%
+% \begingroup
+% \renewcommand\thefootnote{}%
+% \footnote{\footnotesize#1}%
+% \addtocounter{footnote}{-1}%
+% \endgroup
+% }
+% 
+% \renewcommand{\footnotesize}{\footnotesize}
+
+% \usecolortheme{beaver}
+% Title page details: 
+
+\PassOptionsToPackage{demo}{graphicx}
+\makeatletter
+\newcommand\titlegraphicii[1]{\def\inserttitlegraphicii{#1}}
+\titlegraphicii{}
+%\setbeamercolor{title}{bg=blue!20}
+
+\setbeamertemplate{title page}
+{
+  \vbox{}
+  {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\hfill\inserttitlegraphicii\par}
+  \begin{centering}
+    \begin{beamercolorbox}[sep=8pt,center,rounded=true,shadow=true]{title}
+      \Huge{\usebeamerfont{title}}\inserttitle\par%
+      \ifx\insertsubtitle\@empty%
+      \else%
+        \vskip0.25em%
+        {\large{\usebeamerfont{subtitle}}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      \fi%     
+    \end{beamercolorbox}%
+    \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center]{date}
+      \usebeamerfont{date}\insertdate
+    \end{beamercolorbox}%\vskip0.5em
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[sep=8pt,center]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+  \end{centering}
+  %\vfill
+}
+\makeatother
+
+\usepackage{datetime}
+\newdate{date}{13}{09}{2025}
+\date{\displaydate{date}}
+
+\title{Science of Memory}
+\subtitle{심화스터디}
+%\subtitle{Chapter 6. Visualizing Nervous System Structure\\신경계 구조 시각화}
+\author{김태현\and 윤시원\and 정유경}
+\institute{BCSC 2025}
+\date{\displaydate{date}}
+\usepackage{tikz}
+% \titlegraphic{\includegraphics[width=2cm]{image/bcsc_logo2}}
+\titlegraphic { 
+\begin{tikzpicture}[overlay,remember picture]
+\node[right=0.2cm] at (current page.150){
+    \includegraphics[width=2cm]{image/bcsc_logo2}
+};
+\end{tikzpicture}
+}
+
+\begin{document}
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}{Contents}
+  \tableofcontents
+\end{frame}
+
+\section{스터디 소개}
+\begin{frame}{Science of Memory 스터디 소개}
+  \begin{columns}
+    \begin{column}{0.39\textwidth}
+      \subsection{스터디 목표}
+      \begin{block}{스터디 목표}
+        기억의 기본 원리부터 최신 연구 동향, 다양한 응용 분야까지 깊이 있게 탐구
+      \end{block}
+      \subsection{스터디 진행 방식}
+      \begin{block}{스터디 진행 방식}
+        매주 1회의 대면 활동을 기본으로 진행
+      \end{block}
+      \vspace{-1em}
+      \begin{figure}
+        \centering
+        \subfloat[{Learning and memory}]
+          {\includegraphics[height=2.5cm]
+          {image/LN}}\qquad
+        \subfloat[{Cognitive Neuroscience of Memory}]
+          {\includegraphics[height=2.5cm]
+          {image/CN}}
+        \vspace{-0.5em}
+        \caption{스터디 교재}
+      \end{figure}
+      % \begin{figure}
+      %   \includegraphics[width=\textwidth]{image/ch2_blueprint}
+      %   \caption{Dishbrain arichitecture\footnote{Kagan, Brett J. et al. 2022}}
+      % \end{figure}
+    \end{column}
+    \hfill
+    \begin{column}{0.6\textwidth}
+      % \vspace{-1em}
+      \subsection{스터디 일정}
+      \begin{table}[]
+        \centering
+        % \tiny
+        \scriptsize
+        \begin{tabularx}{\textwidth}{|c|p{1cm}|X|l|}
+      \hline
+      \textbf{차시}        & \textbf{materials}                                            & \textbf{발제 내용}                                                        & \textbf{발제자} \\ \hline
+      \multirow{4}{*}{1} & \multirow{4}{*}{\parbox[c]{1cm}{Learning and Memory}}                 & 1.01 Learning Theory and Behavior: Introduction and Overview & 공동           \\ \cline{3-4} 
+                         &                                                      & 1.02 A Typology of Memory Terms                              & 윤시원          \\ \cline{3-4} 
+                         &                                                      & 1.03 Retrieval From Memory                                   & 김태현          \\ \cline{3-4} 
+                         &                                                      & 1.15 Memory for Space, Time, and Episodes                    & 정유경          \\ \hline
+      \multirow{2}{*}{2} & \multirow{11}{*}{\parbox[c]{1.1cm}{Cognitive Neuroscience of Memories}} & 1. Types of Memory and Brain Regions of Interest             & 윤시원          \\ \cline{3-4} 
+                         &                                                      & 2. The Tools of Cognitive Neuroscience                       & 정유경          \\ \cline{1-1} \cline{3-4} 
+      \multirow{3}{*}{3} &                                                      & 3. Brain Regions Associated with Long-Term Memory            & 윤시원          \\ \cline{3-4} 
+                         &                                                      & 4. Brain Timing Associated with Long-Term Memory             & 공동           \\ \cline{3-4} 
+                         &                                                      & 5. Long-Term Memory Failure                                  & 정유경          \\ \cline{1-1} \cline{3-4} 
+      \multirow{2}{*}{4} &                                                      & 6. Working Memory                                            & 윤시원          \\ \cline{3-4} 
+                         &                                                      & 7. Implicit Memory                                           & 정유경          \\ \cline{1-1} \cline{3-4} 
+      \multirow{2}{*}{5} &                                                      & 8. Memory and Other Cognitive Processes                      & 윤시원          \\ \cline{3-4} 
+                         &                                                      & 9. Explicit Memory and Disease                               & 김태현          \\ \cline{1-1} \cline{3-4} 
+      \multirow{2}{*}{6} &                                                      & 10. Long-Term Memory in Animals                              & 정유경          \\ \cline{3-4} 
+                         &                                                      & 11. The Future of Memory Research                            & 김태현          \\ \hline
+      \multirow{3}{*}{7} & \multirow{3}{*}{논문}                                  & Engram                                                       & 김태현          \\ \cline{3-4} 
+                         &                                                      & Memory systems in AI                                         & 윤시원          \\ \cline{3-4} 
+                         &                                                      & Multimodal Brain Imaging in Memory Research                  & 정유경          \\ \hline
+      \end{tabularx}
+      \caption{Science of Memory 스터디 일정표}
+      \end{table}
+
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{스터디 내용 소개}
+\subsection{기억의 종류}
+\begin{frame}{기억의 종류}
+  % {\huge{\textbf{기억의 종류}}}\\
+  \begin{table}
+    \begin{tabular}{l}
+      Consciousness?\\
+      Kept in mind during `delay period'?\\
+      Involve previous episode?\\
+      Task performance:\\
+      Subjective experience:\\
+      General term:
+    \end{tabular}
+  \end{table}
+
+  % \begin{tikzpicture}[remember picture, overlay]
+  %   \node (image) 
+  %   [
+  %     left=0.2cm
+  %   ] at (current page.east)
+  %   {
+  %     \includegraphics[width=0.8\textwidth]{image/memory_tree}
+  %   };
+  %   \node
+  %   [
+  %       fill=teal,
+  %       align=center,
+  %       text=white,
+  %       font={\huge\bfseries}
+  %   ] at (image.center) {A beautiful photo!!};
+  % \end{tikzpicture}
+\end{frame}
+
+\subsection{장기 기억}
+\begin{frame}{장기 기억\textsuperscript{Long-Term Memory}\\\normalsize{: 오랜 시간 동안 정보를 저장하는 시스템}}
+  \noindent
+  \begin{minipage}{0.4\textwidth}
+    \vspace{2em}
+    \textbf{실험 패러다임}:\\
+    Study phase \\$\rightarrow$ Delay period(수\textit{분}$\sim$수\textit{시간}) \\$\rightarrow$ Test phase(Old-new recognition)\\~\\~\\~\\
+  \end{minipage}%
+  \begin{minipage}{0.6\textwidth}
+      \centering
+      \begin{figure}
+      \subfloat[Study]
+        {\includegraphics[height=1.5cm]
+        {image/study_phase}}\qquad
+      Delay...
+      \subfloat[Test]
+        {\includegraphics[height=1.5cm]
+        {image/test_phase}}
+      \vspace{-0.5em}
+      \caption{실험 패러다임}
+    \end{figure}
+  \end{minipage}\\
+  \vspace{-2em}
+  % \begin{wrapfigure}{r}{0.37\textwidth}
+  %   \centering
+  %   \subfloat[Study]
+  %     {\includegraphics[height=1.5cm]
+  %     {image/study_phase}}\qquad
+  %   Delay...
+  %   \subfloat[Test]
+  %     {\includegraphics[height=1.5cm]
+  %     {image/test_phase}}
+  %   \vspace{-0.5em}
+  %   \caption{스터디 교재}
+  % \end{wrapfigure}
+  % \vspace{-2em}
+  % \qquad\\
+  % \vspace{2em}
+  % \textbf{실험 패러다임}:\\
+  % Study phase \\$\rightarrow$ Delay period(수\textit{분}$\sim$수\textit{시간}) \\$\rightarrow$ Test phase(Old-new recognition)\\~\\~\\~\\
+  \textbf{Retrieval 시 활성화 뇌 영역}:\\
+  감각 영역, 통제 영역(Medial Temporal Lobe\textsuperscript{MTL}, \\\qquad dorsolateral Prefrontal Cortex\textsuperscript{dl-PFC}, Parietal Cortex)
+  \vspace{-3.5em}
+  \newsavebox{\rightfigure}
+\savebox{\rightfigure}{%
+    \subfloat[Model of MTL sub-region function]
+    {\includegraphics[height=3.2cm]{image/hippocampus_binding}}%
+}
+  \begin{figure}
+    \centering
+    \only<1-5>{\vspace{-1em}}
+    \subfloat[Regions of the brain associated with episodic memory]
+      {
+        \begin{tikzpicture}
+          \node[anchor=south west,inner sep=0] (image) at (0,0) {
+            \includegraphics[height=2cm]{image/brain_regions_1}%
+          }
+          \draw<2->[red,very thick] (4.55,0.35) circle (0.29cm);
+          \draw<3->[red,very thick] (0.9,1.3) circle (0.29cm);
+          \draw<4->[red,very thick] (2.2,1.1) circle (0.29cm);
+          \draw<5->[red,very thick] (4.3,1.47) circle (0.29cm);
+        \end{tikzpicture}
+        % \includegraphics<1>[height=2cm]{image/brain_regions_1}%
+        % \includegraphics<2>[height=2cm]{image/brain_regions_2}%
+        % \includegraphics<3>[height=2cm]{image/brain_regions_3}%
+        % \includegraphics<4>[height=2cm]{image/brain_regions_4}%
+        % \includegraphics<5->[height=2cm]{image/brain_regions_5}%
+      }\qquad
+    \only<1-5>{\phantom{%
+      \subfloat[Model of MTL sub-region function]
+      {\includegraphics[height=3.2cm]{image/hippocampus_binding}}%
+    }}
+    \only<6->{
+      \subfloat[Model of MTL sub-region function]
+      {\includegraphics[height=3.2cm]{image/hippocampus_binding}}
+    }
+    \vspace{-0.5em}
+    \caption{Retrieval 시 활성화되는 뇌 영역과 해마의 역할}
+  \end{figure}
+  % \begin{figure}
+  %   \centering
+  %   \subfloat[Regions of the brain associated with episodic memory]
+  %     {
+  %       \only<1>{\includegraphics[height=2cm]{image/brain_regions_1}}
+  %       \only<2>{\includegraphics[height=2cm]{image/brain_regions_2}}
+  %       \only<3>{\includegraphics[height=2cm]{image/brain_regions_3}}
+  %       \only<4>{\includegraphics[height=2cm]{image/brain_regions_4}}
+  %       \only<5->{\includegraphics[height=2cm]{image/brain_regions_5}}
+  %     }\qquad
+  %   \only<1-5>{\phantom{%
+  %       \subfloat[Model of MTL sub-region function]
+  %       {\includegraphics[height=3.2cm]{image/hippocampus_binding}}%
+  %   }}
+  %   \only<6->{
+  %     \subfloat[Model of MTL sub-region function]
+  %     {\includegraphics[height=3.2cm]{image/hippocampus_binding}}
+  %   }
+  %   \vspace{-0.5em}
+  %   \caption{Retrieval 시 활성화되는 뇌 영역과 해마의 역할}
+  % \end{figure}
+
+\end{frame}
+
+
+\begin{frame}
+  \\~\\
+  \textbf{공고화(Consolidation)}: 새로운 기억을 안정적인 장기 기억으로 전환하는 과정
+  \begin{itemize}
+    \small
+    \item \textbf{표준 통합 이론(Standard consolidation model)}: hippocampal-cortical $\rightarrow$ cortical-cortical interaction
+    \item \textbf{다중 흔적 이론(Multiple trace theory)}: hippocampus is involved in LTM throughout the lifetime
+  \end{itemize}
+  \vspace{1.5em}
+  \textbf{부호화(Encoding)}: 정보의 습득
+  \begin{minipage}{0.7\textwidth}
+    \vspace{-1em}
+    \begin{itemize}
+      \item Subsequent memory analysis로 관련 뇌 영역 규명
+      \item Medial Temporal Lobe, dorsolateral Prefrontal Cortex, Parietal Cortex $\rightarrow$ Retrieval과 차이 有
+    \end{itemize}
+    \hfill
+  \end{minipage}%
+  \begin{minipage}{0.3\textwidth}
+    \vspace{-2em}
+    \centering
+    \includegraphics[height=1.5cm]{image/encoding_brain_regions}
+    \captionof{figure}{\small Regions of the brain associated with subsequent memory effects}
+  \end{minipage}
+
+  %\vspace{-1em}
+  \textbf{망각(Forgetting)}:
+  \begin{minipage}{0.5\textwidth}
+    \begin{itemize}
+      \small
+      \item \textbf{Typical forgetting}: attention 부족으로 encoding 실패. dlPFC, mPFC, parietal cortex 활성화. DMN과 같은 패턴의 뇌 활성
+      \item \textbf{Retrieval-induced forgetting}: 관련 기억의 방해를 받아 회상 실패 (fMRI 실험)
+      \item \textbf{Motivated forgetting}: 의도적인 망각
+    \end{itemize}
+    \hfill
+  \end{minipage}%
+  \begin{minipage}{0.5\textwidth}
+    \vspace{-2em}
+    \begin{figure}
+      \centering
+      \subfloat[\small Subsequent forgetting fMRI activity and default network fMRI activity]
+        {
+          \includegraphics[height=2cm]{image/forgetting_brain_regions}
+        }\qquad
+      \subfloat[\small Retrieval-induced forgetting EEG activity]
+        {\includegraphics[height=1.9cm]
+        {image/forgetting_graph}}
+      \vspace{-0.5em}
+      \caption{Forgetting}
+
+    \end{figure}
+  \end{minipage}
+  
+\end{frame}
+
+\subsubsection{Retrieval-induced forgetting fMRI 실험}
+\begin{frame}{Retrieval-induced forgetting fMRI 실험}
+  \begin{columns}
+    \begin{column}{0.38\textwidth}
+      \begin{figure}
+        \includegraphics[width=\textwidth]{image/Retrieval-induced_forgetting}
+        \caption{Retrieval-inducted forgetting paradigm, behavioral performance, and fMRI activity}
+      \end{figure}
+    \end{column}
+    \hfill
+    \begin{column}{0.6\textwidth}
+      % \large
+      \textbf{Used Paradigm}:
+      \vspace{-0.5em}
+      \begin{itemize}[itemsep=0pt, parsep=0pt]
+        \small
+        \item \textbf{initial study phase}: word pairs(category+examplar) presented
+        \item \textbf{intermediate retrieval practice phase}: subset of categories(category+two-letter word cue)\\
+        $\longrightarrow$ non-presented words from this category are inhibited
+        \item \textbf{final recall phase}: word pairs(category+examplar) presented
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{Examplar 분류}:
+      \vspace{-0.5em}
+      \begin{itemize}[itemsep=0pt, parsep=0pt]
+        \small
+        \item 대조군(non-practiced categories): low freq. (\textbf{C+}), high freq. (\textbf{C-})
+        \item 실험군(practiced categories): low freq. but practiced (\textbf{P+}), high freq. but not practiced (\textbf{P-})
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{Result}:
+      \vspace{-0.5em}
+      \begin{itemize}[itemsep=0pt, parsep=0pt]
+        \small
+        \item P-는 P+에 의해 억제되어 대조군보다 낮은 연상 빈도를 보임
+        \item P+은 연습의 결과로 대조군보다 높은 연상 빈도를 보임
+        \item comparison from P- to P+: \textbf{dlPFC}의 활성이 클수록, \textbf{RIF 효과}가 더 높은 것으로 나타남
+      \end{itemize}
+
+      % \textbf{Retrieving particular information} from memory facilitates the later retrieval of that information, but also \textbf{impairs the later retrieval of related, interfering information}.\\~\\
+
+      % Activity in \textbf{left anterior VLPFC (BA 47)} and left posterior temporal cortex (BA 22), regions implicated in the controlled \textbf{retrieval of weak semantic memory representations}, predicted the degree of retrieval-induced forgetting.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{관련 ERP}
+\begin{frame}{관련 ERP}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Familiarity \& Recollection}
+        \textbf{Familiarity} (Know)
+        \begin{itemize}
+          \item mid-frontal old-new effect
+          \item frontal brain activity within \textbf{300$\sim$500ms}
+          \item FN400: negative frontal activity in 400ms
+        \end{itemize}\\~\\~\\
+        \textbf{Recollection} (Remember)
+        \begin{itemize}
+          \item left-parietal old-new effect
+          \item parietal brain activity within \textbf{500$\sim$800ms}
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \hfill
+    \begin{column}{0.48\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/familiarity_ERP}
+        \caption{ERP activity associated with recollection and familiarity}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{관련 Frequency Band}
+\begin{frame}{관련 Frequency Band}
+  \begin{columns}
+    \begin{column}{0.58\textwidth}
+      \begin{block}{Frequency band}
+        \begin{itemize}
+          \item \textbf{gamma}($>$30Hz): 서로 다른 피질 영역의 기능 처리 
+          \item \textbf{alpha}(8$\sim$12Hz): 피질 영역 활동 억제
+          \item \textbf{theta}(4$\sim$8Hz): 해마와 피질 영역 간 상호작용
+        \end{itemize}
+      \end{block}
+      \begin{block}{LTM encoding \& retrieval}
+        \begin{itemize}
+          \item gamma increase in \textbf{parietal}, \textbf{occipital} regions
+          \item alpha decrease in \textbf{anterior}, \textbf{posterior} regions
+          \item theta increase in \textbf{frontal} regions, \textbf{thalamus}
+          \item cross-frequency coupling\footnote{두 영역 간 상호작용} \\b/w \textbf{frontal} theta \& \textbf{parietal-occipital} gamma,\\b/w \textbf{frontal} \& \textbf{thalamic} theta
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \hfill
+    \begin{column}{0.38\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{image/remember_EEG}
+        \caption{EEG frequency band activity associated with subsequently remembered and forgotten items}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{수면 중 역할}
+\begin{frame}{수면 중 역할}
+  \begin{columns}
+    \begin{column}{0.58\textwidth}
+      \textbf{서파 수면}(slow-wave sleep)
+      \begin{itemize}
+        \item 장기 기억 공고화가 주로 발생하는 시점
+        \item 1Hz 이하 주파수에서의 widespread cortical modulation 수반
+        \item 주로 3 or 4단계 REM 수면, 낮잠 중 발생
+        \item 다른 뇌파(11$\sim$16Hz에서 진동하는 thalamic-cortical sleep spindles, 200Hz 근처에서 진동하는 hippocampal sharp-wave ripples\footnote{hippocampal-cortical 상호작용을 조절하여 기억(from the previous waking period)의 replay를 반영})와 synchronize되어 기억 공고화에 최적화
+      \end{itemize}
+    \end{column}
+    \hfill
+    \begin{column}{0.42\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/sleep_stages}
+        \caption{Sleep stages and brain oscillations associated with slow wave sleep and long-term memory consolidation}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{작업 기억}
+\begin{frame}{작업 기억\textsuperscript{Working Memory}\\\normalsize : 짧은 시간 동안 정보를 유지(maintenance)하고, 그 정보를 조작/이용해 현재 과제를 수행하는 인지 시스템
+}
+  \begin{block}{Working Memory vs Short-Term Memory (단기기억, STM)}
+    \begin{itemize}
+      \item 두 용어는 종종 혼용되지만 (본 교재), 현대 인지신경과학에서는 개념적으로 구분하는 경향이다.
+      \item 초기에는 단기 기억으로 불렸으나, 정보의 `능동적 처리' 기능이 강조되면서 작동 기억이라는 용어가 등장했다.
+      \item \textbf{Short-Term Memory}: \\정보를 짧은 시간동안 단순히 유지하는 것 (수동적)
+      \item \textbf{Working Memory}: \\정보를 짧은 시간동안 유지할 뿐만 아니라, 그 정보를 \textbf{능동적으로 조작하고 활용}하는데 쓰인다.\\
+        $\rightarrow$ 단기 기억의 저장 특징 + \textbf{저장된 정보를 활용(조작/처리)}, 더 포괄적
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\subsubsection{Baddeley's Model}
+\begin{frame}{Baddeley's Model of Working Memory}
+  \begin{columns}
+    \begin{column}{0.28\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/baddeley_model}
+        \caption{Baddeley’s working memory model}
+      \end{figure}
+    \end{column}
+    \hfill
+    \begin{column}{0.72\textwidth}
+      \vspace{-2em}
+      \large
+      \begin{itemize}
+        \item \textbf{Central executive}: \\주의력 배분, 하위 시스템의 작업 조율 \& 총괄
+        \item \textbf{Visuospatial sketchpad}: \\시각/공간 정보를 유지하고 조작
+        \item \textbf{Phonological loop}: \\언어/청각 정보를 일시적 저장 및 되뇔 때 관여
+        \item \textbf{Episodic buffer}: \\서로 다른 종류의 감각 정보들을 하나의 일화로 통합하고, 이 정보를 장기 기억으로 형성하거나 장기 기억 속의 일화를 인출할 때 사용되는 임시 작업 공간
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{관련 뇌 영역}
+\begin{frame}{Brain Regions Related to Working Memory}
+  \begin{columns}
+    \begin{column}{0.31\textwidth}
+      \begin{block}{dlPFC}
+        \begin{minipage}[t][5cm][c]{\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{image/working_memory_b1}
+          \textbf{Control Tower}\\
+          어떤 정보에 주의를 기울이고, 어떻게 처리할지 지시하는 상위 제어 기능을 수행
+        \end{minipage}
+      \end{block}
+    \end{column}
+    \hfill
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Parietal Cortex}
+        \begin{minipage}[t][5cm][c]{\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{image/working_memory_b2}\\~\\~\\
+          주로 주의 집중과 정보의 공간적 위치를 파악하는 데 관여
+        \end{minipage}
+      \end{block}
+    \end{column}
+    \hfill
+    \begin{column}{0.31\textwidth}
+      \begin{block}{Sensory Processing Regions}
+        \begin{minipage}[t][5cm][c]{\textwidth}
+          \centering
+          \includegraphics[width=\textwidth]{image/working_memory_b3}\\~\\~\\
+          작업 기억의 내용이 저장됨
+        \end{minipage}
+      \end{block}
+    \end{column}
+  \end{columns}\\~\\~\\
+  \large ** 기본적이고 단순한 작업기억은 대체적으로 해마에 크게 의존하지 않음
+\end{frame}
+
+\subsubsection{관련 Frequency Band}
+\begin{frame}{Brain Activity Related to Working Memory}
+  \begin{columns}
+    \begin{column}{0.52\textwidth}
+      \large
+      \textbf{Gamma Activity} ($>$30 Hz):\\여러 뇌 영역에 흩어져 있는 정보 조각들을 하나의 의미 있는 기억으로 묶어주는 `정보 통합(Binding)' 역할
+    \end{column}
+    \hfill
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/gamma}
+        \caption{Gamma Activity}
+      \end{figure}
+    \end{column}
+  \end{columns}
+  \begin{columns}
+    \begin{column}{0.52\textwidth}
+      \large
+      \textbf{Alpha Activity} (8$\sim$12 Hz):\\불필요한 시각 정보 처리를 줄이기 위해 과제와 관련 없는 뇌 영역의 활동을 억제하는 역할
+    \end{column}
+    \hfill
+    \begin{column}{0.48\textwidth}
+      \centering
+      \begin{figure}
+        \centering
+        \includegraphics[width=\textwidth]{image/alpha}
+        \caption{Alpha Activity}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsubsection{실험 패러다임}
+\begin{frame}{실험 패러다임}
+  정보를 \textbf{(1) 활성화된 상태로 유지}하고 \textbf{(2) 처리}하는 능력을 측정함\\
+  대부분의 패러다임은 공통적으로 [학습 $\rightarrow$ 지연 $\rightarrow$ 검사]의 3단계 구조를 따름\\~\\~\\
+
+  \textbf{실험 패러다임}:
+  \begin{itemize}
+    \item \textbf{학습 단계 (Study Phase)}: 참가자에게 기억해야 할 정보를 제시
+    \item \textbf{지연 기간 (Delay Period)}: 몇 초 $\sim$ 몇십 초 동안 아무것도 안 보여줌\\
+      $\rightarrow$ 참가자는 이 시간 동안 \textbf{학습한 정보를 마음속으로 적극적으로 유지}해야 함(작업 기억의 핵심적인 측정 구간)
+    \item \textbf{검사 단계 (Test Phase)}: 학습한 정보에 대해 질문하여 정확도를 측정함
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{작업 기억 실험의 대표적인 패러다임들}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width=0.8\textwidth]{image/work_ex_p1}
+        \caption{작업 기억 실험 패러다임 예시}
+      \end{figure}
+      \textbf{Old-New Recognition}:\\
+      \vspace{-0.5em}
+      \begin{itemize}
+        \small
+        \item \textbf{학습 단계}: 여러 항목(단어, 도형 등)을 보여줌
+        \item \textbf{검사 단계}: 학습 단계 항목과 새로운 항목을 섞어서 제시 \\$\Rightarrow$ 참가자는 각 항목이 이전에 봤던 것(old)인지 처음 보는 것 (new)인지 판단
+      \end{itemize}\\~\\
+      
+      \textbf{Source/Context Memory Task}:\\
+      {\small Old-new recognition + 그 항목이 제시된 위치나 색상 등의 맥락까지 기억}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \textbf{N-Back Task}:\\
+      {\small 일련의 자극(예: 자음 문자열)을 듣거나 보면서, \textbf{현재 자극이 N개 전에 제시된 자극과 일치하는지 여부}를 판단}\\~\\~\\
+      
+      \textbf{Operation Span Task}:\\
+      {\small 간단한 \textbf{산술 문제를 풀면서(정보 조작)} 동시에 \textbf{단어를 기억}해야하는(정보 유지) 과제}\\~\\~\\
+      
+      \textbf{Mental Rotation Task}:\\
+      \vspace{-0.5em}
+      \begin{itemize}
+        \small
+        \item \textbf{학습 단계}: 여러 물체가 배열된 모습 제시
+        \item \textbf{지연 단계}: 머릿속으로 그 배열을 90도 회전시키라고 지시
+        \item \textbf{검사 단계}: 회전된 모습의 배열을 보여주고 원래 배열을 제대로 회전시킨 것과 일치하는지 판단하게 함
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+
+
+\section{발표를 맺으며}
+\subsection{발표서 다루지 아니한 부분}
+\begin{frame}{발표에서 다루지 않았지만 공부한 것들}
+  \textbf{교재}:
+  \begin{itemize}
+    \item 기술들
+    \item 여러 세부적인 기억 유형들
+    \item 주의력, 심상, 언어, 감정 등 다른 인지과정과 기억의 관계
+    \item 기억 장애(예: 알츠하이머병, 외상 후 스트레스 장애)
+    \item 동물들의 기억
+  \end{itemize}\\~\\
+
+  \textbf{자신이 관심있는 것들 조사 및 정리 후 공유}:
+  \begin{itemize}
+    \item Multimodal Research
+    \item Engram
+    \item AI에서의 기억 체계
+  \end{itemize}
+\end{frame}
+
+\subsection{소감}
+\begin{frame}{소감}
+  \begin{itemize}
+    \large
+    \item 단순히 학습 자료에서 얘기하는 바를 그대로 받아들이기보다는 `왜 그럴까'하고 더 생각해보았고, 조원들과 3시간이 부족할 만큼 열정적으로 의견을 주고 받았다. 
+      이를 통해 조금 더 깊은 생각과 확장된 시야를 얻을 수 있었다.
+    \item 스터디를 완주했다고 해도 기억에 대해 완벽히 이해한 것도 아니며, 오히려 아직도 이해가 안 된 부분과 궁금한 점이 많다. 하지만 본 스터디를 통해 기억에 대해 조금 더 다가갈 수 있었고, 기억을 앞으로 더 심화적으로 공부할 수 있게 해줄 밑거름을 쌓은 것 같다. 기억에 관하여 몰랐던 것들을 많이 알게 되어 정말 유익했던 스터디였다.
+  \end{itemize}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
+
