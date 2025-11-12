@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-// 비밀번호 해시 (실제 해시로 교체하세요)
+// Fixed: 2025-11-12 - API logic with proper if-else-if structure
+// 비밀번호 해시
 const CORRECT_PASSWORD_HASH = '6e659deaa85842cdabb5c6305fcc40033ba43772ec00d45c2a3c921741a5e377';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
