@@ -343,7 +343,7 @@ td:not(:first-child) {
 
 .profile-menu {
   position: absolute;
-  top: 50px; /* Adjust as needed */
+  top: 50px;
   right: 0;
   background: white;
   border: 1px solid #ddd;
@@ -351,6 +351,30 @@ td:not(:first-child) {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   min-width: 120px;
   padding: 5px 0;
+}
+
+.profile-menu::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid #ddd;
+}
+
+.profile-menu::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 11px;
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid white;
 }
 
 .profile-menu button {
