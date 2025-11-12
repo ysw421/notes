@@ -47,7 +47,7 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    sessionStorage.setItem('auth_token', data.token);
+                    localStorage.setItem('auth_token', data.token);
                     window.location.href = 'viewer.html';
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';
