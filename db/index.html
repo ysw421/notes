@@ -219,22 +219,36 @@
 
                     if (role !== 'admin') {
                         const basePath = permissions.basePath.replace(/^\//, '');
+                        const allowedPaths = [basePath, ...permissions.allowed.map(p => p.replace(/^\//, ''))];
 
                         if (!path) {
                             path = basePath;
                         } else if (!path.startsWith(basePath)) {
-                            for (const allowedPath of permissions.allowed) {
-                                const allowedRelative = allowedPath.replace(/^\//, '');
-                                const allowedName = allowedRelative.split('/').pop();
-
-                                if (path === allowedName || path.startsWith(allowedName + '/')) {
-                                    path = allowedRelative + (path.length > allowedName.length ? path.substring(allowedName.length) : '');
-                                    break;
+                            const indexMatch = path.match(/^(\d+)(\/.*)?$/);
+                            if (indexMatch) {
+                                const index = parseInt(indexMatch[1]);
+                                const subPath = indexMatch[2] || '';
+                                if (index < allowedPaths.length) {
+                                    path = allowedPaths[index] + subPath;
+                                } else {
+                                    path = basePath;
                                 }
-                            }
+                            } else {
+                                let matched = false;
+                                for (let i = 0; i < allowedPaths.length; i++) {
+                                    const allowedPath = allowedPaths[i];
+                                    const allowedName = allowedPath.split('/').pop();
 
-                            if (!path.startsWith(basePath)) {
-                                path = basePath + '/' + path;
+                                    if (path === allowedName || path.startsWith(allowedName + '/')) {
+                                        path = allowedPath + (path.length > allowedName.length ? path.substring(allowedName.length) : '');
+                                        matched = true;
+                                        break;
+                                    }
+                                }
+
+                                if (!matched && !path.startsWith(basePath)) {
+                                    path = basePath + '/' + path;
+                                }
                             }
                         }
                     }
@@ -270,25 +284,29 @@
 
             let displayPath = path;
             let virtualRoot = null;
+            let virtualIndex = -1;
 
             if (role !== 'admin') {
                 const basePath = permissions.basePath.replace(/^\//, '');
+                const allowedPaths = [basePath, ...permissions.allowed.map(p => p.replace(/^\//, ''))];
 
-                for (const allowedPath of permissions.allowed) {
-                    const allowedRelative = allowedPath.replace(/^\//, '');
-                    if (path === allowedRelative || path.startsWith(allowedRelative + '/')) {
-                        const allowedName = allowedRelative.split('/').pop();
-                        displayPath = allowedName + (path.length > allowedRelative.length ? path.substring(allowedRelative.length) : '');
-                        virtualRoot = allowedRelative;
+                for (let i = 0; i < allowedPaths.length; i++) {
+                    const allowedPath = allowedPaths[i];
+                    if (path === allowedPath || path.startsWith(allowedPath + '/')) {
+                        virtualRoot = allowedPath;
+                        virtualIndex = i;
+
+                        if (i === 0) {
+                            if (path === basePath) {
+                                displayPath = '';
+                            } else if (path.startsWith(basePath + '/')) {
+                                displayPath = path.substring(basePath.length + 1);
+                            }
+                        } else {
+                            const allowedName = allowedPath.split('/').pop();
+                            displayPath = `${i} (${allowedName})` + (path.length > allowedPath.length ? path.substring(allowedPath.length) : '');
+                        }
                         break;
-                    }
-                }
-
-                if (!virtualRoot) {
-                    if (path === basePath) {
-                        displayPath = '';
-                    } else if (path.startsWith(basePath + '/')) {
-                        displayPath = path.substring(basePath.length + 1);
                     }
                 }
             }
@@ -302,12 +320,11 @@
                 if (role !== 'admin') {
                     const basePath = permissions.basePath.replace(/^\//, '');
 
-                    if (virtualRoot) {
+                    if (virtualIndex > 0) {
                         if (path === virtualRoot) {
                             goUp.style.display = 'none';
                         } else {
-                            const virtualRootName = virtualRoot.split('/').pop();
-                            parentLinkPath = virtualRootName + (parentPath.length > virtualRoot.length ? parentPath.substring(virtualRoot.length) : '');
+                            parentLinkPath = virtualIndex + (parentPath.length > virtualRoot.length ? parentPath.substring(virtualRoot.length) : '');
                             goUp.style.display = 'block';
                         }
                     } else {
@@ -443,11 +460,17 @@
             const { role, permissions } = payload;
 
             let virtualRoot = null;
+            let virtualIndex = -1;
+
             if (role !== 'admin') {
-                for (const allowedPath of permissions.allowed) {
-                    const allowedRelative = allowedPath.replace(/^\//, '');
-                    if (currentPath === allowedRelative || currentPath.startsWith(allowedRelative + '/')) {
-                        virtualRoot = allowedRelative;
+                const basePath = permissions.basePath.replace(/^\//, '');
+                const allowedPaths = [basePath, ...permissions.allowed.map(p => p.replace(/^\//, ''))];
+
+                for (let i = 0; i < allowedPaths.length; i++) {
+                    const allowedPath = allowedPaths[i];
+                    if (currentPath === allowedPath || currentPath.startsWith(allowedPath + '/')) {
+                        virtualRoot = allowedPath;
+                        virtualIndex = i;
                         break;
                     }
                 }
@@ -466,10 +489,9 @@
                 if (role !== 'admin') {
                     const basePath = permissions.basePath.replace(/^\//, '');
 
-                    if (virtualRoot) {
-                        const virtualRootName = virtualRoot.split('/').pop();
+                    if (virtualIndex > 0) {
                         if (file.path === virtualRoot || file.path.startsWith(virtualRoot + '/')) {
-                            linkPath = virtualRootName + (file.path.length > virtualRoot.length ? file.path.substring(virtualRoot.length) : '');
+                            linkPath = virtualIndex + (file.path.length > virtualRoot.length ? file.path.substring(virtualRoot.length) : '');
                         }
                     } else {
                         if (file.path.startsWith(basePath + '/')) {
