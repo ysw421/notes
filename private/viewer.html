@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Notes - Viewer</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .viewer-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .breadcrumb {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-item:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .file-icon {
+            font-size: 24px;
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .file-size {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .content-viewer {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-container">
+        <div class="header">
+            <div>
+                <h1>📁 Private Notes</h1>
+                <div class="breadcrumb" id="breadcrumb">/</div>
+            </div>
+            <button class="logout-btn" onclick="logout()">로그아웃</button>
+        </div>
+
+        <button class="back-btn" id="backBtn" style="display: none;" onclick="goBack()">← 뒤로</button>
+
+        <div class="loading" id="loading">로딩 중...</div>
+        <ul class="file-list" id="fileList"></ul>
+        <div class="content-viewer" id="contentViewer" style="display: none;"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://private-notes-api.vercel.app/api/github-proxy'; // 실제 URL로 변경
+        let currentPath = '';
+        let pathHistory = [''];
+
+        // 인증 확인
+        const password = sessionStorage.getItem('auth_password');
+        if (!password) {
+            window.location.href = 'index.html';
+        }
+
+        // 초기 로드
+        loadFiles('');
+
+        async function loadFiles(path) {
+            const loading = document.getElementById('loading');
+            const fileList = document.getElementById('fileList');
+            const contentViewer = document.getElementById('contentViewer');
+            const backBtn = document.getElementById('backBtn');
+            const breadcrumb = document.getElementById('breadcrumb');
+
+            loading.style.display = 'block';
+            fileList.innerHTML = '';
+            contentViewer.style.display = 'none';
+
+            currentPath = path;
+            breadcrumb.textContent = '/' + path;
+            backBtn.style.display = path ? 'block' : 'none';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password, path })
+                });
+
+                if (!response.ok) {
+                    throw new Error('인증 실패');
+                }
+
+                const files = await response.json();
+                loading.style.display = 'none';
+
+                files.forEach(file => {
+                    const li = document.createElement('li');
+                    li.className = 'file-item';
+
+                    const icon = file.type === 'dir' ? '📁' : '📄';
+                    const size = file.size ? `(${formatSize(file.size)})` : '';
+
+                    li.innerHTML = `
+                        <span class="file-icon">${icon}</span>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${size}</div>
+                        </div>
+                    `;
+
+                    li.onclick = () => {
+                        if (file.type === 'dir') {
+                            pathHistory.push(currentPath);
+                            loadFiles(file.path);
+                        } else {
+                            viewFile(file);
+                        }
+                    };
+
+                    fileList.appendChild(li);
+                });
+
+            } catch (error) {
+                loading.textContent = '❌ 오류: ' + error.message;
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            }
+        }
+
+        async function viewFile(file) {
+            const contentViewer = document.getElementById('contentViewer');
+            contentViewer.style.display = 'block';
+            contentViewer.innerHTML = '<div class="loading">파일 로딩 중...</div>';
+
+            try {
+                // Base64 디코딩
+                const content = atob(file.content);
+                
+                // 텍스트 파일 표시
+                if (file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+                    contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+                } else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
+                    contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}" style="max-width: 100%;">`;
+                } else {
+                    contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+                }
+            } catch (error) {
+                contentViewer.innerHTML = `❌ 파일을 표시할 수 없습니다: ${error.message}`;
+            }
+        }
+
+        function goBack() {
+            const previousPath = pathHistory.pop();
+            loadFiles(previousPath);
+        }
+
+        function logout() {
+            sessionStorage.removeItem('auth_password');
+            window.location.href = 'index.html';
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
