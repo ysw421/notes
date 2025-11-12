@@ -3,92 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Private Notes - Viewer</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Index of /</title>
     <style>
-        .viewer-container {
-            max-width: 1200px;
-            margin: 40px auto;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: #fff;
+            color: #000;
             padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-
-        .breadcrumb {
-            color: #666;
-            font-size: 14px;
+        h1 {
+            font-size: 18px;
+            font-weight: normal;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
         }
 
         .logout-btn {
-            padding: 8px 16px;
-            background: #e74c3c;
-            color: white;
-            border: none;
-            border-radius: 6px;
+            float: right;
+            padding: 4px 12px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 14px;
-        }
-
-        .logout-btn:hover {
-            background: #c0392b;
-        }
-
-        .file-list {
-            list-style: none;
-        }
-
-        .file-item {
-            padding: 15px;
-            margin-bottom: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .file-item:hover {
-            background: #f8f9fa;
-            border-color: #667eea;
-        }
-
-        .file-icon {
-            font-size: 24px;
-        }
-
-        .file-info {
-            flex: 1;
-        }
-
-        .file-name {
-            font-weight: 600;
+            font-size: 12px;
             color: #333;
         }
 
-        .file-size {
-            font-size: 12px;
-            color: #999;
+        .logout-btn:hover {
+            background: #e0e0e0;
         }
 
-        .content-viewer {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            max-height: 600px;
-            overflow-y: auto;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            padding: 8px;
+            background: #f5f5f5;
+            border-bottom: 1px solid #ccc;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        th:hover {
+            background: #e8e8e8;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        a {
+            color: #0645ad;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:visited {
+            color: #0b0080;
+        }
+
+        .icon {
+            width: 20px;
+            display: inline-block;
+            text-align: center;
+            margin-right: 8px;
+        }
+
+        .size {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .date {
+            font-family: monospace;
         }
 
         .loading {
@@ -97,42 +104,68 @@
             color: #666;
         }
 
-        .back-btn {
-            padding: 8px 16px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
+        .error {
+            color: #c00;
+            padding: 20px;
+            background: #fee;
+            border: 1px solid #fcc;
+            border-radius: 4px;
+            margin: 20px 0;
         }
 
-        .back-btn:hover {
-            background: #5568d3;
+        .back-link {
+            display: inline-block;
+            margin-bottom: 10px;
+            padding: 4px 8px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 3px;
         }
 
-        pre {
+        .content-viewer {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .content-viewer pre {
             white-space: pre-wrap;
             word-wrap: break-word;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 13px;
+        }
+
+        .content-viewer img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div class="viewer-container">
-        <div class="header">
-            <div>
-                <h1>📁 Private Notes</h1>
-                <div class="breadcrumb" id="breadcrumb">/</div>
-            </div>
-            <button class="logout-btn" onclick="logout()">로그아웃</button>
-        </div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+    <h1 id="title">Index of /</h1>
 
-        <button class="back-btn" id="backBtn" style="display: none;" onclick="goBack()">← 뒤로</button>
+    <a href="#" class="back-link" id="backBtn" style="display: none;" onclick="goBack(); return false;">상위 디렉토리</a>
 
-        <div class="loading" id="loading">로딩 중...</div>
-        <ul class="file-list" id="fileList"></ul>
-        <div class="content-viewer" id="contentViewer" style="display: none;"></div>
-    </div>
+    <div class="loading" id="loading">로딩 중...</div>
+    <div class="error" id="error" style="display: none;"></div>
+
+    <table id="fileTable" style="display: none;">
+        <thead>
+            <tr>
+                <th>이름</th>
+                <th class="size">크기</th>
+                <th class="date">수정 날짜</th>
+            </tr>
+        </thead>
+        <tbody id="fileList"></tbody>
+    </table>
+
+    <div class="content-viewer" id="contentViewer" style="display: none;"></div>
 
     <script>
         const API_URL = 'https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy';
@@ -150,18 +183,22 @@
 
         async function loadFiles(path) {
             const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const fileTable = document.getElementById('fileTable');
             const fileList = document.getElementById('fileList');
             const contentViewer = document.getElementById('contentViewer');
             const backBtn = document.getElementById('backBtn');
-            const breadcrumb = document.getElementById('breadcrumb');
+            const title = document.getElementById('title');
 
             loading.style.display = 'block';
-            fileList.innerHTML = '';
+            error.style.display = 'none';
+            fileTable.style.display = 'none';
             contentViewer.style.display = 'none';
+            fileList.innerHTML = '';
 
             currentPath = path;
-            breadcrumb.textContent = '/' + path;
-            backBtn.style.display = path ? 'block' : 'none';
+            title.textContent = 'Index of /' + path;
+            backBtn.style.display = path ? 'inline-block' : 'none';
 
             try {
                 const response = await fetch(API_URL, {
@@ -178,61 +215,77 @@
 
                 const files = await response.json();
                 loading.style.display = 'none';
+                fileTable.style.display = 'table';
 
-                files.forEach(file => {
-                    const li = document.createElement('li');
-                    li.className = 'file-item';
-
-                    const icon = file.type === 'dir' ? '📁' : '📄';
-                    const size = file.size ? `(${formatSize(file.size)})` : '';
-
-                    li.innerHTML = `
-                        <span class="file-icon">${icon}</span>
-                        <div class="file-info">
-                            <div class="file-name">${file.name}</div>
-                            <div class="file-size">${size}</div>
-                        </div>
-                    `;
-
-                    li.onclick = () => {
-                        if (file.type === 'dir') {
-                            pathHistory.push(currentPath);
-                            loadFiles(file.path);
-                        } else {
-                            viewFile(file);
-                        }
-                    };
-
-                    fileList.appendChild(li);
+                // 정렬: 폴더 먼저, 그 다음 파일 (이름순)
+                files.sort((a, b) => {
+                    if (a.type === b.type) {
+                        return a.name.localeCompare(b.name);
+                    }
+                    return a.type === 'dir' ? -1 : 1;
                 });
 
-            } catch (error) {
-                loading.textContent = '❌ 오류: ' + error.message;
-                // setTimeout(() => {
-                //     window.location.href = 'index.html';
-                // }, 2000);
+                files.forEach(file => {
+                    const tr = document.createElement('tr');
+
+                    const icon = file.type === 'dir' ? '📁' : '📄';
+                    const size = file.size ? formatSize(file.size) : '-';
+                    const date = '-'; // GitHub API에서 날짜 정보가 없음
+
+                    tr.innerHTML = `
+                        <td>
+                            <span class="icon">${icon}</span>
+                            <a href="#" onclick="handleClick('${file.type}', '${file.path}', ${JSON.stringify(file).replace(/'/g, "&apos;")}); return false;">
+                                ${file.name}${file.type === 'dir' ? '/' : ''}
+                            </a>
+                        </td>
+                        <td class="size">${size}</td>
+                        <td class="date">${date}</td>
+                    `;
+
+                    fileList.appendChild(tr);
+                });
+
+            } catch (err) {
+                loading.style.display = 'none';
+                error.style.display = 'block';
+                error.textContent = '❌ 오류: ' + err.message;
+            }
+        }
+
+        function handleClick(type, path, fileData) {
+            if (type === 'dir') {
+                pathHistory.push(currentPath);
+                loadFiles(path);
+            } else {
+                viewFile(fileData);
             }
         }
 
         async function viewFile(file) {
             const contentViewer = document.getElementById('contentViewer');
+            const fileTable = document.getElementById('fileTable');
+            
+            fileTable.style.display = 'none';
             contentViewer.style.display = 'block';
             contentViewer.innerHTML = '<div class="loading">파일 로딩 중...</div>';
 
             try {
-                // Base64 디코딩
                 const content = atob(file.content);
                 
-                // 텍스트 파일 표시
-                if (file.name.endsWith('.md') || file.name.endsWith('.txt')) {
+                if (file.name.match(/\.(md|txt|js|json|py|html|css|xml|log)$/i)) {
                     contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
-                } else if (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg')) {
-                    contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}" style="max-width: 100%;">`;
+                } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
+                    contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}" alt="${file.name}">`;
                 } else {
-                    contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+                    contentViewer.innerHTML = `
+                        <p>파일 타입: ${file.name.split('.').pop()}</p>
+                        <p>크기: ${formatSize(file.size)}</p>
+                        <a href="${file.download_url}" target="_blank">다운로드</a>
+                    `;
                 }
-            } catch (error) {
-                contentViewer.innerHTML = `❌ 파일을 표시할 수 없습니다: ${error.message}`;
+            } catch (err) {
+                contentViewer.innerHTML = `<div class="error">❌ 파일을 표시할 수 없습니다: ${err.message}</div>`;
             }
         }
 
@@ -247,6 +300,7 @@
         }
 
         function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
             if (bytes < 1024) return bytes + ' B';
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
