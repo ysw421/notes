@@ -54,7 +54,7 @@ document.body.style.display = 'block';
 const API_URL = 'https://notes-pi-sand.vercel.app/api/github-proxy';
 let currentPath = '';
 let gRows = [];
-let gOrderBy = 0;
+let gOrderBy = -1;
 let gTable;
 let gTBody;
 let directoryCache = {};
@@ -578,14 +578,15 @@ function orderBy(column) {
     if (gOrderBy == column) {
         order = gTable.getAttribute("order") == "asc" ? "desc" : "asc";
     } else {
-        order = "asc";
+        order = "desc";
         gOrderBy = column;
-        gTable.setAttribute("order-by", column);
-        gRows.sort(compareRows);
     }
+
+    gRows.sort(compareRows);
 
     gTable.removeChild(gTBody);
     gTable.setAttribute("order", order);
+    gTable.setAttribute("order-by", column);
 
     if (order == "asc") {
         gRows.forEach(row => gTBody.appendChild(row));

@@ -50,11 +50,11 @@ table[order] > thead > tr > th::after {
 }
 
 table[order="asc"] > thead > tr > th::after {
-  content: "\2193";
+  content: "\2191";
 }
 
 table[order="desc"] > thead > tr > th::after {
-  content: "\2191";
+  content: "\2193";
 }
 
 table[order][order-by="0"] > thead > tr > th:first-child > a,
@@ -271,10 +271,10 @@ td:not(:first-child) {
 }
 
 .btn-download-inline {
-  padding: 4px 8px;
-  background: #4CAF50;
-  color: white;
-  border: 1px solid #4CAF50;
+  padding: 3px 6px;
+  background: #f0f0f0;
+  color: #666;
+  border: 1px solid #ddd;
   border-radius: 3px;
   cursor: pointer;
   font-size: 12px;
@@ -282,11 +282,12 @@ td:not(:first-child) {
 }
 
 .btn-download-inline:hover {
-  background: #45a049;
+  background: #e0e0e0;
+  color: #333;
 }
 
 .btn-download-inline i {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .btn-download-all {
