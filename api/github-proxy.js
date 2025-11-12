@@ -40,11 +40,15 @@ export default async function handler(req, res) {
 
         // 로그인 요청 (비밀번호로 토큰 발급)
         if (password && !token) {
+            console.log('Login branch - generating token');
             const crypto = await import('crypto');
             const passwordHash = crypto
                 .createHash('sha256')
                 .update(password)
                 .digest('hex');
+
+            console.log('Password hash:', passwordHash);
+            console.log('Expected hash:', CORRECT_PASSWORD_HASH);
 
             if (passwordHash !== CORRECT_PASSWORD_HASH) {
                 return res.status(401).json({ error: 'Invalid password' });
@@ -57,11 +61,13 @@ export default async function handler(req, res) {
                 { expiresIn: '24h' }
             );
 
+            console.log('Token generated successfully');
             return res.status(200).json({ token: authToken });
         }
 
         // 데이터 요청 (토큰 검증)
-        if (token) {
+        else if (token) {
+            console.log('Data request branch - token provided');
             try {
                 // JWT 토큰 검증
                 jwt.verify(token, JWT_SECRET);
@@ -85,10 +91,14 @@ export default async function handler(req, res) {
             }
 
             const data = await response.json();
+            console.log('Returning GitHub data');
             return res.status(200).json(data);
         }
 
-        return res.status(400).json({ error: 'Password or token required' });
+        else {
+            console.log('No password or token provided');
+            return res.status(400).json({ error: 'Password or token required' });
+        }
 
     } catch (error) {
         console.error('Error:', error);
