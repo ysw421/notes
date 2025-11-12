@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Notes - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>🔒 Private Notes</h1>
+        <p>비밀번호를 입력하세요</p>
+        
+        <form id="loginForm">
+            <input 
+                type="password" 
+                id="password" 
+                placeholder="Password"
+                autocomplete="off"
+                required
+            >
+            <button type="submit">입장</button>
+        </form>
+        
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const passwordInput = document.getElementById('password');
+        const errorDiv = document.getElementById('error');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorDiv.textContent = '';
+
+            const password = passwordInput.value;
+
+            try {
+                // Vercel Function 호출 (테스트)
+                const response = await fetch('/api/github-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password, path: '' })
+                });
+
+                if (response.ok) {
+                    // 비밀번호 저장 (세션)
+                    sessionStorage.setItem('auth_password', password);
+                    window.location.href = 'viewer.html';
+                } else {
+                    errorDiv.textContent = '❌ 비밀번호가 올바르지 않습니다';
+                    passwordInput.value = '';
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ 연결 오류: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>
