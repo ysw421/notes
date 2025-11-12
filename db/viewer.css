@@ -1,0 +1,372 @@
+:root {
+  font-family: sans-serif;
+  background-color: -moz-dialog;
+  color: -moz-dialogtext;
+  font: message-box;
+  padding-inline: 2em;
+  color-scheme: light dark;
+}
+
+body {
+  border: 1px solid ThreeDShadow;
+  border-radius: 10px;
+  padding: 3em;
+  min-width: 30em;
+  max-width: 65em;
+  margin: 4em auto;
+  background-color: Field;
+  color: FieldText;
+}
+
+h1 {
+  font-size: 160%;
+  margin: 0 0 0.6em;
+  border-bottom: 1px solid ThreeDLightShadow;
+  font-weight: normal;
+}
+
+img {
+  border: 0;
+}
+
+th {
+  text-align: start;
+  white-space: nowrap;
+}
+
+th > a {
+  color: inherit;
+}
+
+table[order] > thead > tr > th {
+  cursor: pointer;
+}
+
+table[order] > thead > tr > th::after {
+  display: none;
+  width: .8em;
+  margin-inline-end: -.8em;
+  text-align: end;
+}
+
+table[order="asc"] > thead > tr > th::after {
+  content: "\2193";
+}
+
+table[order="desc"] > thead > tr > th::after {
+  content: "\2191";
+}
+
+table[order][order-by="0"] > thead > tr > th:first-child > a,
+table[order][order-by="1"] > thead > tr > th:first-child + th > a,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th > a {
+  text-decoration: underline;
+}
+
+table[order][order-by="0"] > thead > tr > th:first-child::after,
+table[order][order-by="1"] > thead > tr > th:first-child + th::after,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th::after {
+  display: inline-block;
+}
+
+table.remove-hidden > tbody > tr.hidden-object {
+  display: none;
+}
+
+td {
+  white-space: nowrap;
+}
+
+table.ellipsis {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+
+table.ellipsis > tbody > tr > td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+th:first-child {
+  padding-inline-end: 2em;
+}
+
+th:first-child + th {
+  padding-inline-end: 1em;
+}
+
+td:first-child + td {
+  text-align: end;
+  padding-inline-end: 1em;
+}
+
+td:first-child + td + td {
+  padding-inline-start: 1em;
+  padding-inline-end: .5em;
+}
+
+td:first-child + td + td + td {
+  padding-inline-start: .5em;
+}
+
+.symlink {
+  font-style: italic;
+}
+
+.dir,
+.symlink,
+.file {
+  margin-inline-start: 20px;
+}
+
+.dir i,
+.file i {
+  margin-inline-end: 4px;
+  margin-inline-start: -20px;
+  width: 16px;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+td:first-child > a {
+  white-space: pre;
+}
+
+p {
+  font-size: 110%;
+}
+
+#UI_goUp {
+  margin-top: 0;
+  float: inline-start;
+}
+
+table {
+  clear: both;
+  width: 90%;
+  margin: 0 auto;
+}
+
+thead {
+  font-size: 130%;
+}
+
+th:last-child {
+  text-align: center;
+}
+
+th:hover > a {
+  text-decoration: underline;
+}
+
+body > table > tbody > tr:hover {
+  outline: 1px solid ThreeDLightShadow;
+}
+
+td:not(:first-child) {
+  width: 0;
+}
+
+.up {
+  padding: 0 0.5em;
+  margin-inline-start: 20px;
+}
+
+.up i {
+  margin-inline: -20px 4px;
+  vertical-align: middle;
+}
+
+.logout-btn {
+  float: right;
+  padding: 6px 14px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+}
+
+.logout-btn:hover {
+  background: #e0e0e0;
+}
+
+.content-viewer {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.content-viewer pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 13px;
+}
+
+.content-viewer img {
+  max-width: 100%;
+}
+
+.file-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-back {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-back:hover {
+  background: #e0e0e0;
+}
+
+.btn-download {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+
+.btn-download:hover {
+  background: #45a049;
+}
+
+.file-info {
+  color: #666;
+  font-size: 14px;
+  margin-left: auto;
+}
+
+.btn-download-inline {
+  padding: 4px 8px;
+  background: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.btn-download-inline:hover {
+  background: #45a049;
+}
+
+.btn-download-inline i {
+  font-size: 12px;
+}
+
+.btn-download-all {
+  padding: 8px 16px;
+  background: #2196F3;
+  color: white;
+  border: 1px solid #2196F3;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-download-all:hover {
+  background: #1976D2;
+}
+
+.btn-download-all:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
+
+.profile-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.profile-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.profile-circle:hover {
+  background: #e0e0e0;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px; /* Adjust as needed */
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  min-width: 120px;
+  padding: 5px 0;
+}
+
+.profile-menu button {
+  width: 100%;
+  padding: 8px 15px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-menu button:hover {
+  background: #f0f0f0;
+}
+
+.profile-menu button i {
+  font-size: 14px;
+}
