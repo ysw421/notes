@@ -1,316 +1,386 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index of /</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Ubuntu, "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: #fff;
-            color: #000;
-            padding: 20px;
-        }
-
-        h1 {
-            font-size: 18px;
-            font-weight: normal;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 10px;
-        }
-
-        .logout-btn {
-            float: right;
-            padding: 4px 12px;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 12px;
-            color: #333;
-        }
-
-        .logout-btn:hover {
-            background: #e0e0e0;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th {
-            text-align: left;
-            padding: 8px;
-            background: #f5f5f5;
-            border-bottom: 1px solid #ccc;
-            font-weight: normal;
-            cursor: pointer;
-        }
-
-        th:hover {
-            background: #e8e8e8;
-        }
-
-        td {
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        tr:hover {
-            background: #f9f9f9;
-        }
-
-        a {
-            color: #0645ad;
-            text-decoration: none;
-        }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        a:visited {
-            color: #0b0080;
-        }
-
-        .icon {
-            width: 20px;
-            display: inline-block;
-            text-align: center;
-            margin-right: 8px;
-        }
-
-        .size {
-            text-align: right;
-            font-family: monospace;
-        }
-
-        .date {
-            font-family: monospace;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .error {
-            color: #c00;
-            padding: 20px;
-            background: #fee;
-            border: 1px solid #fcc;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-bottom: 10px;
-            padding: 4px 8px;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        .content-viewer {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f8f8;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-
-        .content-viewer pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-            font-size: 13px;
-        }
-
-        .content-viewer img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style type="text/css">
+:root {
+  font-family: sans-serif;
+}
+img {
+  border: 0;
+}
+th {
+  text-align: start;
+  white-space: nowrap;
+}
+th > a {
+  color: inherit;
+}
+table[order] > thead > tr > th {
+  cursor: pointer;
+}
+table[order] > thead > tr > th::after {
+  display: none;
+  width: .8em;
+  margin-inline-end: -.8em;
+  text-align: end;
+}
+table[order="asc"] > thead > tr > th::after {
+  content: "\2193";
+}
+table[order="desc"] > thead > tr > th::after {
+  content: "\2191";
+}
+table[order][order-by="0"] > thead > tr > th:first-child > a ,
+table[order][order-by="1"] > thead > tr > th:first-child + th > a ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th > a {
+  text-decoration: underline;
+}
+table[order][order-by="0"] > thead > tr > th:first-child::after ,
+table[order][order-by="1"] > thead > tr > th:first-child + th::after ,
+table[order][order-by="2"] > thead > tr > th:first-child + th + th::after {
+  display: inline-block;
+}
+td {
+  white-space: nowrap;
+}
+table.ellipsis {
+  width: 100%;
+  table-layout: fixed;
+  border-spacing: 0;
+}
+table.ellipsis > tbody > tr > td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+th:first-child {
+  padding-inline-end: 2em;
+}
+th:first-child + th {
+  padding-inline-end: 1em;
+}
+td:first-child + td {
+  text-align: end;
+  padding-inline-end: 1em;
+}
+td:first-child + td + td {
+  padding-inline-start: 1em;
+  padding-inline-end: .5em;
+}
+td:first-child + td + td + td {
+  padding-inline-start: .5em;
+}
+.symlink {
+  font-style: italic;
+}
+.dir ,
+.symlink ,
+.file {
+  margin-inline-start: 20px;
+}
+.dir i,
+.file i {
+  margin-inline-end: 4px;
+  margin-inline-start: -20px;
+  width: 16px;
+  display: inline-block;
+  text-align: center;
+}
+.logout-btn {
+  float: right;
+  padding: 4px 12px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.content-viewer {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f8f8;
+  border: 1px solid #ddd;
+  max-height: 600px;
+  overflow-y: auto;
+}
+.content-viewer pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: monospace;
+}
+.content-viewer img {
+  max-width: 100%;
+}
+</style>
+<title>Index of /</title>
 </head>
-<body>
-    <button class="logout-btn" onclick="logout()">로그아웃</button>
-    <h1 id="title">Index of /</h1>
+<body dir="ltr">
+<button class="logout-btn" onclick="logout()">로그아웃</button>
+<h1 id="title">Index of /</h1>
+<p id="UI_goUp" style="display:none"><a class="up" href="#" onclick="goBack(); return false;">Up to higher level directory</a></p>
+<table id="dirTable" order="">
+ <thead>
+  <tr>
+   <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
+   <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
+   <th colspan="2"><a href="#" onclick="orderBy(2); return false;">Last Modified</a></th>
+  </tr>
+ </thead>
+ <tbody id="tbody">
+ </tbody>
+</table>
+<div id="contentViewer" class="content-viewer" style="display:none;"></div>
+<script>
+const API_URL = 'https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy';
+let currentPath = '';
+let pathHistory = [''];
+let gRows = [];
+let gOrderBy = 0;
+let gTable;
+let gTBody;
 
-    <a href="#" class="back-link" id="backBtn" style="display: none;" onclick="goBack(); return false;">상위 디렉토리</a>
+const password = sessionStorage.getItem('auth_password');
+if (!password) {
+    window.location.href = 'index.html';
+}
 
-    <div class="loading" id="loading">로딩 중...</div>
-    <div class="error" id="error" style="display: none;"></div>
+// Font Awesome 아이콘 매핑
+const FILE_ICONS = {
+    // 문서
+    'pdf': 'fa-file-pdf',
+    'doc': 'fa-file-word', 'docx': 'fa-file-word',
+    'txt': 'fa-file-lines', 'md': 'fa-file-lines',
+    'rtf': 'fa-file-word',
+    
+    // 코드
+    'js': 'fa-file-code', 'jsx': 'fa-file-code',
+    'ts': 'fa-file-code', 'tsx': 'fa-file-code',
+    'py': 'fa-file-code', 'java': 'fa-file-code',
+    'cpp': 'fa-file-code', 'c': 'fa-file-code',
+    'html': 'fa-file-code', 'css': 'fa-file-code',
+    'php': 'fa-file-code', 'go': 'fa-file-code',
+    'rs': 'fa-file-code', 'rb': 'fa-file-code',
+    'tex': 'fa-file-code',
+    
+    // 이미지
+    'png': 'fa-file-image', 'jpg': 'fa-file-image',
+    'jpeg': 'fa-file-image', 'gif': 'fa-file-image',
+    'svg': 'fa-file-image', 'webp': 'fa-file-image',
+    'bmp': 'fa-file-image', 'ico': 'fa-file-image',
+    
+    // 압축
+    'zip': 'fa-file-zipper', 'tar': 'fa-file-zipper',
+    'gz': 'fa-file-zipper', 'rar': 'fa-file-zipper',
+    '7z': 'fa-file-zipper', 'bz2': 'fa-file-zipper',
+    
+    // 데이터
+    'json': 'fa-file-code', 'xml': 'fa-file-code',
+    'csv': 'fa-file-csv', 'xlsx': 'fa-file-excel',
+    'xls': 'fa-file-excel',
+    
+    // 미디어
+    'mp3': 'fa-file-audio', 'wav': 'fa-file-audio',
+    'ogg': 'fa-file-audio', 'flac': 'fa-file-audio',
+    'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+    'mov': 'fa-file-video', 'mkv': 'fa-file-video',
+    
+    // 기타
+    'log': 'fa-file-lines', 'bib': 'fa-file-lines',
+    'aux': 'fa-file', 'out': 'fa-file',
+    'toc': 'fa-file-lines', 'idx': 'fa-file',
+    'ind': 'fa-file', 'fls': 'fa-file',
+    'fdb_latexmk': 'fa-file', 'ilg': 'fa-file',
+    'synctex': 'fa-file',
+};
 
-    <table id="fileTable" style="display: none;">
-        <thead>
-            <tr>
-                <th>이름</th>
-                <th class="size">크기</th>
-                <th class="date">수정 날짜</th>
-            </tr>
-        </thead>
-        <tbody id="fileList"></tbody>
-    </table>
+const FILE_COLORS = {
+    'fa-file-pdf': '#F44336',
+    'fa-file-word': '#2196F3',
+    'fa-file-code': '#4CAF50',
+    'fa-file-image': '#9C27B0',
+    'fa-file-zipper': '#FF9800',
+    'fa-file-excel': '#4CAF50',
+    'fa-file-csv': '#4CAF50',
+    'fa-file-audio': '#E91E63',
+    'fa-file-video': '#673AB7',
+    'fa-file-lines': '#607D8B',
+};
 
-    <div class="content-viewer" id="contentViewer" style="display: none;"></div>
+function getFileIcon(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    return FILE_ICONS[ext] || 'fa-file';
+}
 
-    <script>
-        const API_URL = 'https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy';
-        let currentPath = '';
-        let pathHistory = [''];
+function getIconColor(iconClass) {
+    return FILE_COLORS[iconClass] || '#757575';
+}
 
-        // 인증 확인
-        const password = sessionStorage.getItem('auth_password');
-        if (!password) {
-            window.location.href = 'index.html';
-        }
+document.addEventListener("DOMContentLoaded", function() {
+    gTable = document.getElementById("dirTable");
+    gTBody = document.getElementById("tbody");
+    loadFiles('');
+});
 
-        // 초기 로드
-        loadFiles('');
+async function loadFiles(path) {
+    const tbody = document.getElementById('tbody');
+    const title = document.getElementById('title');
+    const goUp = document.getElementById('UI_goUp');
+    const contentViewer = document.getElementById('contentViewer');
+    
+    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+    contentViewer.style.display = 'none';
+    gTable.style.display = 'table';
+    
+    currentPath = path;
+    title.textContent = 'Index of /' + path;
+    goUp.style.display = path ? 'block' : 'none';
 
-        async function loadFiles(path) {
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            const fileTable = document.getElementById('fileTable');
-            const fileList = document.getElementById('fileList');
-            const contentViewer = document.getElementById('contentViewer');
-            const backBtn = document.getElementById('backBtn');
-            const title = document.getElementById('title');
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password, path })
+        });
 
-            loading.style.display = 'block';
-            error.style.display = 'none';
-            fileTable.style.display = 'none';
-            contentViewer.style.display = 'none';
-            fileList.innerHTML = '';
+        if (!response.ok) throw new Error('Authentication failed');
 
-            currentPath = path;
-            title.textContent = 'Index of /' + path;
-            backBtn.style.display = path ? 'inline-block' : 'none';
+        const files = await response.json();
+        tbody.innerHTML = '';
+        gRows = [];
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ password, path })
-                });
+        // 정렬: 폴더 먼저, 그 다음 파일
+        files.sort((a, b) => {
+            if (a.type === b.type) return a.name.localeCompare(b.name);
+            return a.type === 'dir' ? -1 : 1;
+        });
 
-                if (!response.ok) {
-                    throw new Error('인증 실패');
-                }
-
-                const files = await response.json();
-                loading.style.display = 'none';
-                fileTable.style.display = 'table';
-
-                // 정렬: 폴더 먼저, 그 다음 파일 (이름순)
-                files.sort((a, b) => {
-                    if (a.type === b.type) {
-                        return a.name.localeCompare(b.name);
-                    }
-                    return a.type === 'dir' ? -1 : 1;
-                });
-
-                files.forEach(file => {
-                    const tr = document.createElement('tr');
-
-                    const icon = file.type === 'dir' ? '📁' : '📄';
-                    const size = file.size ? formatSize(file.size) : '-';
-                    const date = '-'; // GitHub API에서 날짜 정보가 없음
-
-                    tr.innerHTML = `
-                        <td>
-                            <span class="icon">${icon}</span>
-                            <a href="#" onclick="handleClick('${file.type}', '${file.path}', ${JSON.stringify(file).replace(/'/g, "&apos;")}); return false;">
-                                ${file.name}${file.type === 'dir' ? '/' : ''}
-                            </a>
-                        </td>
-                        <td class="size">${size}</td>
-                        <td class="date">${date}</td>
-                    `;
-
-                    fileList.appendChild(tr);
-                });
-
-            } catch (err) {
-                loading.style.display = 'none';
-                error.style.display = 'block';
-                error.textContent = '❌ 오류: ' + err.message;
-            }
-        }
-
-        function handleClick(type, path, fileData) {
-            if (type === 'dir') {
-                pathHistory.push(currentPath);
-                loadFiles(path);
-            } else {
-                viewFile(fileData);
-            }
-        }
-
-        async function viewFile(file) {
-            const contentViewer = document.getElementById('contentViewer');
-            const fileTable = document.getElementById('fileTable');
+        files.forEach(file => {
+            const tr = document.createElement('tr');
+            const isDir = file.type === 'dir';
+            const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
+            const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
+            const size = file.size ? formatSize(file.size) : '';
+            const date = '';
+            const time = '';
             
-            fileTable.style.display = 'none';
-            contentViewer.style.display = 'block';
-            contentViewer.innerHTML = '<div class="loading">파일 로딩 중...</div>';
+            tr.innerHTML = `
+                <td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}">
+                    <table class="ellipsis"><tbody><tr><td>
+                        <a class="${isDir ? 'dir' : 'file'}" href="#" onclick="handleClick('${file.type}', '${file.path}', event); return false;">
+                            <i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}
+                        </a>
+                    </td></tr></tbody></table>
+                </td>
+                <td sortable-data="${file.size || 0}">${size}</td>
+                <td sortable-data="${Date.now()}">${date}</td>
+                <td>${time}</td>
+            `;
+            
+            tr.fileData = file;
+            gRows.push(tr);
+            tbody.appendChild(tr);
+        });
 
-            try {
-                const content = atob(file.content);
-                
-                if (file.name.match(/\.(md|txt|js|json|py|html|css|xml|log)$/i)) {
-                    contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
-                } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp)$/i)) {
-                    contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}" alt="${file.name}">`;
-                } else {
-                    contentViewer.innerHTML = `
-                        <p>파일 타입: ${file.name.split('.').pop()}</p>
-                        <p>크기: ${formatSize(file.size)}</p>
-                        <a href="${file.download_url}" target="_blank">다운로드</a>
-                    `;
-                }
-            } catch (err) {
-                contentViewer.innerHTML = `<div class="error">❌ 파일을 표시할 수 없습니다: ${err.message}</div>`;
-            }
-        }
+    } catch (error) {
+        tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${error.message}</td></tr>`;
+    }
+}
 
-        function goBack() {
-            const previousPath = pathHistory.pop();
-            loadFiles(previousPath);
-        }
+function handleClick(type, path, event) {
+    event.preventDefault();
+    const row = event.target.closest('tr');
+    
+    if (type === 'dir') {
+        pathHistory.push(currentPath);
+        loadFiles(path);
+    } else {
+        viewFile(row.fileData);
+    }
+}
 
-        function logout() {
-            sessionStorage.removeItem('auth_password');
-            window.location.href = 'index.html';
-        }
+async function viewFile(file) {
+    const contentViewer = document.getElementById('contentViewer');
+    gTable.style.display = 'none';
+    contentViewer.style.display = 'block';
+    contentViewer.innerHTML = '<p>Loading file...</p>';
 
-        function formatSize(bytes) {
-            if (bytes === 0) return '0 B';
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    try {
+        const content = atob(file.content);
+        
+        if (file.name.match(/\.(txt|md|js|json|py|html|css|xml|log|tex|bib|c|cpp|java|php|go|rs)$/i)) {
+            contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+        } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
+            contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}">`;
+        } else if (file.name.match(/\.pdf$/i)) {
+            contentViewer.innerHTML = `<p>PDF 파일: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">다운로드</a></p>`;
+        } else {
+            contentViewer.innerHTML = `<p>파일: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">다운로드</a></p>`;
         }
+    } catch (error) {
+        contentViewer.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+}
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    </script>
+function goBack() {
+    const previousPath = pathHistory.pop();
+    loadFiles(previousPath);
+}
+
+function logout() {
+    sessionStorage.removeItem('auth_password');
+    window.location.href = 'index.html';
+}
+
+function formatSize(bytes) {
+    if (bytes === 0) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+    return Math.round(bytes / (1024 * 1024)) + ' MB';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function compareRows(rowA, rowB) {
+    const a = rowA.cells[gOrderBy].getAttribute("sortable-data") || "";
+    const b = rowB.cells[gOrderBy].getAttribute("sortable-data") || "";
+    let numA = +a;
+    let numB = +b;
+    
+    if (a == numA && b == numB) {
+        return numA - numB;
+    }
+    return a.toLowerCase().localeCompare(b.toLowerCase());
+}
+
+function orderBy(column) {
+    if (!gRows.length) return;
+    
+    let order;
+    if (gOrderBy == column) {
+        order = gTable.getAttribute("order") == "asc" ? "desc" : "asc";
+    } else {
+        order = "asc";
+        gOrderBy = column;
+        gTable.setAttribute("order-by", column);
+        gRows.sort(compareRows);
+    }
+    
+    gTable.removeChild(gTBody);
+    gTable.setAttribute("order", order);
+    
+    if (order == "asc") {
+        gRows.forEach(row => gTBody.appendChild(row));
+    } else {
+        gRows.reverse().forEach(row => gTBody.appendChild(row));
+    }
+    
+    gTable.appendChild(gTBody);
+}
+</script>
 </body>
 </html>
