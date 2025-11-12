@@ -6,6 +6,25 @@
 <style type="text/css">
 :root {
   font-family: sans-serif;
+  background-color: #f5f5f5;
+  color: #000;
+  padding-inline: 2em;
+}
+body {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 3em;
+  min-width: 30em;
+  max-width: 65em;
+  margin: 4em auto;
+  background-color: #fff;
+  color: #000;
+}
+h1 {
+  font-size: 160%;
+  margin: 0 0 0.6em;
+  border-bottom: 1px solid #e0e0e0;
+  font-weight: normal;
 }
 img {
   border: 0;
@@ -13,6 +32,7 @@ img {
 th {
   text-align: start;
   white-space: nowrap;
+  font-size: 130%;
 }
 th > a {
   color: inherit;
@@ -71,6 +91,9 @@ td:first-child + td + td {
 td:first-child + td + td + td {
   padding-inline-start: .5em;
 }
+th:last-child {
+  text-align: center;
+}
 .symlink {
   font-style: italic;
 }
@@ -86,39 +109,89 @@ td:first-child + td + td + td {
   width: 16px;
   display: inline-block;
   text-align: center;
+  vertical-align: middle;
+}
+a {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+td:first-child > a {
+  white-space: pre;
+}
+th:hover > a {
+  text-decoration: underline;
+}
+body > table > tbody > tr:hover {
+  outline: 1px solid #e0e0e0;
+}
+td:not(:first-child) {
+  width: 0;
+}
+p {
+  font-size: 110%;
+}
+#UI_goUp {
+  margin-top: 0;
+  float: inline-start;
+}
+table {
+  clear: both;
+  width: 90%;
+  margin: 0 auto;
+}
+.up {
+  padding: 0 0.5em;
+  margin-inline-start: 20px;
+}
+.up i {
+  margin-inline: -20px 4px;
+  vertical-align: middle;
 }
 .logout-btn {
   float: right;
-  padding: 4px 12px;
+  padding: 6px 14px;
   background: #f0f0f0;
   border: 1px solid #ccc;
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 13px;
+  color: #333;
+}
+.logout-btn:hover {
+  background: #e0e0e0;
 }
 .content-viewer {
   margin-top: 20px;
   padding: 20px;
   background: #f8f8f8;
   border: 1px solid #ddd;
+  border-radius: 4px;
   max-height: 600px;
   overflow-y: auto;
 }
 .content-viewer pre {
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: monospace;
+  font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  font-size: 13px;
 }
 .content-viewer img {
   max-width: 100%;
 }
 </style>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2260BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 <title>Index of /</title>
 </head>
 <body dir="ltr">
 <button class="logout-btn" onclick="logout()">로그아웃</button>
 <h1 id="title">Index of /</h1>
-<p id="UI_goUp" style="display:none"><a class="up" href="#" onclick="goBack(); return false;">Up to higher level directory</a></p>
+<p id="UI_goUp" style="display:none">
+  <a class="up" href="#" onclick="goBack(); return false;">
+    <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
+  </a>
+</p>
 <table id="dirTable" order="">
  <thead>
   <tr>
@@ -127,8 +200,7 @@ td:first-child + td + td + td {
    <th colspan="2"><a href="#" onclick="orderBy(2); return false;">Last Modified</a></th>
   </tr>
  </thead>
- <tbody id="tbody">
- </tbody>
+ <tbody id="tbody"></tbody>
 </table>
 <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 <script>
@@ -145,66 +217,36 @@ if (!password) {
     window.location.href = 'index.html';
 }
 
-// Font Awesome 아이콘 매핑
 const FILE_ICONS = {
-    // 문서
-    'pdf': 'fa-file-pdf',
-    'doc': 'fa-file-word', 'docx': 'fa-file-word',
-    'txt': 'fa-file-lines', 'md': 'fa-file-lines',
-    'rtf': 'fa-file-word',
-    
-    // 코드
-    'js': 'fa-file-code', 'jsx': 'fa-file-code',
-    'ts': 'fa-file-code', 'tsx': 'fa-file-code',
-    'py': 'fa-file-code', 'java': 'fa-file-code',
-    'cpp': 'fa-file-code', 'c': 'fa-file-code',
-    'html': 'fa-file-code', 'css': 'fa-file-code',
-    'php': 'fa-file-code', 'go': 'fa-file-code',
-    'rs': 'fa-file-code', 'rb': 'fa-file-code',
-    'tex': 'fa-file-code',
-    
-    // 이미지
-    'png': 'fa-file-image', 'jpg': 'fa-file-image',
-    'jpeg': 'fa-file-image', 'gif': 'fa-file-image',
-    'svg': 'fa-file-image', 'webp': 'fa-file-image',
+    'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
+    'txt': 'fa-file-lines', 'md': 'fa-file-lines', 'rtf': 'fa-file-word',
+    'js': 'fa-file-code', 'jsx': 'fa-file-code', 'ts': 'fa-file-code',
+    'tsx': 'fa-file-code', 'py': 'fa-file-code', 'java': 'fa-file-code',
+    'cpp': 'fa-file-code', 'c': 'fa-file-code', 'html': 'fa-file-code',
+    'css': 'fa-file-code', 'php': 'fa-file-code', 'go': 'fa-file-code',
+    'rs': 'fa-file-code', 'rb': 'fa-file-code', 'tex': 'fa-file-code',
+    'png': 'fa-file-image', 'jpg': 'fa-file-image', 'jpeg': 'fa-file-image',
+    'gif': 'fa-file-image', 'svg': 'fa-file-image', 'webp': 'fa-file-image',
     'bmp': 'fa-file-image', 'ico': 'fa-file-image',
-    
-    // 압축
-    'zip': 'fa-file-zipper', 'tar': 'fa-file-zipper',
-    'gz': 'fa-file-zipper', 'rar': 'fa-file-zipper',
-    '7z': 'fa-file-zipper', 'bz2': 'fa-file-zipper',
-    
-    // 데이터
-    'json': 'fa-file-code', 'xml': 'fa-file-code',
-    'csv': 'fa-file-csv', 'xlsx': 'fa-file-excel',
-    'xls': 'fa-file-excel',
-    
-    // 미디어
-    'mp3': 'fa-file-audio', 'wav': 'fa-file-audio',
-    'ogg': 'fa-file-audio', 'flac': 'fa-file-audio',
-    'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+    'zip': 'fa-file-zipper', 'tar': 'fa-file-zipper', 'gz': 'fa-file-zipper',
+    'rar': 'fa-file-zipper', '7z': 'fa-file-zipper', 'bz2': 'fa-file-zipper',
+    'json': 'fa-file-code', 'xml': 'fa-file-code', 'csv': 'fa-file-csv',
+    'xlsx': 'fa-file-excel', 'xls': 'fa-file-excel',
+    'mp3': 'fa-file-audio', 'wav': 'fa-file-audio', 'ogg': 'fa-file-audio',
+    'flac': 'fa-file-audio', 'mp4': 'fa-file-video', 'avi': 'fa-file-video',
     'mov': 'fa-file-video', 'mkv': 'fa-file-video',
-    
-    // 기타
-    'log': 'fa-file-lines', 'bib': 'fa-file-lines',
-    'aux': 'fa-file', 'out': 'fa-file',
-    'toc': 'fa-file-lines', 'idx': 'fa-file',
-    'ind': 'fa-file', 'fls': 'fa-file',
-    'fdb_latexmk': 'fa-file', 'ilg': 'fa-file',
-    'synctex': 'fa-file',
+    'log': 'fa-file-lines', 'bib': 'fa-file-lines', 'aux': 'fa-file',
+    'out': 'fa-file', 'toc': 'fa-file-lines', 'idx': 'fa-file',
+    'ind': 'fa-file', 'fls': 'fa-file', 'fdb_latexmk': 'fa-file',
+    'ilg': 'fa-file', 'synctex': 'fa-file',
 };
 
 const FILE_COLORS = {
-    'fa-file-pdf': '#F44336',
-    'fa-file-word': '#2196F3',
-    'fa-file-code': '#4CAF50',
-    'fa-file-image': '#9C27B0',
-    'fa-file-zipper': '#FF9800',
-    'fa-file-excel': '#4CAF50',
-    'fa-file-csv': '#4CAF50',
-    'fa-file-audio': '#E91E63',
-    'fa-file-video': '#673AB7',
-    'fa-file-lines': '#607D8B',
+    'fa-file-pdf': '#F44336', 'fa-file-word': '#2196F3',
+    'fa-file-code': '#4CAF50', 'fa-file-image': '#9C27B0',
+    'fa-file-zipper': '#FF9800', 'fa-file-excel': '#217346',
+    'fa-file-csv': '#4CAF50', 'fa-file-audio': '#E91E63',
+    'fa-file-video': '#673AB7', 'fa-file-lines': '#607D8B',
 };
 
 function getFileIcon(filename) {
@@ -249,7 +291,6 @@ async function loadFiles(path) {
         tbody.innerHTML = '';
         gRows = [];
 
-        // 정렬: 폴더 먼저, 그 다음 파일
         files.sort((a, b) => {
             if (a.type === b.type) return a.name.localeCompare(b.name);
             return a.type === 'dir' ? -1 : 1;
@@ -261,8 +302,6 @@ async function loadFiles(path) {
             const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
             const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
             const size = file.size ? formatSize(file.size) : '';
-            const date = '';
-            const time = '';
             
             tr.innerHTML = `
                 <td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}">
@@ -273,14 +312,17 @@ async function loadFiles(path) {
                     </td></tr></tbody></table>
                 </td>
                 <td sortable-data="${file.size || 0}">${size}</td>
-                <td sortable-data="${Date.now()}">${date}</td>
-                <td>${time}</td>
+                <td sortable-data="${Date.now()}"></td>
+                <td></td>
             `;
             
             tr.fileData = file;
             gRows.push(tr);
             tbody.appendChild(tr);
         });
+
+        if (gRows.length < 2) return;
+        gTable.setAttribute("order", "");
 
     } catch (error) {
         tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${error.message}</td></tr>`;
@@ -313,9 +355,9 @@ async function viewFile(file) {
         } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
             contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}">`;
         } else if (file.name.match(/\.pdf$/i)) {
-            contentViewer.innerHTML = `<p>PDF 파일: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">다운로드</a></p>`;
+            contentViewer.innerHTML = `<p>PDF: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">Download</a></p>`;
         } else {
-            contentViewer.innerHTML = `<p>파일: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">다운로드</a></p>`;
+            contentViewer.innerHTML = `<p>File: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">Download</a></p>`;
         }
     } catch (error) {
         contentViewer.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
