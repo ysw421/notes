@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Notes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="./style.css" id="loginStyle">
+    <link rel="stylesheet" href="./viewer.css" id="viewerStyle" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
+</head>
+<body dir="ltr">
+    <!-- Login Section -->
+    <div id="loginSection" style="display:none;">
+        <div class="login-container">
+            <h1>🔒 Private Notes</h1>
+            <p>Enter your password</p>
+
+            <form id="loginForm">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Password"
+                    autocomplete="new-password"
+                    required
+                >
+                <button type="submit">Enter</button>
+            </form>
+
+            <div id="error" class="error"></div>
+        </div>
+    </div>
+
+    <!-- Viewer Section -->
+    <div id="viewerSection" style="display:none;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <h1 id="title" style="margin: 0; border: none; flex: 1;">Index of /</h1>
+            <button class="btn-download-all" onclick="downloadAll()" style="display:none;">
+                <i class="fa-solid fa-download"></i>Download All
+            </button>
+        </div>
+        <div class="profile-container" onclick="toggleProfileMenu()">
+            <div class="profile-circle">
+                <i class="fa-solid fa-user"></i>
+            </div>
+            <div class="profile-menu" id="profileMenu" style="display:none;">
+                <button onclick="logout(); event.stopPropagation();">
+                    <i class="fa-solid fa-sign-out-alt"></i>Logout
+                </button>
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid ThreeDLightShadow; margin-bottom: 0.6em;"></div>
+        <p id="UI_goUp" style="display:none">
+          <a class="up" href="#" id="upLink">
+            <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
+          </a>
+        </p>
+        <table id="dirTable" order="">
+         <thead>
+          <tr>
+           <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
+           <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
+           <th>Download</th>
+          </tr>
+         </thead>
+         <tbody id="tbody"></tbody>
+        </table>
+        <div id="contentViewer" class="content-viewer" style="display:none;"></div>
+    </div>
+
+    <script>
+        // Check authentication and show appropriate section
+        function checkAuth() {
+            const token = localStorage.getItem('auth_token');
+            const loginSection = document.getElementById('loginSection');
+            const viewerSection = document.getElementById('viewerSection');
+            const loginStyle = document.getElementById('loginStyle');
+            const viewerStyle = document.getElementById('viewerStyle');
+
+            if (token) {
+                loginSection.style.display = 'none';
+                viewerSection.style.display = 'block';
+                loginStyle.disabled = true;
+                viewerStyle.disabled = false;
+                initViewer();
+            } else {
+                loginSection.style.display = 'block';
+                viewerSection.style.display = 'none';
+                loginStyle.disabled = false;
+                viewerStyle.disabled = true;
+                initLogin();
+            }
+        }
+
+        // Login functionality
+        function initLogin() {
+            const form = document.getElementById('loginForm');
+            const passwordInput = document.getElementById('password');
+            const errorDiv = document.getElementById('error');
+
+            if (!form) return;
+
+            passwordInput.value = '';
+
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                errorDiv.textContent = '';
+
+                const password = passwordInput.value;
+
+                try {
+                    const apiUrl = window.location.hostname === 'localhost'
+                        ? 'http://localhost:3000/api/github-proxy'
+                        : 'https://notes-pi-sand.vercel.app/api/github-proxy';
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ password })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem('auth_token', data.token);
+                        checkAuth();
+                    } else {
+                        errorDiv.textContent = '❌ Incorrect password';
+                        passwordInput.value = '';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = '❌ Connection error: ' + error.message;
+                }
+            };
+        }
+
+        // Viewer functionality
+        const API_URL = 'https://notes-pi-sand.vercel.app/api/github-proxy';
+        let currentPath = '';
+        let gRows = [];
+        let gOrderBy = -1;
+        let gTable;
+        let gTBody;
+        let directoryCache = {};
+        let currentFileData = null;
+
+        const FILE_ICONS = {
+            'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
+            'txt': 'fa-file-lines', 'md': 'fa-file-lines', 'rtf': 'fa-file-word',
+            'js': 'fa-file-code', 'jsx': 'fa-file-code', 'ts': 'fa-file-code',
+            'tsx': 'fa-file-code', 'py': 'fa-file-code', 'java': 'fa-file-code',
+            'cpp': 'fa-file-code', 'c': 'fa-file-code', 'html': 'fa-file-code',
+            'css': 'fa-file-code', 'php': 'fa-file-code', 'go': 'fa-file-code',
+            'rs': 'fa-file-code', 'rb': 'fa-file-code', 'tex': 'fa-file-code',
+            'png': 'fa-file-image', 'jpg': 'fa-file-image', 'jpeg': 'fa-file-image',
+            'gif': 'fa-file-image', 'svg': 'fa-file-image', 'webp': 'fa-file-image',
+            'bmp': 'fa-file-image', 'ico': 'fa-file-image',
+            'zip': 'fa-file-zipper', 'tar': 'fa-file-zipper', 'gz': 'fa-file-zipper',
+            'rar': 'fa-file-zipper', '7z': 'fa-file-zipper', 'bz2': 'fa-file-zipper',
+            'json': 'fa-file-code', 'xml': 'fa-file-code', 'csv': 'fa-file-csv',
+            'xlsx': 'fa-file-excel', 'xls': 'fa-file-excel',
+            'mp3': 'fa-file-audio', 'wav': 'fa-file-audio', 'ogg': 'fa-file-audio',
+            'flac': 'fa-file-audio', 'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+            'mov': 'fa-file-video', 'mkv': 'fa-file-video',
+            'log': 'fa-file-lines', 'bib': 'fa-file-lines', 'aux': 'fa-file',
+            'out': 'fa-file', 'toc': 'fa-file-lines', 'idx': 'fa-file',
+            'ind': 'fa-file', 'fls': 'fa-file', 'fdb_latexmk': 'fa-file',
+            'ilg': 'fa-file', 'synctex': 'fa-file',
+        };
+
+        const FILE_COLORS = {
+            'fa-file-pdf': '#F44336', 'fa-file-word': '#2196F3',
+            'fa-file-code': '#4CAF50', 'fa-file-image': '#9C27B0',
+            'fa-file-zipper': '#FF9800', 'fa-file-excel': '#217346',
+            'fa-file-csv': '#4CAF50', 'fa-file-audio': '#E91E63',
+            'fa-file-video': '#673AB7', 'fa-file-lines': '#607D8B',
+        };
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return FILE_ICONS[ext] || 'fa-file';
+        }
+
+        function getIconColor(iconClass) {
+            return FILE_COLORS[iconClass] || '#757575';
+        }
+
+        function initViewer() {
+            gTable = document.getElementById("dirTable");
+            gTBody = document.getElementById("tbody");
+
+            window.removeEventListener('hashchange', handleHashChange);
+            window.addEventListener('hashchange', handleHashChange);
+            handleHashChange();
+        }
+
+        function handleHashChange() {
+            const hash = window.location.hash.slice(1);
+            const path = decodeURIComponent(hash || '');
+            loadFiles(path);
+        }
+
+        async function loadFiles(path) {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                checkAuth();
+                return;
+            }
+
+            const tbody = document.getElementById('tbody');
+            const title = document.getElementById('title');
+            const goUp = document.getElementById('UI_goUp');
+            const upLink = document.getElementById('upLink');
+            const contentViewer = document.getElementById('contentViewer');
+
+            contentViewer.style.display = 'none';
+            gTable.style.display = 'table';
+            currentFileData = null;
+
+            currentPath = path;
+            title.textContent = 'Index of /' + path;
+
+            if (path) {
+                const parentPath = path.split('/').slice(0, -1).join('/');
+                upLink.href = '#' + encodeURIComponent(parentPath);
+                goUp.style.display = 'block';
+            } else {
+                goUp.style.display = 'none';
+            }
+
+            const downloadAllBtn = document.querySelector('.btn-download-all');
+
+            if (directoryCache[path]) {
+                renderFiles(directoryCache[path]);
+                prefetchSubfolders(directoryCache[path]);
+                return;
+            }
+
+            if (downloadAllBtn) {
+                downloadAllBtn.disabled = true;
+                downloadAllBtn.style.display = 'inline-flex';
+            }
+
+            tbody.innerHTML = '<tr style="height:0;visibility:hidden;"><td></td><td></td><td></td></tr><tr><td colspan="3">Loading...</td></tr>';
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        checkAuth();
+                        return;
+                    }
+                    throw new Error('Request failed');
+                }
+
+                const files = await response.json();
+
+                directoryCache[path] = files;
+
+                renderFiles(files);
+
+                prefetchSubfolders(files);
+
+            } catch (error) {
+                tbody.innerHTML = `<tr style="height:0;visibility:hidden;"><td></td><td></td><td></td></tr><tr><td colspan="3" style="color:red;">Error: ${error.message}</td></tr>`;
+            }
+        }
+
+        async function prefetchSubfolders(files) {
+            const token = localStorage.getItem('auth_token');
+            const folders = files.filter(f => f.type === 'dir');
+
+            for (const folder of folders) {
+                if (!directoryCache[folder.path]) {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, path: folder.path })
+                        });
+
+                        if (response.ok) {
+                            const subFiles = await response.json();
+                            directoryCache[folder.path] = subFiles;
+                        }
+                    } catch (error) {
+                    }
+                }
+            }
+        }
+
+        function renderFiles(files) {
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+            gRows = [];
+
+            const downloadAllBtn = document.querySelector('.btn-download-all');
+            const hasFiles = files.some(f => f.type === 'file');
+            if (downloadAllBtn) {
+                downloadAllBtn.style.display = hasFiles ? 'inline-flex' : 'none';
+                downloadAllBtn.disabled = false;
+            }
+
+            files.sort((a, b) => {
+                if (a.type === b.type) return a.name.localeCompare(b.name);
+                return a.type === 'dir' ? -1 : 1;
+            });
+
+            files.forEach(file => {
+                const tr = document.createElement('tr');
+                const isDir = file.type === 'dir';
+                const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
+                const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
+                const size = file.size ? formatSize(file.size) : '';
+
+                const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
+                const clickHandler = isDir ? '' : `onclick="openFile(this); return false;"`;
+
+                const downloadBtn = isDir
+                    ? ''
+                    : `<button class="btn-download-inline" onclick="downloadFileInline(this); event.stopPropagation();"><i class="fa-solid fa-download"></i></button>`;
+
+                tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td>${downloadBtn}</td>`;
+
+                tr.fileData = file;
+                gRows.push(tr);
+                tbody.appendChild(tr);
+            });
+
+            if (gRows.length < 2) return;
+            gTable.setAttribute("order", "");
+        }
+
+        async function openFile(element) {
+            const token = localStorage.getItem('auth_token');
+            const tr = element.closest('table.ellipsis').parentElement.parentElement;
+            const file = tr.fileData;
+
+            if (!file) {
+                alert('File data not found');
+                return;
+            }
+
+            try {
+                if (!file.content) {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token, path: file.path })
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            localStorage.removeItem('auth_token');
+                            checkAuth();
+                            return;
+                        }
+                        throw new Error('Failed to load file');
+                    }
+
+                    const fileData = await response.json();
+                    file.content = fileData.content;
+                }
+
+                const byteCharacters = atob(file.content);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+
+                let mimeType = 'application/octet-stream';
+                if (file.name.match(/\.(txt|md|log)$/i)) {
+                    mimeType = 'text/plain';
+                } else if (file.name.match(/\.(html|htm)$/i)) {
+                    mimeType = 'text/html';
+                } else if (file.name.match(/\.(js)$/i)) {
+                    mimeType = 'text/javascript';
+                } else if (file.name.match(/\.(json)$/i)) {
+                    mimeType = 'application/json';
+                } else if (file.name.match(/\.(css)$/i)) {
+                    mimeType = 'text/css';
+                } else if (file.name.match(/\.(pdf)$/i)) {
+                    mimeType = 'application/pdf';
+                } else if (file.name.match(/\.(png)$/i)) {
+                    mimeType = 'image/png';
+                } else if (file.name.match(/\.(jpg|jpeg)$/i)) {
+                    mimeType = 'image/jpeg';
+                } else if (file.name.match(/\.(gif)$/i)) {
+                    mimeType = 'image/gif';
+                } else if (file.name.match(/\.(svg)$/i)) {
+                    mimeType = 'image/svg+xml';
+                } else if (file.name.match(/\.(webp)$/i)) {
+                    mimeType = 'image/webp';
+                }
+
+                const blob = new Blob([byteArray], { type: mimeType });
+                const url = window.URL.createObjectURL(blob);
+                window.open(url, '_blank');
+
+                setTimeout(() => {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+            } catch (error) {
+                alert('Failed to open file: ' + error.message);
+            }
+        }
+
+        async function downloadFileInline(element) {
+            const token = localStorage.getItem('auth_token');
+            const tr = element.closest('tr');
+            const file = tr ? tr.fileData : null;
+
+            if (!file) {
+                alert('File data not found');
+                return;
+            }
+
+            try {
+                if (!file.content) {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token, path: file.path })
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            localStorage.removeItem('auth_token');
+                            checkAuth();
+                            return;
+                        }
+                        throw new Error('Failed to load file');
+                    }
+
+                    const fileData = await response.json();
+                    file.content = fileData.content;
+                }
+
+                const byteCharacters = atob(file.content);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Download failed: ' + error.message);
+            }
+        }
+
+        async function downloadAll() {
+            const token = localStorage.getItem('auth_token');
+            const files = directoryCache[currentPath] || [];
+            const fileItems = files.filter(f => f.type === 'file');
+
+            if (fileItems.length === 0) {
+                alert('No files to download');
+                return;
+            }
+
+            const downloadBtn = document.querySelector('.btn-download-all');
+            const originalText = downloadBtn.innerHTML;
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Downloading...';
+
+            try {
+                const zip = new JSZip();
+
+                for (const file of fileItems) {
+                    if (!file.content) {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token, path: file.path })
+                        });
+
+                        if (!response.ok) {
+                            if (response.status === 401) {
+                                localStorage.removeItem('auth_token');
+                                checkAuth();
+                                return;
+                            }
+                            throw new Error(`Failed to load ${file.name}`);
+                        }
+
+                        const fileData = await response.json();
+                        file.content = fileData.content;
+                    }
+
+                    const byteCharacters = atob(file.content);
+                    const byteNumbers = new Array(byteCharacters.length);
+                    for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+
+                    zip.file(file.name, byteArray);
+                }
+
+                const blob = await zip.generateAsync({ type: 'blob' });
+
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const folderName = currentPath ? currentPath.split('/').pop() : 'files';
+                a.download = `${folderName}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert('Download failed: ' + error.message);
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalText;
+            }
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+            return Math.round(bytes / (1024 * 1024)) + ' MB';
+        }
+
+        function compareRows(rowA, rowB) {
+            const a = rowA.cells[gOrderBy].getAttribute("sortable-data") || "";
+            const b = rowB.cells[gOrderBy].getAttribute("sortable-data") || "";
+            let numA = +a;
+            let numB = +b;
+
+            if (a == numA && b == numB) {
+                return numA - numB;
+            }
+            return a.toLowerCase().localeCompare(b.toLowerCase());
+        }
+
+        function orderBy(column) {
+            if (!gRows.length) return;
+
+            let order;
+            if (gOrderBy == column) {
+                order = gTable.getAttribute("order") == "asc" ? "desc" : "asc";
+            } else {
+                order = "desc";
+                gOrderBy = column;
+            }
+
+            gRows.sort(compareRows);
+
+            gTable.removeChild(gTBody);
+            gTable.setAttribute("order", order);
+            gTable.setAttribute("order-by", column);
+
+            if (order == "asc") {
+                gRows.forEach(row => gTBody.appendChild(row));
+            } else {
+                gRows.reverse().forEach(row => gTBody.appendChild(row));
+            }
+
+            gTable.appendChild(gTBody);
+        }
+
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profileMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function logout() {
+            localStorage.removeItem('auth_token');
+            checkAuth();
+        }
+
+        document.addEventListener('click', function(event) {
+            const profileContainer = document.querySelector('.profile-container');
+            const profileMenu = document.getElementById('profileMenu');
+            if (profileMenu && profileContainer && !profileContainer.contains(event.target)) {
+                profileMenu.style.display = 'none';
+            }
+        });
+
+        // Initialize on page load
+        checkAuth();
+
+        window.addEventListener('pageshow', function(event) {
+            checkAuth();
+        });
+    </script>
+</body>
+</html>
