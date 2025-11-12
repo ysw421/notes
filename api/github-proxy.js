@@ -31,6 +31,15 @@ export default async function handler(req, res) {
     }
 
     try {
+        // 버전 체크 - Vercel이 최신 코드를 사용하는지 확인
+        if (req.body?.version_check === true) {
+            return res.status(200).json({
+                version: '2025-11-12-v2',
+                timestamp: new Date().toISOString(),
+                body: req.body
+            });
+        }
+
         // 디버깅: req.body 내용 확인
         console.log('Request body:', req.body);
         console.log('Body type:', typeof req.body);
