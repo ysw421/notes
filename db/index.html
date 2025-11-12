@@ -15,14 +15,21 @@
     <div id="loginSection" style="display:none;">
         <div class="login-container">
             <h1>🔒 Private Notes</h1>
-            <p>Enter your password</p>
+            <p>Enter your credentials</p>
 
             <form id="loginForm">
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Username"
+                    autocomplete="username"
+                    required
+                >
                 <input
                     type="password"
                     id="password"
                     placeholder="Password"
-                    autocomplete="new-password"
+                    autocomplete="current-password"
                     required
                 >
                 <button type="submit">Enter</button>
@@ -79,6 +86,18 @@
             const viewerStyle = document.getElementById('viewerStyle');
 
             if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    const { role, permissions } = payload;
+
+                    if (role !== 'admin' && !window.location.hash) {
+                        const basePath = permissions.basePath.replace(/^\//, '');
+                        window.location.hash = basePath;
+                    }
+                } catch (error) {
+                    console.error('Failed to decode token:', error);
+                }
+
                 loginSection.style.display = 'none';
                 viewerSection.style.display = 'block';
                 loginStyle.disabled = true;
@@ -96,17 +115,20 @@
         // Login functionality
         function initLogin() {
             const form = document.getElementById('loginForm');
+            const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const errorDiv = document.getElementById('error');
 
             if (!form) return;
 
+            usernameInput.value = '';
             passwordInput.value = '';
 
             form.onsubmit = async (e) => {
                 e.preventDefault();
                 errorDiv.textContent = '';
 
+                const username = usernameInput.value;
                 const password = passwordInput.value;
 
                 try {
@@ -119,7 +141,7 @@
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ password })
+                        body: JSON.stringify({ username, password })
                     });
 
                     if (response.ok) {
@@ -127,7 +149,7 @@
                         localStorage.setItem('auth_token', data.token);
                         checkAuth();
                     } else {
-                        errorDiv.textContent = '❌ Incorrect password';
+                        errorDiv.textContent = '❌ Incorrect username or password';
                         passwordInput.value = '';
                     }
                 } catch (error) {
@@ -261,7 +283,31 @@
                     throw new Error('Request failed');
                 }
 
-                const files = await response.json();
+                let files = await response.json();
+
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const { role, permissions } = payload;
+
+                if (role !== 'admin') {
+                    files = files.filter(file => {
+                        const filePath = '/' + file.path;
+
+                        const isDenied = permissions.denied.some(deniedPath =>
+                            filePath.startsWith(deniedPath)
+                        );
+
+                        if (isDenied) return false;
+
+                        if (permissions.allowed.length > 0) {
+                            const isAllowed = permissions.allowed.some(allowedPath =>
+                                filePath.startsWith(allowedPath) || allowedPath.startsWith(filePath)
+                            );
+                            return isAllowed;
+                        }
+
+                        return true;
+                    });
+                }
 
                 directoryCache[path] = files;
 
