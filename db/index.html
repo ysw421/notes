@@ -292,18 +292,17 @@
                     files = files.filter(file => {
                         const filePath = '/' + file.path;
 
+                        const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
+                            filePath.startsWith(allowedPath) || allowedPath.startsWith(filePath)
+                        );
+
+                        if (isExplicitlyAllowed) return true;
+
                         const isDenied = permissions.denied.some(deniedPath =>
                             filePath.startsWith(deniedPath)
                         );
 
                         if (isDenied) return false;
-
-                        if (permissions.allowed.length > 0) {
-                            const isAllowed = permissions.allowed.some(allowedPath =>
-                                filePath.startsWith(allowedPath) || allowedPath.startsWith(filePath)
-                            );
-                            return isAllowed;
-                        }
 
                         return true;
                     });

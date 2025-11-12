@@ -85,20 +85,17 @@ export default async function handler(req, res) {
                     return res.status(403).json({ error: 'Access denied to this path' });
                 }
 
-                const isDenied = permissions.denied.some(deniedPath =>
-                    normalizedPath.startsWith(deniedPath)
+                const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
+                    normalizedPath.startsWith(allowedPath)
                 );
 
-                if (isDenied) {
-                    return res.status(403).json({ error: 'Access denied to this path' });
-                }
-
-                if (permissions.allowed.length > 0) {
-                    const isAllowed = permissions.allowed.some(allowedPath =>
-                        normalizedPath.startsWith(allowedPath)
+                if (isExplicitlyAllowed) {
+                } else {
+                    const isDenied = permissions.denied.some(deniedPath =>
+                        normalizedPath.startsWith(deniedPath)
                     );
 
-                    if (!isAllowed && normalizedPath !== basePath) {
+                    if (isDenied) {
                         return res.status(403).json({ error: 'Access denied to this path' });
                     }
                 }
