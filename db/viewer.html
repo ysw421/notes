@@ -45,7 +45,7 @@
 <script>
 const token = localStorage.getItem('auth_token');
 if (!token) {
-    window.location.href = 'index';
+    window.location.href = './';
     throw new Error('Unauthorized');
 }
 
@@ -162,7 +162,7 @@ async function loadFiles(path) {
         if (!response.ok) {
             if (response.status === 401) {
                 localStorage.removeItem('auth_token');
-                window.location.href = 'index';
+                window.location.href = './';
                 return;
             }
             throw new Error('Request failed');
@@ -265,7 +265,7 @@ async function openFile(element) {
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('auth_token');
-                    window.location.href = 'index';
+                    window.location.href = './';
                     return;
                 }
                 throw new Error('Failed to load file');
@@ -343,7 +343,7 @@ async function downloadFileInline(element) {
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('auth_token');
-                    window.location.href = 'index';
+                    window.location.href = './';
                     return;
                 }
                 throw new Error('Failed to load file');
@@ -401,7 +401,7 @@ function downloadFile() {
 
 function logout() {
     localStorage.removeItem('auth_token');
-    window.location.reload();
+    window.location.href = './';
 }
 
 async function downloadFolder(element) {
@@ -442,7 +442,7 @@ async function addFolderToZip(zip, folderPath, zipPath) {
     if (!response.ok) {
         if (response.status === 401) {
             localStorage.removeItem('auth_token');
-            window.location.href = 'index';
+            window.location.href = './';
             return;
         }
         throw new Error(`Failed to load folder ${folderPath}`);
@@ -507,7 +507,7 @@ async function downloadAll() {
                 if (!response.ok) {
                     if (response.status === 401) {
                         localStorage.removeItem('auth_token');
-                        window.location.href = 'index';
+                        window.location.href = './';
                         return;
                     }
                     throw new Error(`Failed to load ${file.name}`);
