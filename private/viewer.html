@@ -48,10 +48,10 @@ table[order] > thead > tr > th::after {
   text-align: end;
 }
 table[order="asc"] > thead > tr > th::after {
-  content: "\2193"; /* DOWNWARDS ARROW (U+2193) */
+  content: "\2193";
 }
 table[order="desc"] > thead > tr > th::after {
-  content: "\2191"; /* UPWARDS ARROW (U+2191) */
+  content: "\2191";
 }
 table[order][order-by="0"] > thead > tr > th:first-child > a ,
 table[order][order-by="1"] > thead > tr > th:first-child + th > a ,
@@ -78,11 +78,9 @@ table.ellipsis > tbody > tr > td {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* name */
 th:first-child {
   padding-inline-end: 2em;
 }
-/* size */
 th:first-child + th {
   padding-inline-end: 1em;
 }
@@ -90,12 +88,10 @@ td:first-child + td {
   text-align: end;
   padding-inline-end: 1em;
 }
-/* date */
 td:first-child + td + td {
   padding-inline-start: 1em;
   padding-inline-end: .5em;
 }
-/* time */
 td:first-child + td + td + td {
   padding-inline-start: .5em;
 }
@@ -122,7 +118,6 @@ a {
 a:hover {
   text-decoration: underline;
 }
-/* ensure multiple spaces are shown correctly. */
 td:first-child > a {
   white-space: pre;
 }
@@ -141,7 +136,6 @@ table {
 thead {
   font-size: 130%;
 }
-/* last modified */
 th:last-child {
   text-align: center;
 }
@@ -151,7 +145,6 @@ th:hover > a {
 body > table > tbody > tr:hover {
   outline: 1px solid ThreeDLightShadow;
 }
-/* let 'Size' and 'Last Modified' take only as much space as they need and 'Name' all the rest */
 td:not(:first-child) {
   width: 0;
 }
@@ -194,12 +187,50 @@ td:not(:first-child) {
 .content-viewer img {
   max-width: 100%;
 }
+.file-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+.btn {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-back {
+  background: #f0f0f0;
+  color: #333;
+}
+.btn-back:hover {
+  background: #e0e0e0;
+}
+.btn-download {
+  background: #4CAF50;
+  color: white;
+  border-color: #4CAF50;
+}
+.btn-download:hover {
+  background: #45a049;
+}
+.file-info {
+  color: #666;
+  font-size: 14px;
+  margin-left: auto;
+}
 </style>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2260BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 <title>Index of /</title>
 </head>
 <body dir="ltr" style="display:none;">
-<button class="logout-btn" onclick="logout()">로그아웃</button>
+<button class="logout-btn" onclick="logout()">Logout</button>
 <h1 id="title">Index of /</h1>
 <p id="UI_goUp" style="display:none">
   <a class="up" href="#" id="upLink">
@@ -218,14 +249,12 @@ td:not(:first-child) {
 </table>
 <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 <script>
-// 비밀번호 확인 (먼저 체크)
 const password = localStorage.getItem('auth_password');
 if (!password) {
     window.location.href = 'index.html';
-    throw new Error('Unauthorized'); // 이후 코드 실행 중단
+    throw new Error('Unauthorized');
 }
 
-// 인증 성공 - body 표시
 document.body.style.display = 'block';
 
 const API_URL = 'https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy';
@@ -234,6 +263,8 @@ let gRows = [];
 let gOrderBy = 0;
 let gTable;
 let gTBody;
+let directoryCache = {};
+let currentFileData = null;
 
 const FILE_ICONS = {
     'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
@@ -280,13 +311,12 @@ document.addEventListener("DOMContentLoaded", function() {
     gTable = document.getElementById("dirTable");
     gTBody = document.getElementById("tbody");
 
-    // Handle hash-based routing
     window.addEventListener('hashchange', handleHashChange);
     handleHashChange();
 });
 
 function handleHashChange() {
-    const hash = window.location.hash.slice(1); // Remove the '#'
+    const hash = window.location.hash.slice(1);
     const path = decodeURIComponent(hash || '');
     loadFiles(path);
 }
@@ -298,14 +328,13 @@ async function loadFiles(path) {
     const upLink = document.getElementById('upLink');
     const contentViewer = document.getElementById('contentViewer');
 
-    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
     contentViewer.style.display = 'none';
     gTable.style.display = 'table';
+    currentFileData = null;
 
     currentPath = path;
     title.textContent = 'Index of /' + path;
 
-    // Update "Up" link with parent path
     if (path) {
         const parentPath = path.split('/').slice(0, -1).join('/');
         upLink.href = '#' + encodeURIComponent(parentPath);
@@ -313,6 +342,13 @@ async function loadFiles(path) {
     } else {
         goUp.style.display = 'none';
     }
+
+    if (directoryCache[path]) {
+        renderFiles(directoryCache[path]);
+        return;
+    }
+
+    tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
 
     try {
         const response = await fetch(API_URL, {
@@ -324,60 +360,112 @@ async function loadFiles(path) {
         if (!response.ok) throw new Error('Authentication failed');
 
         const files = await response.json();
-        tbody.innerHTML = '';
-        gRows = [];
 
-        files.sort((a, b) => {
-            if (a.type === b.type) return a.name.localeCompare(b.name);
-            return a.type === 'dir' ? -1 : 1;
-        });
+        directoryCache[path] = files;
 
-        files.forEach(file => {
-            const tr = document.createElement('tr');
-            const isDir = file.type === 'dir';
-            const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
-            const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
-            const size = file.size ? formatSize(file.size) : '';
-
-            // Create path-dependent URL for directories, data attribute for files
-            const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
-            const clickHandler = isDir ? '' : `onclick="viewFile(this.closest('tr').fileData); return false;"`;
-
-            tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="${Date.now()}"></td><td></td>`;
-
-            tr.fileData = file;
-            gRows.push(tr);
-            tbody.appendChild(tr);
-        });
-
-        if (gRows.length < 2) return;
-        gTable.setAttribute("order", "");
+        renderFiles(files);
 
     } catch (error) {
         tbody.innerHTML = `<tr><td colspan="4" style="color:red;">Error: ${error.message}</td></tr>`;
     }
 }
 
+function renderFiles(files) {
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    gRows = [];
+
+    files.sort((a, b) => {
+        if (a.type === b.type) return a.name.localeCompare(b.name);
+        return a.type === 'dir' ? -1 : 1;
+    });
+
+    files.forEach(file => {
+        const tr = document.createElement('tr');
+        const isDir = file.type === 'dir';
+        const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
+        const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
+        const size = file.size ? formatSize(file.size) : '';
+
+        const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
+        const clickHandler = isDir ? '' : `onclick="viewFile(this.closest('tr').fileData); return false;"`;
+
+        tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="${Date.now()}"></td><td></td>`;
+
+        tr.fileData = file;
+        gRows.push(tr);
+        tbody.appendChild(tr);
+    });
+
+    if (gRows.length < 2) return;
+    gTable.setAttribute("order", "");
+}
+
 async function viewFile(file) {
     const contentViewer = document.getElementById('contentViewer');
     gTable.style.display = 'none';
     contentViewer.style.display = 'block';
-    contentViewer.innerHTML = '<p>Loading file...</p>';
+    currentFileData = file;
+
+    const actionsHtml = `
+        <div class="file-actions">
+            <button class="btn btn-back" onclick="goBackToDirectory()">
+                <i class="fa-solid fa-arrow-left"></i>Back
+            </button>
+            <button class="btn btn-download" onclick="downloadFile()">
+                <i class="fa-solid fa-download"></i>Download
+            </button>
+            <span class="file-info">${file.name} (${formatSize(file.size)})</span>
+        </div>
+    `;
+
+    contentViewer.innerHTML = actionsHtml + '<div id="fileContent"><p>Loading file...</p></div>';
+    const fileContentDiv = document.getElementById('fileContent');
 
     try {
         const content = atob(file.content);
-        
-        if (file.name.match(/\.(txt|md|js|json|py|html|css|xml|log|tex|bib|c|cpp|java|php|go|rs)$/i)) {
-            contentViewer.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
-        } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i)) {
-            contentViewer.innerHTML = `<img src="data:image/${file.name.split('.').pop()};base64,${file.content}">`;
+
+        if (file.name.match(/\.(txt|md|js|json|py|html|css|xml|log|tex|bib|c|cpp|java|php|go|rs|sh|yml|yaml)$/i)) {
+            fileContentDiv.innerHTML = `<pre>${escapeHtml(content)}</pre>`;
+        } else if (file.name.match(/\.(png|jpg|jpeg|gif|webp|svg|bmp)$/i)) {
+            const mimeType = file.name.match(/\.svg$/i) ? 'svg+xml' : file.name.split('.').pop();
+            fileContentDiv.innerHTML = `<img src="data:image/${mimeType};base64,${file.content}" alt="${file.name}">`;
         } else if (file.name.match(/\.pdf$/i)) {
-            contentViewer.innerHTML = `<p>PDF: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">Download</a></p>`;
+            fileContentDiv.innerHTML = `<p>Please download to view PDF file.</p>`;
         } else {
-            contentViewer.innerHTML = `<p>File: ${file.name} (${formatSize(file.size)})</p><p><a href="${file.download_url}" target="_blank">Download</a></p>`;
+            fileContentDiv.innerHTML = `<p>Preview not supported. Please click download button.</p>`;
         }
     } catch (error) {
-        contentViewer.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+        fileContentDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+    }
+}
+
+function goBackToDirectory() {
+    window.location.hash = '#' + encodeURIComponent(currentPath);
+}
+
+function downloadFile() {
+    if (!currentFileData) return;
+
+    try {
+        const byteCharacters = atob(currentFileData.content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = currentFileData.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        alert('Download failed: ' + error.message);
     }
 }
 

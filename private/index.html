@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,19 +9,19 @@
 <body>
     <div class="login-container">
         <h1>🔒 Private Notes</h1>
-        <p>비밀번호를 입력하세요</p>
-        
+        <p>Enter your password</p>
+
         <form id="loginForm">
-            <input 
-                type="password" 
-                id="password" 
+            <input
+                type="password"
+                id="password"
                 placeholder="Password"
                 autocomplete="off"
                 required
             >
-            <button type="submit">입장</button>
+            <button type="submit">Enter</button>
         </form>
-        
+
         <div id="error" class="error"></div>
     </div>
 
@@ -37,7 +37,6 @@
             const password = passwordInput.value;
 
             try {
-                // Vercel Function 호출 (테스트)
                 const response = await fetch('https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy', {
                     method: 'POST',
                     headers: {
@@ -47,15 +46,14 @@
                 });
 
                 if (response.ok) {
-                    // 비밀번호 저장 (모든 탭에서 유지)
                     localStorage.setItem('auth_password', password);
                     window.location.href = 'viewer.html';
                 } else {
-                    errorDiv.textContent = '❌ 비밀번호가 올바르지 않습니다';
+                    errorDiv.textContent = '❌ Incorrect password';
                     passwordInput.value = '';
                 }
             } catch (error) {
-                errorDiv.textContent = '❌ 연결 오류: ' + error.message;
+                errorDiv.textContent = '❌ Connection error: ' + error.message;
             }
         });
     </script>
