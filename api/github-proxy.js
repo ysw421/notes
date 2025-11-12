@@ -30,7 +30,13 @@ export default async function handler(req, res) {
     }
 
     try {
+        // 디버깅: req.body 내용 확인
+        console.log('Request body:', req.body);
+        console.log('Body type:', typeof req.body);
+
         const { password, token, path = '' } = req.body;
+
+        console.log('Parsed - password:', password, 'token:', token, 'path:', path);
 
         // 로그인 요청 (비밀번호로 토큰 발급)
         if (password && !token) {
