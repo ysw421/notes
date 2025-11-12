@@ -242,12 +242,36 @@
             currentFileData = null;
 
             currentPath = path;
-            title.textContent = 'Index of /' + path;
+
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const { role, permissions } = payload;
+
+            let displayPath = path;
+            if (role !== 'admin') {
+                const basePath = permissions.basePath.replace(/^\//, '');
+                if (path === basePath) {
+                    displayPath = '';
+                } else if (path.startsWith(basePath + '/')) {
+                    displayPath = path.substring(basePath.length + 1);
+                }
+            }
+
+            title.textContent = 'Index of /' + displayPath;
 
             if (path) {
                 const parentPath = path.split('/').slice(0, -1).join('/');
                 upLink.href = '#' + encodeURIComponent(parentPath);
-                goUp.style.display = 'block';
+
+                if (role !== 'admin') {
+                    const basePath = permissions.basePath.replace(/^\//, '');
+                    if (path === basePath) {
+                        goUp.style.display = 'none';
+                    } else {
+                        goUp.style.display = 'block';
+                    }
+                } else {
+                    goUp.style.display = 'block';
+                }
             } else {
                 goUp.style.display = 'none';
             }
@@ -292,17 +316,16 @@
                     files = files.filter(file => {
                         const filePath = '/' + file.path;
 
-                        const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
-                            filePath.startsWith(allowedPath) || allowedPath.startsWith(filePath)
-                        );
-
-                        if (isExplicitlyAllowed) return true;
-
                         const isDenied = permissions.denied.some(deniedPath =>
                             filePath.startsWith(deniedPath)
                         );
 
-                        if (isDenied) return false;
+                        if (isDenied) {
+                            const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
+                                filePath.startsWith(allowedPath) || allowedPath.startsWith(filePath + '/')
+                            );
+                            return isExplicitlyAllowed;
+                        }
 
                         return true;
                     });
@@ -359,12 +382,26 @@
                 return a.type === 'dir' ? -1 : 1;
             });
 
+            const token = localStorage.getItem('auth_token');
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const { role, permissions } = payload;
+
             files.forEach(file => {
                 const tr = document.createElement('tr');
                 const isDir = file.type === 'dir';
                 const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
                 const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
                 const size = file.size ? formatSize(file.size) : '';
+
+                let displayPath = file.path;
+                if (role !== 'admin') {
+                    const basePath = permissions.basePath.replace(/^\//, '');
+                    if (file.path.startsWith(basePath + '/')) {
+                        displayPath = file.path.substring(basePath.length + 1);
+                    } else if (file.path === basePath) {
+                        displayPath = '';
+                    }
+                }
 
                 const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
                 const clickHandler = isDir ? '' : `onclick="openFile(this); return false;"`;
