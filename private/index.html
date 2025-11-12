@@ -46,7 +46,7 @@
                 });
 
                 if (response.ok) {
-                    localStorage.setItem('auth_password', password);
+                    sessionStorage.setItem('auth_password', password);
                     window.location.href = 'viewer.html';
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';

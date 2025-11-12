@@ -249,7 +249,7 @@ td:not(:first-child) {
 </table>
 <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 <script>
-const password = localStorage.getItem('auth_password');
+const password = sessionStorage.getItem('auth_password');
 if (!password) {
     window.location.href = 'index.html';
     throw new Error('Unauthorized');
@@ -470,7 +470,7 @@ function downloadFile() {
 }
 
 function logout() {
-    localStorage.removeItem('auth_password');
+    sessionStorage.removeItem('auth_password');
     window.location.href = 'index.html';
 }
 
