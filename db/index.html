@@ -302,30 +302,7 @@
                     throw new Error('Request failed');
                 }
 
-                let files = await response.json();
-
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const { role, permissions } = payload;
-
-                if (role !== 'admin') {
-                    files = files.filter(file => {
-                        const filePath = '/' + file.path;
-
-                        const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
-                            filePath === allowedPath || filePath.startsWith(allowedPath + '/')
-                        );
-
-                        if (isExplicitlyAllowed) {
-                            return true;
-                        }
-
-                        const isDenied = permissions.denied.some(deniedPath =>
-                            filePath === deniedPath || filePath.startsWith(deniedPath + '/')
-                        );
-
-                        return !isDenied;
-                    });
-                }
+                const files = await response.json();
 
                 directoryCache[path] = files;
 
@@ -378,6 +355,10 @@
                 return a.type === 'dir' ? -1 : 1;
             });
 
+            const token = localStorage.getItem('auth_token');
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const { role, permissions } = payload;
+
             files.forEach(file => {
                 const tr = document.createElement('tr');
                 const isDir = file.type === 'dir';
@@ -385,14 +366,37 @@
                 const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
                 const size = file.size ? formatSize(file.size) : '';
 
-                const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
-                const clickHandler = isDir ? '' : `onclick="openFile(this); return false;"`;
+                let hasAccess = true;
+                let fileName = file.name;
 
-                const downloadBtn = isDir
+                if (role !== 'admin') {
+                    const filePath = '/' + file.path;
+
+                    const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
+                        filePath === allowedPath || filePath.startsWith(allowedPath + '/')
+                    );
+
+                    if (!isExplicitlyAllowed) {
+                        const isDenied = permissions.denied.some(deniedPath =>
+                            filePath === deniedPath || filePath.startsWith(deniedPath + '/')
+                        );
+
+                        if (isDenied) {
+                            hasAccess = false;
+                            fileName = '🔒 Locked';
+                        }
+                    }
+                }
+
+                const linkHref = hasAccess ? (isDir ? '#' + encodeURIComponent(file.path) : '#') : '#';
+                const clickHandler = hasAccess ? (isDir ? '' : `onclick="openFile(this); return false;"`) : 'onclick="return false;"';
+                const linkStyle = hasAccess ? '' : 'style="cursor: not-allowed; opacity: 0.5;"';
+
+                const downloadBtn = (isDir || !hasAccess)
                     ? ''
                     : `<button class="btn-download-inline" onclick="downloadFileInline(this); event.stopPropagation();"><i class="fa-solid fa-download"></i></button>`;
 
-                tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td>${downloadBtn}</td>`;
+                tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler} ${linkStyle}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${fileName}${isDir && hasAccess ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${hasAccess ? size : ''}</td><td>${downloadBtn}</td>`;
 
                 tr.fileData = file;
                 gRows.push(tr);
