@@ -34,7 +34,8 @@
 
         const existingToken = localStorage.getItem('auth_token');
         if (existingToken) {
-            window.location.href = 'viewer';
+            const viewerUrl = window.location.hostname === 'localhost' ? 'viewer.html' : 'viewer';
+            window.location.href = viewerUrl;
         }
 
         form.addEventListener('submit', async (e) => {
@@ -59,7 +60,8 @@
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('auth_token', data.token);
-                    window.location.href = 'viewer';
+                    const viewerUrl = window.location.hostname === 'localhost' ? 'viewer.html' : 'viewer';
+                    window.location.href = viewerUrl;
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';
                     passwordInput.value = '';

@@ -4,12 +4,18 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="viewer.css">
-<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2260BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 <title>Index of /</title>
 </head>
 <body dir="ltr" style="display:none;">
 <button class="logout-btn" onclick="logout()">Logout</button>
-<h1 id="title">Index of /</h1>
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6em; border-bottom: 1px solid ThreeDLightShadow;">
+    <h1 id="title" style="margin: 0; border: none;">Index of /</h1>
+    <button class="btn-download-all" onclick="downloadAll()" style="display:none;">
+        <i class="fa-solid fa-download"></i>Download All
+    </button>
+</div>
 <p id="UI_goUp" style="display:none">
   <a class="up" href="#" id="upLink">
     <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
@@ -20,7 +26,7 @@
   <tr>
    <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
    <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
-   <th colspan="2"><a href="#" onclick="orderBy(2); return false;">Last Modified</a></th>
+   <th></th>
   </tr>
  </thead>
  <tbody id="tbody"></tbody>
@@ -29,7 +35,8 @@
 <script>
 const token = localStorage.getItem('auth_token');
 if (!token) {
-    window.location.href = 'index';
+    const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+    window.location.href = indexUrl;
     throw new Error('Unauthorized');
 }
 
@@ -140,7 +147,8 @@ async function loadFiles(path) {
         if (!response.ok) {
             if (response.status === 401) {
                 localStorage.removeItem('auth_token');
-                window.location.href = 'index.html';
+                const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+                window.location.href = indexUrl;
                 return;
             }
             throw new Error('Request failed');
@@ -162,6 +170,12 @@ function renderFiles(files) {
     tbody.innerHTML = '';
     gRows = [];
 
+    const downloadAllBtn = document.querySelector('.btn-download-all');
+    const hasFiles = files.some(f => f.type === 'file');
+    if (downloadAllBtn) {
+        downloadAllBtn.style.display = hasFiles ? 'inline-flex' : 'none';
+    }
+
     files.sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
         return a.type === 'dir' ? -1 : 1;
@@ -179,7 +193,7 @@ function renderFiles(files) {
 
         const downloadBtn = isDir ? '' : `<button class="btn-download-inline" onclick="downloadFileInline(this.closest('tr').fileData); event.stopPropagation();"><i class="fa-solid fa-download"></i></button>`;
 
-        tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="0"></td><td>${downloadBtn}</td>`;
+        tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td>${downloadBtn}</td>`;
 
         tr.fileData = file;
         gRows.push(tr);
@@ -221,7 +235,8 @@ async function viewFile(file) {
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('auth_token');
-                    window.location.href = 'index';
+                    const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+                    window.location.href = indexUrl;
                     return;
                 }
                 throw new Error('Failed to load file');
@@ -265,7 +280,8 @@ async function downloadFileInline(file) {
             if (!response.ok) {
                 if (response.status === 401) {
                     localStorage.removeItem('auth_token');
-                    window.location.href = 'index';
+                    const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+                    window.location.href = indexUrl;
                     return;
                 }
                 throw new Error('Failed to load file');
@@ -323,7 +339,76 @@ function downloadFile() {
 
 function logout() {
     localStorage.removeItem('auth_token');
-    window.location.href = 'index';
+    const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+    window.location.href = indexUrl;
+}
+
+async function downloadAll() {
+    const files = directoryCache[currentPath] || [];
+    const fileItems = files.filter(f => f.type === 'file');
+
+    if (fileItems.length === 0) {
+        alert('No files to download');
+        return;
+    }
+
+    const downloadBtn = document.querySelector('.btn-download-all');
+    const originalText = downloadBtn.innerHTML;
+    downloadBtn.disabled = true;
+    downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>Downloading...';
+
+    try {
+        const zip = new JSZip();
+
+        for (const file of fileItems) {
+            if (!file.content) {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: file.path })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        const indexUrl = window.location.hostname === 'localhost' ? 'index.html' : 'index';
+                        window.location.href = indexUrl;
+                        return;
+                    }
+                    throw new Error(`Failed to load ${file.name}`);
+                }
+
+                const fileData = await response.json();
+                file.content = fileData.content;
+            }
+
+            const byteCharacters = atob(file.content);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+
+            zip.file(file.name, byteArray);
+        }
+
+        const blob = await zip.generateAsync({ type: 'blob' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const folderName = currentPath ? currentPath.split('/').pop() : 'files';
+        a.download = `${folderName}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        alert('Download failed: ' + error.message);
+    } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = originalText;
+    }
 }
 
 function formatSize(bytes) {

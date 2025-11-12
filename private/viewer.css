@@ -286,3 +286,27 @@ td:not(:first-child) {
 .btn-download-inline i {
   font-size: 12px;
 }
+
+.btn-download-all {
+  padding: 8px 16px;
+  background: #2196F3;
+  color: white;
+  border: 1px solid #2196F3;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-download-all:hover {
+  background: #1976D2;
+}
+
+.btn-download-all:disabled {
+  background: #ccc;
+  border-color: #ccc;
+  cursor: not-allowed;
+}
