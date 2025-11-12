@@ -47,8 +47,8 @@
                 });
 
                 if (response.ok) {
-                    // 비밀번호 저장 (세션)
-                    sessionStorage.setItem('auth_password', password);
+                    // 비밀번호 저장 (모든 탭에서 유지)
+                    localStorage.setItem('auth_password', password);
                     window.location.href = 'viewer.html';
                 } else {
                     errorDiv.textContent = '❌ 비밀번호가 올바르지 않습니다';
