@@ -219,7 +219,7 @@ td:not(:first-child) {
 <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 <script>
 // 비밀번호 확인 (먼저 체크)
-const password = sessionStorage.getItem('auth_password');
+const password = localStorage.getItem('auth_password');
 if (!password) {
     window.location.href = 'index.html';
     throw new Error('Unauthorized'); // 이후 코드 실행 중단
@@ -343,18 +343,7 @@ async function loadFiles(path) {
             const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
             const clickHandler = isDir ? '' : `onclick="viewFile(this.closest('tr').fileData); return false;"`;
 
-            tr.innerHTML = `
-                <td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}">
-                    <table class="ellipsis"><tbody><tr><td>
-                        <a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}>
-                            <i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}
-                        </a>
-                    </td></tr></tbody></table>
-                </td>
-                <td sortable-data="${file.size || 0}">${size}</td>
-                <td sortable-data="${Date.now()}"></td>
-                <td></td>
-            `;
+            tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="${Date.now()}"></td><td></td>`;
 
             tr.fileData = file;
             gRows.push(tr);
@@ -393,7 +382,7 @@ async function viewFile(file) {
 }
 
 function logout() {
-    sessionStorage.removeItem('auth_password');
+    localStorage.removeItem('auth_password');
     window.location.href = 'index.html';
 }
 
