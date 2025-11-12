@@ -16,7 +16,7 @@
                 type="password"
                 id="password"
                 placeholder="Password"
-                autocomplete="off"
+                autocomplete="new-password"
                 required
             >
             <button type="submit">Enter</button>
@@ -30,27 +30,71 @@
         const passwordInput = document.getElementById('password');
         const errorDiv = document.getElementById('error');
 
+        // 페이지 로드 시 password 필드 강제 클리어
+        passwordInput.value = '';
+
+        // localStorage도 확인
+        console.log('Current localStorage contents:');
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            console.log(`  ${key}:`, localStorage.getItem(key));
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorDiv.textContent = '';
 
             const password = passwordInput.value;
 
+            console.log('Password field value:', password);
+            console.log('Password length:', password.length);
+            console.log('Password starts with:', password.substring(0, 10));
+
+            // JWT 토큰은 보통 "eyJ"로 시작합니다
+            if (password.startsWith('eyJ')) {
+                alert('WARNING: Password field contains a JWT token, not a password!\nClearing...');
+                passwordInput.value = '';
+                return;
+            }
+
             try {
+                const requestBody = { password };
+                console.log('Sending request body:', requestBody);
+                console.log('Request body JSON:', JSON.stringify(requestBody));
+
                 const response = await fetch('https://notes-4rdgtdjdt-ysw421s-projects.vercel.app/api/github-proxy', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ password })
+                    body: JSON.stringify(requestBody)
                 });
+
+                console.log('Response status:', response.status);
+                console.log('Response ok:', response.ok);
 
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Login response:', data);
                     console.log('Token:', data.token);
+
+                    if (!data.token) {
+                        alert('ERROR: API returned no token! Response: ' + JSON.stringify(data));
+                        errorDiv.textContent = '❌ Server error: No token received';
+                        return;
+                    }
+
                     localStorage.setItem('auth_token', data.token);
-                    console.log('Stored token:', localStorage.getItem('auth_token'));
+                    const stored = localStorage.getItem('auth_token');
+                    console.log('Stored token:', stored);
+
+                    if (!stored) {
+                        alert('ERROR: Token not stored in localStorage!');
+                        errorDiv.textContent = '❌ Failed to save login session';
+                        return;
+                    }
+
+                    alert('Success! Token stored: ' + stored.substring(0, 20) + '...');
                     window.location.href = 'viewer.html';
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';
