@@ -42,11 +42,12 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ password, path: '' })
+                    body: JSON.stringify({ password })
                 });
 
                 if (response.ok) {
-                    sessionStorage.setItem('auth_password', password);
+                    const data = await response.json();
+                    sessionStorage.setItem('auth_token', data.token);
                     window.location.href = 'viewer.html';
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';

@@ -1,0 +1,8 @@
+{
+  "name": "private-notes",
+  "version": "1.0.0",
+  "description": "Private notes viewer with authentication",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2"
+  }
+}

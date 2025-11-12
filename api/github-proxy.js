@@ -1,9 +1,12 @@
+import jwt from 'jsonwebtoken';
+
 // 비밀번호 해시 (실제 해시로 교체하세요)
 const CORRECT_PASSWORD_HASH = '6e659deaa85842cdabb5c6305fcc40033ba43772ec00d45c2a3c921741a5e377';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = 'ysw421';
 const REPO_NAME = 'private-notes';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
 export default async function handler(req, res) {
     // CORS 헤더를 가장 먼저 설정
@@ -12,7 +15,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader(
         'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
     );
 
     // OPTIONS 요청 처리
@@ -27,36 +30,59 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { password, path = '' } = req.body;
+        const { password, token, path = '' } = req.body;
 
-        // 비밀번호 검증
-        const crypto = await import('crypto');
-        const passwordHash = crypto
-            .createHash('sha256')
-            .update(password)
-            .digest('hex');
+        // 로그인 요청 (비밀번호로 토큰 발급)
+        if (password && !token) {
+            const crypto = await import('crypto');
+            const passwordHash = crypto
+                .createHash('sha256')
+                .update(password)
+                .digest('hex');
 
-        if (passwordHash !== CORRECT_PASSWORD_HASH) {
-            return res.status(401).json({ error: 'Invalid password' });
-        }
-
-        // GitHub API 호출
-        const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'User-Agent': 'Private-Notes-Viewer'
+            if (passwordHash !== CORRECT_PASSWORD_HASH) {
+                return res.status(401).json({ error: 'Invalid password' });
             }
-        });
 
-        if (!response.ok) {
-            const error = await response.text();
-            throw new Error(`GitHub API error: ${response.status}`);
+            // JWT 토큰 생성 (24시간 유효)
+            const authToken = jwt.sign(
+                { authenticated: true, timestamp: Date.now() },
+                JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
+            return res.status(200).json({ token: authToken });
         }
 
-        const data = await response.json();
-        return res.status(200).json(data);
+        // 데이터 요청 (토큰 검증)
+        if (token) {
+            try {
+                // JWT 토큰 검증
+                jwt.verify(token, JWT_SECRET);
+            } catch (error) {
+                return res.status(401).json({ error: 'Invalid or expired token' });
+            }
+
+            // GitHub API 호출
+            const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+            const response = await fetch(url, {
+                headers: {
+                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'Private-Notes-Viewer'
+                }
+            });
+
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(`GitHub API error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return res.status(200).json(data);
+        }
+
+        return res.status(400).json({ error: 'Password or token required' });
 
     } catch (error) {
         console.error('Error:', error);
