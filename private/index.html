@@ -73,6 +73,15 @@
                 console.log('Response status:', response.status);
                 console.log('Response ok:', response.ok);
 
+                // API 버전 확인
+                const apiVersion = response.headers.get('X-API-Version');
+                console.log('API Version:', apiVersion);
+                if (!apiVersion) {
+                    alert('WARNING: API is using OLD version (no X-API-Version header)');
+                } else {
+                    console.log('API Version confirmed:', apiVersion);
+                }
+
                 // 응답 내용 확인
                 const responseText = await response.text();
                 console.log('Response text:', responseText);

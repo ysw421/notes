@@ -9,6 +9,7 @@ const REPO_OWNER = 'ysw421';
 const REPO_NAME = 'private-notes';
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this-in-production';
 
+// API Version: 2025-11-12-v3
 export default async function handler(req, res) {
     // CORS 헤더를 가장 먼저 설정
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -18,6 +19,7 @@ export default async function handler(req, res) {
         'Access-Control-Allow-Headers',
         'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
     );
+    res.setHeader('X-API-Version', '2025-11-12-v3');
 
     // OPTIONS 요청 처리
     if (req.method === 'OPTIONS') {
