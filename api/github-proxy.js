@@ -1,5 +1,5 @@
 // Vercel Serverless Function
-const CORRECT_PASSWORD_HASH = 'a1db5646b6fe049a2509691b3597f736e89fccd6bedb25d8e49e0b54a6d44604'; // 나중에 설정
+const CORRECT_PASSWORD_HASH = 'c497ee5737df7abe5bda37e9ccc252dda3e5db8b5fdd41bd36d00393bf62cbb7';
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Vercel 환경변수
 const REPO_OWNER = 'ysw421';
 const REPO_NAME = 'private-notes';
