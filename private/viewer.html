@@ -29,7 +29,7 @@
 <script>
 const token = localStorage.getItem('auth_token');
 if (!token) {
-    window.location.href = 'index.html';
+    window.location.href = 'index';
     throw new Error('Unauthorized');
 }
 
@@ -177,7 +177,9 @@ function renderFiles(files) {
         const linkHref = isDir ? '#' + encodeURIComponent(file.path) : '#';
         const clickHandler = isDir ? '' : `onclick="viewFile(this.closest('tr').fileData); return false;"`;
 
-        tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="${Date.now()}"></td><td></td>`;
+        const downloadBtn = isDir ? '' : `<button class="btn-download-inline" onclick="downloadFileInline(this.closest('tr').fileData); event.stopPropagation();"><i class="fa-solid fa-download"></i></button>`;
+
+        tr.innerHTML = `<td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td><a class="${isDir ? 'dir' : 'file'}" href="${linkHref}" ${clickHandler}><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}${isDir ? '/' : ''}</a></td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td><td sortable-data="0"></td><td>${downloadBtn}</td>`;
 
         tr.fileData = file;
         gRows.push(tr);
@@ -192,7 +194,6 @@ async function viewFile(file) {
     const contentViewer = document.getElementById('contentViewer');
     gTable.style.display = 'none';
     contentViewer.style.display = 'block';
-    currentFileData = file;
 
     const actionsHtml = `
         <div class="file-actions">
@@ -210,6 +211,27 @@ async function viewFile(file) {
     const fileContentDiv = document.getElementById('fileContent');
 
     try {
+        if (!file.content) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, path: file.path })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = 'index';
+                    return;
+                }
+                throw new Error('Failed to load file');
+            }
+
+            const fileData = await response.json();
+            file.content = fileData.content;
+        }
+
+        currentFileData = file;
         const content = atob(file.content);
 
         if (file.name.match(/\.(txt|md|js|json|py|html|css|xml|log|tex|bib|c|cpp|java|php|go|rs|sh|yml|yaml)$/i)) {
@@ -229,6 +251,49 @@ async function viewFile(file) {
 
 function goBackToDirectory() {
     window.location.hash = '#' + encodeURIComponent(currentPath);
+}
+
+async function downloadFileInline(file) {
+    try {
+        if (!file.content) {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, path: file.path })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    window.location.href = 'index';
+                    return;
+                }
+                throw new Error('Failed to load file');
+            }
+
+            const fileData = await response.json();
+            file.content = fileData.content;
+        }
+
+        const byteCharacters = atob(file.content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = file.name;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        alert('Download failed: ' + error.message);
+    }
 }
 
 function downloadFile() {
@@ -258,7 +323,7 @@ function downloadFile() {
 
 function logout() {
     localStorage.removeItem('auth_token');
-    window.location.href = 'index.html';
+    window.location.href = 'index';
 }
 
 function formatSize(bytes) {

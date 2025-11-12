@@ -32,6 +32,11 @@
 
         passwordInput.value = '';
 
+        const existingToken = localStorage.getItem('auth_token');
+        if (existingToken) {
+            window.location.href = 'viewer';
+        }
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             errorDiv.textContent = '';
@@ -54,7 +59,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('auth_token', data.token);
-                    window.location.href = 'viewer.html';
+                    window.location.href = 'viewer';
                 } else {
                     errorDiv.textContent = '❌ Incorrect password';
                     passwordInput.value = '';

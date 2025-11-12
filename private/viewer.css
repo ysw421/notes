@@ -267,3 +267,22 @@ td:not(:first-child) {
   font-size: 14px;
   margin-left: auto;
 }
+
+.btn-download-inline {
+  padding: 4px 8px;
+  background: #4CAF50;
+  color: white;
+  border: 1px solid #4CAF50;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.btn-download-inline:hover {
+  background: #45a049;
+}
+
+.btn-download-inline i {
+  font-size: 12px;
+}
