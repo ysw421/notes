@@ -7,5 +7,14 @@
       "allowed": [],
       "denied": []
     }
+  },
+  "testuser": {
+    "passwordHash": "6e659deaa85842cdabb5c6305fcc40033ba43772ec00d45c2a3c921741a5e377",
+    "role": "user",
+    "permissions": {
+      "basePath": "/folder1",
+      "allowed": ["/folder1/folder2/2313"],
+      "denied": ["/folder1/folder2"]
+    }
   }
 }
