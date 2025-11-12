@@ -104,6 +104,7 @@ td:first-child + td {
 td:first-child + td + td {
   padding-inline-start: 1em;
   padding-inline-end: .5em;
+  text-align: center;
 }
 
 td:first-child + td + td + td {
