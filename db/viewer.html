@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<base href="/db/">
+<script>
+const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+document.write('<base href="' + basePath + '">');
+</script>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="viewer.css">
