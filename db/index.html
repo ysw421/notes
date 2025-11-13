@@ -738,9 +738,23 @@
         function toggleProfileMenu() {
             const menu = document.getElementById('profileMenu');
             const username = localStorage.getItem('username');
+            const token = localStorage.getItem('auth_token');
             const usernameDiv = document.getElementById('profileUsername');
+
             if (usernameDiv && username) {
-                usernameDiv.textContent = username;
+                let isAdmin = false;
+
+                if (token) {
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        isAdmin = payload.role === 'admin';
+                    } catch (e) {
+                    }
+                }
+
+                usernameDiv.innerHTML = isAdmin
+                    ? username + ' <i class="fa-solid fa-circle-check" style="color: #1da1f2;"></i>'
+                    : username;
             }
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
