@@ -438,12 +438,12 @@
                     file.content = fileData.content;
                 }
 
-                const byteCharacters = atob(file.content);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                const binaryString = atob(file.content);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
                 }
-                const byteArray = new Uint8Array(byteNumbers);
 
                 let mimeType = 'application/octet-stream';
                 if (file.name.match(/\.(txt|md|log)$/i)) {
@@ -470,7 +470,7 @@
                     mimeType = 'image/webp';
                 }
 
-                const blob = new Blob([byteArray.buffer], { type: mimeType });
+                const blob = new Blob([bytes], { type: mimeType });
                 const url = window.URL.createObjectURL(blob);
                 window.open(url, '_blank');
 
@@ -513,13 +513,13 @@
                     file.content = fileData.content;
                 }
 
-                const byteCharacters = atob(file.content);
-                const byteNumbers = new Array(byteCharacters.length);
-                for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                const binaryString = atob(file.content);
+                const len = binaryString.length;
+                const bytes = new Uint8Array(len);
+                for (let i = 0; i < len; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
                 }
-                const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray.buffer], { type: 'application/octet-stream' });
+                const blob = new Blob([bytes], { type: 'application/octet-stream' });
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
