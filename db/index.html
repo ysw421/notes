@@ -593,14 +593,6 @@
 
         async function downloadAll() {
             const token = localStorage.getItem('auth_token');
-            const files = directoryCache[currentPath] || [];
-            const fileItems = files.filter(f => f.type === 'file');
-
-            if (fileItems.length === 0) {
-                alert('No files to download');
-                return;
-            }
-
             const downloadBtn = document.querySelector('.btn-download-all');
             const originalText = downloadBtn.innerHTML;
             downloadBtn.disabled = true;
@@ -609,50 +601,76 @@
             try {
                 const zip = new JSZip();
 
-                for (const file of fileItems) {
-                    let byteArray;
+                async function addFilesToZip(dirPath, zipFolder) {
+                    let files = directoryCache[dirPath];
 
-                    if (!file.content && !file.download_url) {
+                    if (!files) {
                         const response = await fetch(API_URL, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ token, path: file.path })
+                            body: JSON.stringify({ token, path: dirPath })
                         });
 
                         if (!response.ok) {
                             if (response.status === 401) {
                                 localStorage.removeItem('auth_token');
                                 checkAuth();
-                                return;
+                                throw new Error('Authentication required');
                             }
-                            throw new Error(`Failed to load ${file.name}`);
+                            throw new Error(`Failed to load directory: ${dirPath}`);
                         }
 
-                        const fileData = await response.json();
-                        file.content = fileData.content;
-                        file.download_url = fileData.download_url;
+                        files = await response.json();
+                        directoryCache[dirPath] = files;
                     }
 
-                    if ((!file.content || file.content.length === 0) && file.download_url) {
-                        const response = await fetch(file.download_url);
-                        if (!response.ok) {
-                            throw new Error(`Failed to download ${file.name} from URL`);
-                        }
-                        const arrayBuffer = await response.arrayBuffer();
-                        byteArray = new Uint8Array(arrayBuffer);
-                    } else if (file.content && file.content.length > 0) {
-                        const byteCharacters = atob(file.content);
-                        const byteNumbers = new Array(byteCharacters.length);
-                        for (let i = 0; i < byteCharacters.length; i++) {
-                            byteNumbers[i] = byteCharacters.charCodeAt(i);
-                        }
-                        byteArray = new Uint8Array(byteNumbers);
-                    } else {
-                        throw new Error(`${file.name}: content is empty and no download URL available`);
-                    }
+                    for (const item of files) {
+                        if (item.type === 'file') {
+                            let byteArray;
 
-                    zip.file(file.name, byteArray);
+                            if (!item.content && !item.download_url) {
+                                const response = await fetch(API_URL, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ token, path: item.path })
+                                });
+
+                                if (!response.ok) {
+                                    throw new Error(`Failed to load ${item.name}`);
+                                }
+
+                                const fileData = await response.json();
+                                item.content = fileData.content;
+                                item.download_url = fileData.download_url;
+                            }
+
+                            if ((!item.content || item.content.length === 0) && item.download_url) {
+                                const response = await fetch(item.download_url);
+                                if (!response.ok) {
+                                    throw new Error(`Failed to download ${item.name} from URL`);
+                                }
+                                const arrayBuffer = await response.arrayBuffer();
+                                byteArray = new Uint8Array(arrayBuffer);
+                            } else if (item.content && item.content.length > 0) {
+                                const byteCharacters = atob(item.content);
+                                const byteNumbers = new Array(byteCharacters.length);
+                                for (let i = 0; i < byteCharacters.length; i++) {
+                                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                                }
+                                byteArray = new Uint8Array(byteNumbers);
+                            } else {
+                                throw new Error(`${item.name}: content is empty and no download URL available`);
+                            }
+
+                            zipFolder.file(item.name, byteArray);
+                        } else if (item.type === 'dir') {
+                            const subFolder = zipFolder.folder(item.name);
+                            await addFilesToZip(item.path, subFolder);
+                        }
+                    }
                 }
+
+                await addFilesToZip(currentPath, zip);
 
                 const blob = await zip.generateAsync({ type: 'blob' });
 
