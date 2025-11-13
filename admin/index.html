@@ -285,7 +285,9 @@
             ? 'http://localhost:3000/api/github-proxy'
             : 'https://notes-api.ysw421.workers.dev';
 
-        const ADMIN_API_URL = 'https://notes-api.ysw421.workers.dev';
+        const ADMIN_API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:8787'
+            : 'https://notes-api.ysw421.workers.dev';
 
         let currentEditingUser = null;
 
