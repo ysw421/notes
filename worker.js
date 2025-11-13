@@ -1,27 +1,6 @@
 const REPO_OWNER = 'ysw421';
 const REPO_NAME = 'private-notes';
 
-const users = {
-  "siwon": {
-    "passwordHash": "6e659deaa85842cdabb5c6305fcc40033ba43772ec00d45c2a3c921741a5e377",
-    "role": "admin",
-    "permissions": {
-      "basePath": "/",
-      "allowed": [],
-      "denied": []
-    }
-  },
-  "testuser": {
-    "passwordHash": "6e659deaa85842cdabb5c6305fcc40033ba43772ec00d45c2a3c921741a5e377",
-    "role": "user",
-    "permissions": {
-      "basePath": "/folder1",
-      "allowed": ["/folder1/folder2/2313"],
-      "denied": ["/folder1/folder2"]
-    }
-  }
-};
-
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -83,13 +62,43 @@ async function verifyJWT(token, secret) {
   return payload;
 }
 
+async function getUser(env, username) {
+  const userData = await env.USERS_KV.get(`user:${username}`);
+  return userData ? JSON.parse(userData) : null;
+}
+
+async function setUser(env, username, userData) {
+  await env.USERS_KV.put(`user:${username}`, JSON.stringify(userData));
+}
+
+async function deleteUser(env, username) {
+  await env.USERS_KV.delete(`user:${username}`);
+}
+
+async function listUsers(env) {
+  const list = await env.USERS_KV.list({ prefix: 'user:' });
+  const users = {};
+  for (const key of list.keys) {
+    const username = key.name.replace('user:', '');
+    const userData = await env.USERS_KV.get(key.name);
+    if (userData) {
+      const user = JSON.parse(userData);
+      users[username] = {
+        role: user.role,
+        permissions: user.permissions
+      };
+    }
+  }
+  return users;
+}
+
 export default {
   async fetch(request, env) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN;
     const JWT_SECRET = env.JWT_SECRET;
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
 
@@ -97,19 +106,149 @@ export default {
       return new Response(null, { headers: corsHeaders });
     }
 
-    if (request.method !== 'POST') {
-      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    const url = new URL(request.url);
 
     try {
+      if (url.pathname.startsWith('/admin/users')) {
+        const body = request.method !== 'GET' ? await request.json() : {};
+        const { token } = body;
+
+        if (!token) {
+          return new Response(JSON.stringify({ error: 'Token required' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        let decoded;
+        try {
+          decoded = await verifyJWT(token, JWT_SECRET);
+        } catch (error) {
+          return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (decoded.role !== 'admin') {
+          return new Response(JSON.stringify({ error: 'Admin access required' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (request.method === 'GET' || (request.method === 'POST' && body.action === 'list')) {
+          const users = await listUsers(env);
+          return new Response(JSON.stringify({ users }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (request.method === 'POST' && body.action === 'create') {
+          const { username, password, role, permissions } = body;
+
+          if (!username || !password || !role) {
+            return new Response(JSON.stringify({ error: 'Username, password, and role required' }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          const existingUser = await getUser(env, username);
+          if (existingUser) {
+            return new Response(JSON.stringify({ error: 'User already exists' }), {
+              status: 409,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          const passwordHash = await sha256(password);
+          await setUser(env, username, {
+            passwordHash,
+            role,
+            permissions: permissions || { basePath: '/', allowed: [], denied: [] }
+          });
+
+          return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (request.method === 'POST' && body.action === 'update') {
+          const { username, password, role, permissions } = body;
+
+          if (!username) {
+            return new Response(JSON.stringify({ error: 'Username required' }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          const existingUser = await getUser(env, username);
+          if (!existingUser) {
+            return new Response(JSON.stringify({ error: 'User not found' }), {
+              status: 404,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          const updatedUser = { ...existingUser };
+          if (password) {
+            updatedUser.passwordHash = await sha256(password);
+          }
+          if (role) {
+            updatedUser.role = role;
+          }
+          if (permissions) {
+            updatedUser.permissions = permissions;
+          }
+
+          await setUser(env, username, updatedUser);
+
+          return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (request.method === 'POST' && body.action === 'delete') {
+          const { username } = body;
+
+          if (!username) {
+            return new Response(JSON.stringify({ error: 'Username required' }), {
+              status: 400,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+          }
+
+          await deleteUser(env, username);
+
+          return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        return new Response(JSON.stringify({ error: 'Invalid action' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      if (request.method !== 'POST') {
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+          status: 405,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
       const body = await request.json();
       const { username, password, token, path = '' } = body;
 
       if (username && password && !token) {
-        const user = users[username];
+        const user = await getUser(env, username);
         if (!user) {
           return new Response(JSON.stringify({ error: 'Invalid username or password' }), {
             status: 401,
