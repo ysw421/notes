@@ -285,6 +285,8 @@
             ? 'http://localhost:3000/api/github-proxy'
             : 'https://notes-api.ysw421.workers.dev';
 
+        const ADMIN_API_URL = 'https://notes-api.ysw421.workers.dev';
+
         let currentEditingUser = null;
 
         async function checkAuth() {
@@ -359,7 +361,7 @@
         async function loadUsers() {
             const token = localStorage.getItem('auth_token');
             try {
-                const response = await fetch(`${API_URL}/admin/users`, {
+                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, action: 'list' })
@@ -474,7 +476,7 @@
             }
 
             try {
-                const response = await fetch(`${API_URL}/admin/users`, {
+                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
@@ -498,7 +500,7 @@
             const token = localStorage.getItem('auth_token');
 
             try {
-                const response = await fetch(`${API_URL}/admin/users`, {
+                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, action: 'delete', username })
