@@ -470,7 +470,7 @@
                     mimeType = 'image/webp';
                 }
 
-                const blob = new Blob([byteArray], { type: mimeType });
+                const blob = new Blob([byteArray.buffer], { type: mimeType });
                 const url = window.URL.createObjectURL(blob);
                 window.open(url, '_blank');
 
@@ -519,7 +519,7 @@
                     byteNumbers[i] = byteCharacters.charCodeAt(i);
                 }
                 const byteArray = new Uint8Array(byteNumbers);
-                const blob = new Blob([byteArray], { type: 'application/octet-stream' });
+                const blob = new Blob([byteArray.buffer], { type: 'application/octet-stream' });
 
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');

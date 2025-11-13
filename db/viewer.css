@@ -398,3 +398,10 @@ td:not(:first-child) {
 .profile-menu button i {
   font-size: 14px;
 }
+
+.profile-id {
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}

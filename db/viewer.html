@@ -20,6 +20,7 @@
         <i class="fa-solid fa-user"></i>
     </div>
     <div class="profile-menu" id="profileMenu" style="display:none;">
+        <div class="profile-id" id="profileId"></div>
         <button onclick="logout(); event.stopPropagation();">
             <i class="fa-solid fa-sign-out-alt"></i>Logout
         </button>
@@ -47,6 +48,17 @@ const token = localStorage.getItem('auth_token');
 if (!token) {
     window.location.href = './';
     throw new Error('Unauthorized');
+}
+
+try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.userId;
+    const profileIdElement = document.getElementById('profileId');
+    if (profileIdElement) {
+        profileIdElement.textContent = userId;
+    }
+} catch (e) {
+    console.error('Failed to decode token or set user ID:', e);
 }
 
 document.body.style.display = 'block';
