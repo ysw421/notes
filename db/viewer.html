@@ -63,7 +63,9 @@ try {
 
 document.body.style.display = 'block';
 
-const API_URL = 'https://notes-pi-sand.vercel.app/api/github-proxy';
+const API_URL = window.location.hostname === 'localhost'
+    ? 'http://localhost:3000/api/github-proxy'
+    : 'https://notes-api.ysw421.workers.dev';
 let currentPath = '';
 let gRows = [];
 let gOrderBy = -1;
