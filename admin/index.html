@@ -8,97 +8,55 @@
     <link rel="stylesheet" href="../db/style.css" id="loginStyle">
     <link rel="stylesheet" href="../db/viewer.css" id="viewerStyle" disabled>
     <style>
-        .admin-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #ddd;
-        }
-        .admin-tab {
-            padding: 10px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #666;
-            border-bottom: 3px solid transparent;
-        }
-        .admin-tab.active {
-            color: #1da1f2;
-            border-bottom-color: #1da1f2;
-        }
-        .admin-tab:hover {
-            color: #333;
-        }
         .admin-panel {
-            display: none;
-        }
-        .admin-panel.active {
-            display: block;
-        }
-        .user-list {
-            margin-top: 20px;
-        }
-        .user-item {
+            background: #f8f9fa;
             padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+        }
+        .admin-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .admin-controls select,
+        .admin-controls button {
+            padding: 8px 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .user-info {
-            flex: 1;
-        }
-        .user-info h3 {
-            margin: 0 0 5px 0;
-            font-size: 18px;
-        }
-        .user-info p {
-            margin: 2px 0;
-            color: #666;
             font-size: 14px;
         }
-        .user-actions {
-            display: flex;
-            gap: 10px;
-        }
-        .user-actions button {
-            padding: 8px 15px;
+        .admin-controls button {
+            background: #007bff;
+            color: white;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
         }
-        .btn-edit {
-            background: #1da1f2;
-            color: white;
+        .admin-controls button:hover {
+            background: #0056b3;
         }
-        .btn-edit:hover {
-            background: #1a91da;
+        .admin-controls button.btn-danger {
+            background: #dc3545;
         }
-        .btn-delete {
-            background: #e74c3c;
-            color: white;
+        .admin-controls button.btn-danger:hover {
+            background: #c82333;
         }
-        .btn-delete:hover {
-            background: #c0392b;
+        .selected-count {
+            font-weight: bold;
+            color: #007bff;
         }
-        .btn-add {
-            background: #2ecc71;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
+        .checkbox-col {
+            width: 40px;
+            text-align: center;
+        }
+        .checkbox-col input[type="checkbox"] {
             cursor: pointer;
-            font-size: 16px;
-            margin-bottom: 20px;
+            width: 18px;
+            height: 18px;
         }
-        .btn-add:hover {
-            background: #27ae60;
-        }
-        .modal {
+        .permission-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -108,50 +66,62 @@
             background: rgba(0,0,0,0.5);
             z-index: 1000;
         }
-        .modal.active {
+        .permission-modal.active {
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .modal-content {
+        .permission-modal-content {
             background: white;
             padding: 30px;
             border-radius: 8px;
             width: 90%;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 80vh;
             overflow-y: auto;
         }
-        .modal-content h2 {
+        .permission-modal-content h2 {
             margin-top: 0;
         }
-        .form-group {
-            margin-bottom: 15px;
+        .permission-group {
+            margin-bottom: 20px;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        .permission-group h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
         }
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
+        .permission-list {
+            background: #f8f9fa;
+            padding: 10px;
             border-radius: 4px;
-            font-size: 14px;
+            max-height: 150px;
+            overflow-y: auto;
         }
-        .form-group textarea {
-            min-height: 80px;
-            font-family: monospace;
+        .permission-item {
+            padding: 5px;
+            margin-bottom: 5px;
+            background: white;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .form-actions {
+        .permission-item button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .modal-actions {
             display: flex;
             gap: 10px;
             margin-top: 20px;
         }
-        .form-actions button {
+        .modal-actions button {
             flex: 1;
             padding: 10px;
             border: none;
@@ -160,33 +130,18 @@
             font-size: 16px;
         }
         .btn-save {
-            background: #2ecc71;
+            background: #28a745;
             color: white;
         }
         .btn-save:hover {
-            background: #27ae60;
+            background: #218838;
         }
         .btn-cancel {
-            background: #95a5a6;
+            background: #6c757d;
             color: white;
         }
         .btn-cancel:hover {
-            background: #7f8c8d;
-        }
-        .role-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        .role-admin {
-            background: #e74c3c;
-            color: white;
-        }
-        .role-user {
-            background: #3498db;
-            color: white;
+            background: #5a6268;
         }
     </style>
 </head>
@@ -205,8 +160,29 @@
     </div>
 
     <div id="viewerSection" style="display:none;">
+        <div class="admin-panel">
+            <div class="admin-controls">
+                <label>
+                    <strong>User:</strong>
+                    <select id="userSelect">
+                        <option value="">Select user...</option>
+                    </select>
+                </label>
+                <span class="selected-count">Selected: <span id="selectedCount">0</span> items</span>
+                <button onclick="setPermissions('allow')">
+                    <i class="fa-solid fa-check"></i> Allow Selected
+                </button>
+                <button onclick="setPermissions('deny')" class="btn-danger">
+                    <i class="fa-solid fa-ban"></i> Deny Selected
+                </button>
+                <button onclick="showUserManagement()">
+                    <i class="fa-solid fa-users"></i> Manage Users
+                </button>
+            </div>
+        </div>
+
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <h1 style="margin: 0; border: none;">Admin Panel</h1>
+            <h1 id="title" style="margin: 0; border: none; flex: 1;">Index of /</h1>
             <div class="profile-container" onclick="toggleProfileMenu()">
                 <div class="profile-circle">
                     <i class="fa-solid fa-user"></i>
@@ -220,63 +196,49 @@
             </div>
         </div>
 
-        <div class="admin-tabs">
-            <button class="admin-tab active" onclick="switchTab('users')">
-                <i class="fa-solid fa-users"></i> User Management
-            </button>
-            <button class="admin-tab" onclick="switchTab('files')">
-                <i class="fa-solid fa-folder"></i> File Browser
-            </button>
-        </div>
-
-        <div id="usersPanel" class="admin-panel active">
-            <button class="btn-add" onclick="showUserModal()">
-                <i class="fa-solid fa-plus"></i> Add User
-            </button>
-            <div id="userList" class="user-list"></div>
-        </div>
-
-        <div id="filesPanel" class="admin-panel">
-            <iframe src="../db/" style="width: 100%; height: calc(100vh - 200px); border: none;"></iframe>
-        </div>
+        <div style="border-bottom: 1px solid ThreeDLightShadow; margin-bottom: 0.6em;"></div>
+        <p id="UI_goUp" style="display:none">
+            <a class="up" href="#" id="upLink">
+                <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
+            </a>
+        </p>
+        <table id="dirTable" order="">
+            <thead>
+                <tr>
+                    <th class="checkbox-col">
+                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                    </th>
+                    <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
+                    <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
     </div>
 
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <h2 id="modalTitle">Add User</h2>
-            <form id="userForm">
-                <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" id="editUsername" required>
-                </div>
-                <div class="form-group">
-                    <label>Password <span style="color: #999; font-weight: normal;">(leave empty to keep current)</span></label>
-                    <input type="password" id="editPassword">
-                </div>
-                <div class="form-group">
-                    <label>Role</label>
-                    <select id="editRole" required>
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Base Path</label>
-                    <input type="text" id="editBasePath" value="/" placeholder="/">
-                </div>
-                <div class="form-group">
-                    <label>Allowed Paths (one per line)</label>
-                    <textarea id="editAllowed" placeholder="/folder1&#10;/folder2/file.txt"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Denied Paths (one per line)</label>
-                    <textarea id="editDenied" placeholder="/secret&#10;/private"></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="closeUserModal()">Cancel</button>
-                    <button type="submit" class="btn-save">Save</button>
-                </div>
-            </form>
+    <div id="permissionModal" class="permission-modal">
+        <div class="permission-modal-content">
+            <h2>User Permissions: <span id="modalUsername"></span></h2>
+
+            <div class="permission-group">
+                <h3>Base Path</h3>
+                <input type="text" id="basePath" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="/">
+            </div>
+
+            <div class="permission-group">
+                <h3>Allowed Paths</h3>
+                <div class="permission-list" id="allowedList"></div>
+            </div>
+
+            <div class="permission-group">
+                <h3>Denied Paths</h3>
+                <div class="permission-list" id="deniedList"></div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closePermissionModal()">Cancel</button>
+                <button class="btn-save" onclick="savePermissions()">Save</button>
+            </div>
         </div>
     </div>
 
@@ -289,18 +251,23 @@
             ? 'http://localhost:8787'
             : 'https://notes-api.ysw421.workers.dev';
 
-        let currentEditingUser = null;
+        let currentPath = '';
+        let allUsers = {};
+        let selectedPaths = new Set();
+        let currentUserPermissions = {};
 
         async function checkAuth() {
             const token = localStorage.getItem('auth_token');
             const loginSection = document.getElementById('loginSection');
             const viewerSection = document.getElementById('viewerSection');
+            const loginStyle = document.getElementById('loginStyle');
+            const viewerStyle = document.getElementById('viewerStyle');
 
             if (!token) {
                 loginSection.style.display = 'flex';
                 viewerSection.style.display = 'none';
-                document.getElementById('loginStyle').disabled = false;
-                document.getElementById('viewerStyle').disabled = true;
+                loginStyle.disabled = false;
+                viewerStyle.disabled = true;
                 return;
             }
 
@@ -316,10 +283,11 @@
 
                 loginSection.style.display = 'none';
                 viewerSection.style.display = 'block';
-                document.getElementById('loginStyle').disabled = true;
-                document.getElementById('viewerStyle').disabled = false;
+                loginStyle.disabled = true;
+                viewerStyle.disabled = false;
 
-                loadUsers();
+                await loadUsers();
+                loadFiles('');
             } catch (error) {
                 localStorage.removeItem('auth_token');
                 localStorage.removeItem('username');
@@ -371,145 +339,146 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    displayUsers(data.users);
-                } else {
-                    alert('Failed to load users');
+                    allUsers = data.users;
+
+                    const userSelect = document.getElementById('userSelect');
+                    userSelect.innerHTML = '<option value="">Select user...</option>';
+                    Object.keys(allUsers).forEach(username => {
+                        const option = document.createElement('option');
+                        option.value = username;
+                        option.textContent = `${username} (${allUsers[username].role})`;
+                        userSelect.appendChild(option);
+                    });
                 }
             } catch (error) {
-                alert('Error loading users: ' + error.message);
+                console.error('Error loading users:', error);
             }
         }
 
-        function displayUsers(users) {
-            const userList = document.getElementById('userList');
-            userList.innerHTML = '';
-
-            Object.entries(users).forEach(([username, user]) => {
-                const div = document.createElement('div');
-                div.className = 'user-item';
-                div.innerHTML = `
-                    <div class="user-info">
-                        <h3>${username} <span class="role-badge role-${user.role}">${user.role}</span></h3>
-                        <p><strong>Base Path:</strong> ${user.permissions.basePath}</p>
-                        ${user.permissions.allowed.length > 0 ? `<p><strong>Allowed:</strong> ${user.permissions.allowed.join(', ')}</p>` : ''}
-                        ${user.permissions.denied.length > 0 ? `<p><strong>Denied:</strong> ${user.permissions.denied.join(', ')}</p>` : ''}
-                    </div>
-                    <div class="user-actions">
-                        <button class="btn-edit" onclick="editUser('${username}', ${JSON.stringify(user).replace(/"/g, '&quot;')})">
-                            <i class="fa-solid fa-edit"></i> Edit
-                        </button>
-                        <button class="btn-delete" onclick="deleteUser('${username}')">
-                            <i class="fa-solid fa-trash"></i> Delete
-                        </button>
-                    </div>
-                `;
-                userList.appendChild(div);
-            });
-        }
-
-        function showUserModal(user = null) {
-            const modal = document.getElementById('userModal');
-            const title = document.getElementById('modalTitle');
-
-            if (user) {
-                title.textContent = 'Edit User';
-                document.getElementById('editUsername').value = user.username;
-                document.getElementById('editUsername').readOnly = true;
-                document.getElementById('editPassword').value = '';
-                document.getElementById('editPassword').placeholder = 'Leave empty to keep current';
-                document.getElementById('editRole').value = user.role;
-                document.getElementById('editBasePath').value = user.permissions.basePath;
-                document.getElementById('editAllowed').value = user.permissions.allowed.join('\n');
-                document.getElementById('editDenied').value = user.permissions.denied.join('\n');
-                currentEditingUser = user.username;
+        document.getElementById('userSelect').addEventListener('change', (e) => {
+            const username = e.target.value;
+            if (username && allUsers[username]) {
+                currentUserPermissions = allUsers[username].permissions;
             } else {
-                title.textContent = 'Add User';
-                document.getElementById('editUsername').value = '';
-                document.getElementById('editUsername').readOnly = false;
-                document.getElementById('editPassword').value = '';
-                document.getElementById('editPassword').placeholder = '';
-                document.getElementById('editPassword').required = true;
-                document.getElementById('editRole').value = 'user';
-                document.getElementById('editBasePath').value = '/';
-                document.getElementById('editAllowed').value = '';
-                document.getElementById('editDenied').value = '';
-                currentEditingUser = null;
-            }
-
-            modal.classList.add('active');
-        }
-
-        function closeUserModal() {
-            document.getElementById('userModal').classList.remove('active');
-            currentEditingUser = null;
-        }
-
-        function editUser(username, user) {
-            showUserModal({
-                username,
-                role: user.role,
-                permissions: user.permissions
-            });
-        }
-
-        document.getElementById('userForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const username = document.getElementById('editUsername').value;
-            const password = document.getElementById('editPassword').value;
-            const role = document.getElementById('editRole').value;
-            const basePath = document.getElementById('editBasePath').value;
-            const allowed = document.getElementById('editAllowed').value.split('\n').filter(p => p.trim());
-            const denied = document.getElementById('editDenied').value.split('\n').filter(p => p.trim());
-
-            const token = localStorage.getItem('auth_token');
-            const action = currentEditingUser ? 'update' : 'create';
-
-            const body = {
-                token,
-                action,
-                username,
-                role,
-                permissions: { basePath, allowed, denied }
-            };
-
-            if (password || !currentEditingUser) {
-                body.password = password;
-            }
-
-            try {
-                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
-                });
-
-                if (response.ok) {
-                    closeUserModal();
-                    loadUsers();
-                } else {
-                    const data = await response.json();
-                    alert('Error: ' + data.error);
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
+                currentUserPermissions = {};
             }
         });
 
-        async function deleteUser(username) {
-            if (!confirm(`Delete user "${username}"?`)) return;
+        async function loadFiles(path) {
+            currentPath = path;
+            const token = localStorage.getItem('auth_token');
+            const tbody = document.getElementById('tbody');
+            const title = document.getElementById('title');
+            const goUp = document.getElementById('UI_goUp');
+            const upLink = document.getElementById('upLink');
+
+            title.textContent = 'Index of /' + path;
+
+            if (path) {
+                goUp.style.display = 'block';
+                const parentPath = path.split('/').slice(0, -1).join('/');
+                upLink.onclick = () => { loadFiles(parentPath); return false; };
+            } else {
+                goUp.style.display = 'none';
+            }
+
+            try {
+                const response = await fetch(ADMIN_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path })
+                });
+
+                if (!response.ok) throw new Error('Failed to load files');
+
+                const files = await response.json();
+                renderFiles(files);
+            } catch (error) {
+                alert('Error loading files: ' + error.message);
+            }
+        }
+
+        function renderFiles(files) {
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+
+            files.forEach(file => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="checkbox-col">
+                        <input type="checkbox" class="file-checkbox" data-path="${file.path}" onchange="updateSelectedCount()">
+                    </td>
+                    <td>
+                        ${file.type === 'dir'
+                            ? `<i class="fa-solid fa-folder"></i> <a href="#" onclick="loadFiles('${file.path}'); return false;">${file.name}/</a>`
+                            : `<i class="fa-solid fa-file"></i> ${file.name}`
+                        }
+                    </td>
+                    <td>${file.size || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.file-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checkboxes = document.querySelectorAll('.file-checkbox:checked');
+            selectedPaths.clear();
+            checkboxes.forEach(cb => selectedPaths.add(cb.dataset.path));
+            document.getElementById('selectedCount').textContent = selectedPaths.size;
+        }
+
+        async function setPermissions(type) {
+            const username = document.getElementById('userSelect').value;
+            if (!username) {
+                alert('Please select a user first');
+                return;
+            }
+
+            if (selectedPaths.size === 0) {
+                alert('Please select at least one file or folder');
+                return;
+            }
 
             const token = localStorage.getItem('auth_token');
+            const user = allUsers[username];
+            const paths = Array.from(selectedPaths);
+
+            const permissions = { ...user.permissions };
+
+            if (type === 'allow') {
+                permissions.allowed = [...new Set([...(permissions.allowed || []), ...paths])];
+                permissions.denied = (permissions.denied || []).filter(p => !paths.includes(p));
+            } else {
+                permissions.denied = [...new Set([...(permissions.denied || []), ...paths])];
+                permissions.allowed = (permissions.allowed || []).filter(p => !paths.includes(p));
+            }
 
             try {
                 const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, action: 'delete', username })
+                    body: JSON.stringify({
+                        token,
+                        action: 'update',
+                        username,
+                        permissions
+                    })
                 });
 
                 if (response.ok) {
-                    loadUsers();
+                    alert(`Successfully ${type === 'allow' ? 'allowed' : 'denied'} ${paths.length} path(s) for ${username}`);
+                    await loadUsers();
+                    selectedPaths.clear();
+                    document.querySelectorAll('.file-checkbox').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAll').checked = false;
+                    updateSelectedCount();
                 } else {
                     const data = await response.json();
                     alert('Error: ' + data.error);
@@ -519,17 +488,8 @@
             }
         }
 
-        function switchTab(tab) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-
-            if (tab === 'users') {
-                document.querySelector('.admin-tab:first-child').classList.add('active');
-                document.getElementById('usersPanel').classList.add('active');
-            } else {
-                document.querySelector('.admin-tab:last-child').classList.add('active');
-                document.getElementById('filesPanel').classList.add('active');
-            }
+        function showUserManagement() {
+            window.open('user-management.html', '_blank');
         }
 
         function toggleProfileMenu() {
