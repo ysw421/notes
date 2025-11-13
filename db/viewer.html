@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="viewer.css">
+<link rel="stylesheet" href="/db/viewer.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 <title>Index of /</title>
@@ -267,7 +267,9 @@ async function openFile(element) {
     }
 
     try {
-        if (!file.content) {
+        let byteArray;
+
+        if (!file.content && !file.download_url) {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -285,14 +287,26 @@ async function openFile(element) {
 
             const fileData = await response.json();
             file.content = fileData.content;
+            file.download_url = fileData.download_url;
         }
 
-        const byteCharacters = atob(file.content);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        if ((!file.content || file.content.length === 0) && file.download_url) {
+            const response = await fetch(file.download_url);
+            if (!response.ok) {
+                throw new Error('Failed to download file from URL');
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            byteArray = new Uint8Array(arrayBuffer);
+        } else if (file.content && file.content.length > 0) {
+            const byteCharacters = atob(file.content);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            byteArray = new Uint8Array(byteNumbers);
+        } else {
+            throw new Error('File content is empty and no download URL available');
         }
-        const byteArray = new Uint8Array(byteNumbers);
 
         let mimeType = 'application/octet-stream';
         if (file.name.match(/\.(txt|md|log)$/i)) {
@@ -345,7 +359,9 @@ async function downloadFileInline(element) {
     }
 
     try {
-        if (!file.content) {
+        let byteArray;
+
+        if (!file.content && !file.download_url) {
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -363,14 +379,27 @@ async function downloadFileInline(element) {
 
             const fileData = await response.json();
             file.content = fileData.content;
+            file.download_url = fileData.download_url;
         }
 
-        const byteCharacters = atob(file.content);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        if ((!file.content || file.content.length === 0) && file.download_url) {
+            const response = await fetch(file.download_url);
+            if (!response.ok) {
+                throw new Error('Failed to download file from URL');
+            }
+            const arrayBuffer = await response.arrayBuffer();
+            byteArray = new Uint8Array(arrayBuffer);
+        } else if (file.content && file.content.length > 0) {
+            const byteCharacters = atob(file.content);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            byteArray = new Uint8Array(byteNumbers);
+        } else {
+            throw new Error('File content is empty and no download URL available');
         }
-        const byteArray = new Uint8Array(byteNumbers);
+
         const blob = new Blob([byteArray], { type: 'application/octet-stream' });
 
         const url = window.URL.createObjectURL(blob);
@@ -509,7 +538,9 @@ async function downloadAll() {
         const zip = new JSZip();
 
         for (const file of fileItems) {
-            if (!file.content) {
+            let byteArray;
+
+            if (!file.content && !file.download_url) {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -527,14 +558,26 @@ async function downloadAll() {
 
                 const fileData = await response.json();
                 file.content = fileData.content;
+                file.download_url = fileData.download_url;
             }
 
-            const byteCharacters = atob(file.content);
-            const byteNumbers = new Array(byteCharacters.length);
-            for (let i = 0; i < byteCharacters.length; i++) {
-                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            if ((!file.content || file.content.length === 0) && file.download_url) {
+                const response = await fetch(file.download_url);
+                if (!response.ok) {
+                    throw new Error(`Failed to download ${file.name} from URL`);
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                byteArray = new Uint8Array(arrayBuffer);
+            } else if (file.content && file.content.length > 0) {
+                const byteCharacters = atob(file.content);
+                const byteNumbers = new Array(byteCharacters.length);
+                for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i);
+                }
+                byteArray = new Uint8Array(byteNumbers);
+            } else {
+                throw new Error(`${file.name}: content is empty and no download URL available`);
             }
-            const byteArray = new Uint8Array(byteNumbers);
 
             zip.file(file.name, byteArray);
         }
