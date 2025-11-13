@@ -3,8 +3,3 @@ main = "worker.js"
 compatibility_date = "2024-01-01"
 
 [vars]
-
-[env.production]
-routes = [
-  { pattern = "db.siwon.me.kr/*", zone_name = "siwon.me.kr" }
-]
