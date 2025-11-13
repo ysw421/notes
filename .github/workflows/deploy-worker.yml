@@ -28,7 +28,7 @@ jobs:
       - name: Deploy to Cloudflare Workers
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: wrangler deploy --env production
+        run: wrangler deploy
 
       - name: Set secrets
         env:
@@ -36,5 +36,5 @@ jobs:
           GITHUB_TOKEN_SECRET: ${{ secrets.GH_PAT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          echo "$GITHUB_TOKEN_SECRET" | wrangler secret put GITHUB_TOKEN --env production
-          echo "$JWT_SECRET" | wrangler secret put JWT_SECRET --env production
+          echo "$GITHUB_TOKEN_SECRET" | wrangler secret put GITHUB_TOKEN
+          echo "$JWT_SECRET" | wrangler secret put JWT_SECRET
