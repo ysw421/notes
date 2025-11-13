@@ -331,9 +331,35 @@
                         if (response.ok) {
                             const subFiles = await response.json();
                             directoryCache[folder.path] = subFiles;
+                            await prefetchSubfolders(subFiles);
                         }
                     } catch (error) {
                     }
+                }
+            }
+
+            await prefetchParentFolder();
+        }
+
+        async function prefetchParentFolder() {
+            if (!currentPath) return;
+
+            const token = localStorage.getItem('auth_token');
+            const parentPath = currentPath.split('/').slice(0, -1).join('/');
+
+            if (!directoryCache[parentPath]) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token, path: parentPath })
+                    });
+
+                    if (response.ok) {
+                        const parentFiles = await response.json();
+                        directoryCache[parentPath] = parentFiles;
+                    }
+                } catch (error) {
                 }
             }
         }
