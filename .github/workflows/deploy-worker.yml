@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'notes/worker.js'
-      - 'notes/wrangler.toml'
+      - 'worker.js'
+      - 'wrangler.toml'
       - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:
 
@@ -28,9 +28,7 @@ jobs:
       - name: Deploy to Cloudflare Workers
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          cd notes
-          wrangler deploy --env production
+        run: wrangler deploy --env production
 
       - name: Set secrets
         env:
@@ -38,6 +36,5 @@ jobs:
           GITHUB_TOKEN_SECRET: ${{ secrets.GH_PAT }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-          cd notes
           echo "$GITHUB_TOKEN_SECRET" | wrangler secret put GITHUB_TOKEN --env production
           echo "$JWT_SECRET" | wrangler secret put JWT_SECRET --env production
