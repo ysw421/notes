@@ -405,3 +405,11 @@ td:not(:first-child) {
   color: #333;
   border-bottom: 1px solid #eee;
 }
+
+.profile-username {
+  padding: 8px 15px;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+}
