@@ -24,6 +24,9 @@ Thumbs.db
 # Vercel
 .vercel
 
+# Wrangler
+.wrangler/
+
 # LaTeX files
 *.aux
 *.bbl
