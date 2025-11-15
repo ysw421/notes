@@ -382,7 +382,7 @@
             gTable.setAttribute("order", "");
         }
 
-        async function openFile(element) {
+        function openFile(element) {
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
             const file = tr.fileData;
 
@@ -392,72 +392,8 @@
             }
 
             const token = localStorage.getItem('auth_token');
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: file.path })
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
-                        checkAuth();
-                        return;
-                    }
-                    throw new Error('Failed to load file');
-                }
-
-                const fileData = await response.json();
-
-                if (fileData.download_url) {
-                    window.open(fileData.download_url, '_blank');
-                } else if (fileData.content && fileData.content.length > 0) {
-                    const binaryString = atob(fileData.content);
-                    const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
-                    for (let i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-
-                    let mimeType = 'application/octet-stream';
-                    if (file.name.match(/\.(txt|md|log)$/i)) {
-                        mimeType = 'text/plain';
-                    } else if (file.name.match(/\.(html|htm)$/i)) {
-                        mimeType = 'text/html';
-                    } else if (file.name.match(/\.(js)$/i)) {
-                        mimeType = 'text/javascript';
-                    } else if (file.name.match(/\.(json)$/i)) {
-                        mimeType = 'application/json';
-                    } else if (file.name.match(/\.(css)$/i)) {
-                        mimeType = 'text/css';
-                    } else if (file.name.match(/\.(pdf)$/i)) {
-                        mimeType = 'application/pdf';
-                    } else if (file.name.match(/\.(png)$/i)) {
-                        mimeType = 'image/png';
-                    } else if (file.name.match(/\.(jpg|jpeg)$/i)) {
-                        mimeType = 'image/jpeg';
-                    } else if (file.name.match(/\.(gif)$/i)) {
-                        mimeType = 'image/gif';
-                    } else if (file.name.match(/\.(svg)$/i)) {
-                        mimeType = 'image/svg+xml';
-                    } else if (file.name.match(/\.(webp)$/i)) {
-                        mimeType = 'image/webp';
-                    }
-
-                    const blob = new Blob([bytes], { type: mimeType });
-                    const url = window.URL.createObjectURL(blob);
-                    window.open(url, '_blank');
-                    setTimeout(() => {
-                        window.URL.revokeObjectURL(url);
-                    }, 5000);
-                } else {
-                    throw new Error('File content is empty and no download URL available');
-                }
-            } catch (error) {
-                alert('Failed to open file: ' + error.message);
-            }
+            const fileUrl = `file.html?path=${encodeURIComponent(file.path)}&token=${encodeURIComponent(token)}`;
+            window.open(fileUrl, '_blank');
         }
 
         async function downloadFileInline(element) {
