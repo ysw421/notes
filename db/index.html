@@ -156,18 +156,9 @@
             handleHashChange();
         }
 
-        async function handleHashChange() {
+        function handleHashChange() {
             const hash = window.location.hash.slice(1);
             let path = decodeURIComponent(hash || '');
-
-            if (path.startsWith('file:')) {
-                const filePath = path.substring(5);
-                const dirPath = filePath.split('/').slice(0, -1).join('/');
-
-                await loadFiles(dirPath);
-                await openFileByPath(filePath);
-                return;
-            }
 
             const token = localStorage.getItem('auth_token');
             if (token) {
@@ -400,18 +391,13 @@
                 return;
             }
 
-            window.location.hash = 'file:' + encodeURIComponent(file.path);
-        }
-
-        async function openFileByPath(filePath) {
             const token = localStorage.getItem('auth_token');
-            const fileName = filePath.split('/').pop();
 
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: filePath })
+                    body: JSON.stringify({ token, path: file.path })
                 });
 
                 if (!response.ok) {
@@ -425,91 +411,50 @@
 
                 const fileData = await response.json();
 
-                let bytes;
-                if ((!fileData.content || fileData.content.length === 0) && fileData.download_url) {
-                    const dlResponse = await fetch(fileData.download_url);
-                    if (!dlResponse.ok) {
-                        throw new Error('Failed to download file from URL');
-                    }
-                    const arrayBuffer = await dlResponse.arrayBuffer();
-                    bytes = new Uint8Array(arrayBuffer);
+                if (fileData.download_url) {
+                    window.open(fileData.download_url, '_blank');
                 } else if (fileData.content && fileData.content.length > 0) {
                     const binaryString = atob(fileData.content);
                     const len = binaryString.length;
-                    bytes = new Uint8Array(len);
+                    const bytes = new Uint8Array(len);
                     for (let i = 0; i < len; i++) {
                         bytes[i] = binaryString.charCodeAt(i);
                     }
-                } else {
-                    throw new Error('File content is empty and no download URL available');
-                }
 
-                let mimeType = 'application/octet-stream';
-                const isPdf = fileName.match(/\.(pdf)$/i);
-                const isImage = fileName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
-                const isText = fileName.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
+                    let mimeType = 'application/octet-stream';
+                    if (file.name.match(/\.(txt|md|log)$/i)) {
+                        mimeType = 'text/plain';
+                    } else if (file.name.match(/\.(html|htm)$/i)) {
+                        mimeType = 'text/html';
+                    } else if (file.name.match(/\.(js)$/i)) {
+                        mimeType = 'text/javascript';
+                    } else if (file.name.match(/\.(json)$/i)) {
+                        mimeType = 'application/json';
+                    } else if (file.name.match(/\.(css)$/i)) {
+                        mimeType = 'text/css';
+                    } else if (file.name.match(/\.(pdf)$/i)) {
+                        mimeType = 'application/pdf';
+                    } else if (file.name.match(/\.(png)$/i)) {
+                        mimeType = 'image/png';
+                    } else if (file.name.match(/\.(jpg|jpeg)$/i)) {
+                        mimeType = 'image/jpeg';
+                    } else if (file.name.match(/\.(gif)$/i)) {
+                        mimeType = 'image/gif';
+                    } else if (file.name.match(/\.(svg)$/i)) {
+                        mimeType = 'image/svg+xml';
+                    } else if (file.name.match(/\.(webp)$/i)) {
+                        mimeType = 'image/webp';
+                    }
 
-                if (fileName.match(/\.(txt|md|log)$/i)) {
-                    mimeType = 'text/plain';
-                } else if (fileName.match(/\.(html|htm)$/i)) {
-                    mimeType = 'text/html';
-                } else if (fileName.match(/\.(js)$/i)) {
-                    mimeType = 'text/javascript';
-                } else if (fileName.match(/\.(json)$/i)) {
-                    mimeType = 'application/json';
-                } else if (fileName.match(/\.(css)$/i)) {
-                    mimeType = 'text/css';
-                } else if (isPdf) {
-                    mimeType = 'application/pdf';
-                } else if (fileName.match(/\.(png)$/i)) {
-                    mimeType = 'image/png';
-                } else if (fileName.match(/\.(jpg|jpeg)$/i)) {
-                    mimeType = 'image/jpeg';
-                } else if (fileName.match(/\.(gif)$/i)) {
-                    mimeType = 'image/gif';
-                } else if (fileName.match(/\.(svg)$/i)) {
-                    mimeType = 'image/svg+xml';
-                } else if (fileName.match(/\.(webp)$/i)) {
-                    mimeType = 'image/webp';
-                }
-
-                const blob = new Blob([bytes], { type: mimeType });
-                const url = window.URL.createObjectURL(blob);
-
-                const overlay = document.getElementById('fileViewerOverlay');
-                const title = document.getElementById('fileViewerTitle');
-                const content = document.getElementById('fileViewerContent');
-
-                title.textContent = fileName;
-                content.innerHTML = '';
-
-                if (isPdf) {
-                    const iframe = document.createElement('iframe');
-                    iframe.src = url;
-                    iframe.style.width = '100%';
-                    iframe.style.height = '100%';
-                    iframe.style.border = 'none';
-                    content.appendChild(iframe);
-                } else if (isImage) {
-                    const img = document.createElement('img');
-                    img.src = url;
-                    content.appendChild(img);
-                } else if (isText) {
-                    const text = new TextDecoder().decode(bytes);
-                    const pre = document.createElement('pre');
-                    pre.textContent = text;
-                    content.appendChild(pre);
-                } else {
+                    const blob = new Blob([bytes], { type: mimeType });
+                    const url = window.URL.createObjectURL(blob);
                     window.open(url, '_blank');
                     setTimeout(() => {
                         window.URL.revokeObjectURL(url);
-                    }, 1000);
-                    return;
+                    }, 5000);
+                } else {
+                    throw new Error('File content is empty and no download URL available');
                 }
-
-                overlay.classList.add('active');
-                overlay.dataset.blobUrl = url;
-                overlay.dataset.filePath = filePath;
             } catch (error) {
                 alert('Failed to open file: ' + error.message);
             }
@@ -747,28 +692,6 @@
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
-        function closeFileViewer() {
-            const overlay = document.getElementById('fileViewerOverlay');
-            const content = document.getElementById('fileViewerContent');
-
-            overlay.classList.remove('active');
-
-            const oldUrl = overlay.dataset.blobUrl;
-            if (oldUrl && oldUrl.startsWith('blob:')) {
-                window.URL.revokeObjectURL(oldUrl);
-            }
-
-            const filePath = overlay.dataset.filePath;
-            if (filePath) {
-                const dirPath = filePath.split('/').slice(0, -1).join('/');
-                window.location.hash = encodeURIComponent(dirPath);
-            }
-
-            content.innerHTML = '';
-            delete overlay.dataset.blobUrl;
-            delete overlay.dataset.filePath;
-        }
-
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('username');
@@ -782,15 +705,6 @@
             const profileMenu = document.getElementById('profileMenu');
             if (profileMenu && profileContainer && !profileContainer.contains(event.target)) {
                 profileMenu.style.display = 'none';
-            }
-        });
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                const overlay = document.getElementById('fileViewerOverlay');
-                if (overlay && overlay.classList.contains('active')) {
-                    closeFileViewer();
-                }
             }
         });
 
