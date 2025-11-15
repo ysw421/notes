@@ -34,3 +34,22 @@
     </table>
     <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 </div>
+
+<div id="pdfViewerOverlay" class="pdf-viewer-overlay">
+    <div class="pdf-viewer-header">
+        <div class="pdf-viewer-title" id="pdfViewerTitle">PDF Viewer</div>
+        <div class="pdf-viewer-controls">
+            <button id="pdfPrevPage">◀</button>
+            <span id="pdfPageInfo">1 / 1</span>
+            <button id="pdfNextPage">▶</button>
+            <button id="pdfZoomOut">-</button>
+            <button id="pdfZoomIn">+</button>
+        </div>
+        <button class="pdf-viewer-close" onclick="closePdfViewer()">
+            <i class="fa-solid fa-times"></i> Close
+        </button>
+    </div>
+    <div class="pdf-viewer-content">
+        <canvas id="pdfCanvas"></canvas>
+    </div>
+</div>

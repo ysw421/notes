@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css" id="loginStyle">
     <link rel="stylesheet" href="viewer.css" id="viewerStyle" disabled>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 </head>
 <body dir="ltr">
@@ -382,7 +383,15 @@
             gTable.setAttribute("order", "");
         }
 
-        function openFile(element) {
+        let pdfDoc = null;
+        let pdfPageNum = 1;
+        let pdfPageRendering = false;
+        let pdfPageNumPending = null;
+        let pdfScale = 1.5;
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        async function openFile(element) {
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
             const file = tr.fileData;
 
@@ -395,11 +404,108 @@
             const isPdf = file.name.match(/\.pdf$/i);
 
             if (isPdf) {
-                const fileUrl = `../file/?path=${encodeURIComponent(file.path)}&token=${encodeURIComponent(token)}`;
-                window.open(fileUrl, '_blank');
+                await openPdfFile(file, token);
             } else {
-                openNonPdfFile(file, token);
+                await openNonPdfFile(file, token);
             }
+        }
+
+        async function openPdfFile(file, token) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: file.path })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        checkAuth();
+                        return;
+                    }
+                    throw new Error('Failed to load file');
+                }
+
+                const fileData = await response.json();
+
+                let pdfData;
+                if (fileData.content && fileData.content.length > 0) {
+                    const binaryString = atob(fileData.content);
+                    const len = binaryString.length;
+                    const bytes = new Uint8Array(len);
+                    for (let i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    pdfData = bytes;
+                } else if (fileData.download_url) {
+                    const dlResponse = await fetch(fileData.download_url);
+                    if (!dlResponse.ok) {
+                        throw new Error('Failed to download PDF');
+                    }
+                    const arrayBuffer = await dlResponse.arrayBuffer();
+                    pdfData = new Uint8Array(arrayBuffer);
+                } else {
+                    throw new Error('No PDF content available');
+                }
+
+                pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                pdfPageNum = 1;
+                pdfScale = 1.5;
+
+                document.getElementById('pdfViewerTitle').textContent = file.name;
+                document.getElementById('pdfViewerOverlay').classList.add('active');
+                renderPdfPage(pdfPageNum);
+            } catch (error) {
+                alert('Failed to open PDF: ' + error.message);
+            }
+        }
+
+        function renderPdfPage(num) {
+            pdfPageRendering = true;
+            const canvas = document.getElementById('pdfCanvas');
+            const ctx = canvas.getContext('2d');
+
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({ scale: pdfScale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+
+                const renderTask = page.render(renderContext);
+                renderTask.promise.then(function() {
+                    pdfPageRendering = false;
+                    if (pdfPageNumPending !== null) {
+                        renderPdfPage(pdfPageNumPending);
+                        pdfPageNumPending = null;
+                    }
+                });
+            });
+
+            document.getElementById('pdfPageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
+            updatePdfButtons();
+        }
+
+        function queueRenderPdfPage(num) {
+            if (pdfPageRendering) {
+                pdfPageNumPending = num;
+            } else {
+                renderPdfPage(num);
+            }
+        }
+
+        function updatePdfButtons() {
+            document.getElementById('pdfPrevPage').disabled = pdfPageNum <= 1;
+            document.getElementById('pdfNextPage').disabled = pdfPageNum >= pdfDoc.numPages;
+        }
+
+        function closePdfViewer() {
+            document.getElementById('pdfViewerOverlay').classList.remove('active');
+            pdfDoc = null;
         }
 
         async function openNonPdfFile(file, token) {
@@ -684,6 +790,48 @@
 
             window.addEventListener('pageshow', function(event) {
                 checkAuth();
+            });
+
+            document.getElementById('pdfPrevPage').addEventListener('click', function() {
+                if (pdfPageNum <= 1) return;
+                pdfPageNum--;
+                queueRenderPdfPage(pdfPageNum);
+            });
+
+            document.getElementById('pdfNextPage').addEventListener('click', function() {
+                if (pdfPageNum >= pdfDoc.numPages) return;
+                pdfPageNum++;
+                queueRenderPdfPage(pdfPageNum);
+            });
+
+            document.getElementById('pdfZoomIn').addEventListener('click', function() {
+                pdfScale += 0.25;
+                queueRenderPdfPage(pdfPageNum);
+            });
+
+            document.getElementById('pdfZoomOut').addEventListener('click', function() {
+                if (pdfScale <= 0.5) return;
+                pdfScale -= 0.25;
+                queueRenderPdfPage(pdfPageNum);
+            });
+
+            document.addEventListener('keydown', function(event) {
+                const overlay = document.getElementById('pdfViewerOverlay');
+                if (overlay && overlay.classList.contains('active')) {
+                    if (event.key === 'Escape') {
+                        closePdfViewer();
+                    } else if (event.key === 'ArrowLeft') {
+                        if (pdfPageNum > 1) {
+                            pdfPageNum--;
+                            queueRenderPdfPage(pdfPageNum);
+                        }
+                    } else if (event.key === 'ArrowRight') {
+                        if (pdfPageNum < pdfDoc.numPages) {
+                            pdfPageNum++;
+                            queueRenderPdfPage(pdfPageNum);
+                        }
+                    }
+                }
             });
         });
     </script>
