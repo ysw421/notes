@@ -156,9 +156,18 @@
             handleHashChange();
         }
 
-        function handleHashChange() {
+        async function handleHashChange() {
             const hash = window.location.hash.slice(1);
             let path = decodeURIComponent(hash || '');
+
+            if (path.startsWith('file:')) {
+                const filePath = path.substring(5);
+                const dirPath = filePath.split('/').slice(0, -1).join('/');
+
+                await loadFiles(dirPath);
+                await openFileByPath(filePath);
+                return;
+            }
 
             const token = localStorage.getItem('auth_token');
             if (token) {
@@ -383,7 +392,6 @@
         }
 
         async function openFile(element) {
-            const token = localStorage.getItem('auth_token');
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
             const file = tr.fileData;
 
@@ -392,11 +400,18 @@
                 return;
             }
 
+            window.location.hash = 'file:' + encodeURIComponent(file.path);
+        }
+
+        async function openFileByPath(filePath) {
+            const token = localStorage.getItem('auth_token');
+            const fileName = filePath.split('/').pop();
+
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: file.path })
+                    body: JSON.stringify({ token, path: filePath })
                 });
 
                 if (!response.ok) {
@@ -409,19 +424,17 @@
                 }
 
                 const fileData = await response.json();
-                file.content = fileData.content;
-                file.download_url = fileData.download_url;
 
                 let bytes;
-                if ((!file.content || file.content.length === 0) && file.download_url) {
-                    const dlResponse = await fetch(file.download_url);
+                if ((!fileData.content || fileData.content.length === 0) && fileData.download_url) {
+                    const dlResponse = await fetch(fileData.download_url);
                     if (!dlResponse.ok) {
                         throw new Error('Failed to download file from URL');
                     }
                     const arrayBuffer = await dlResponse.arrayBuffer();
                     bytes = new Uint8Array(arrayBuffer);
-                } else if (file.content && file.content.length > 0) {
-                    const binaryString = atob(file.content);
+                } else if (fileData.content && fileData.content.length > 0) {
+                    const binaryString = atob(fileData.content);
                     const len = binaryString.length;
                     bytes = new Uint8Array(len);
                     for (let i = 0; i < len; i++) {
@@ -432,31 +445,31 @@
                 }
 
                 let mimeType = 'application/octet-stream';
-                const isPdf = file.name.match(/\.(pdf)$/i);
-                const isImage = file.name.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
-                const isText = file.name.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
+                const isPdf = fileName.match(/\.(pdf)$/i);
+                const isImage = fileName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
+                const isText = fileName.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
 
-                if (file.name.match(/\.(txt|md|log)$/i)) {
+                if (fileName.match(/\.(txt|md|log)$/i)) {
                     mimeType = 'text/plain';
-                } else if (file.name.match(/\.(html|htm)$/i)) {
+                } else if (fileName.match(/\.(html|htm)$/i)) {
                     mimeType = 'text/html';
-                } else if (file.name.match(/\.(js)$/i)) {
+                } else if (fileName.match(/\.(js)$/i)) {
                     mimeType = 'text/javascript';
-                } else if (file.name.match(/\.(json)$/i)) {
+                } else if (fileName.match(/\.(json)$/i)) {
                     mimeType = 'application/json';
-                } else if (file.name.match(/\.(css)$/i)) {
+                } else if (fileName.match(/\.(css)$/i)) {
                     mimeType = 'text/css';
                 } else if (isPdf) {
                     mimeType = 'application/pdf';
-                } else if (file.name.match(/\.(png)$/i)) {
+                } else if (fileName.match(/\.(png)$/i)) {
                     mimeType = 'image/png';
-                } else if (file.name.match(/\.(jpg|jpeg)$/i)) {
+                } else if (fileName.match(/\.(jpg|jpeg)$/i)) {
                     mimeType = 'image/jpeg';
-                } else if (file.name.match(/\.(gif)$/i)) {
+                } else if (fileName.match(/\.(gif)$/i)) {
                     mimeType = 'image/gif';
-                } else if (file.name.match(/\.(svg)$/i)) {
+                } else if (fileName.match(/\.(svg)$/i)) {
                     mimeType = 'image/svg+xml';
-                } else if (file.name.match(/\.(webp)$/i)) {
+                } else if (fileName.match(/\.(webp)$/i)) {
                     mimeType = 'image/webp';
                 }
 
@@ -467,7 +480,7 @@
                 const title = document.getElementById('fileViewerTitle');
                 const content = document.getElementById('fileViewerContent');
 
-                title.textContent = file.name;
+                title.textContent = fileName;
                 content.innerHTML = '';
 
                 if (isPdf) {
@@ -496,6 +509,7 @@
 
                 overlay.classList.add('active');
                 overlay.dataset.blobUrl = url;
+                overlay.dataset.filePath = filePath;
             } catch (error) {
                 alert('Failed to open file: ' + error.message);
             }
@@ -744,8 +758,15 @@
                 window.URL.revokeObjectURL(oldUrl);
             }
 
+            const filePath = overlay.dataset.filePath;
+            if (filePath) {
+                const dirPath = filePath.split('/').slice(0, -1).join('/');
+                window.location.hash = encodeURIComponent(dirPath);
+            }
+
             content.innerHTML = '';
             delete overlay.dataset.blobUrl;
+            delete overlay.dataset.filePath;
         }
 
         function logout() {
