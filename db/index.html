@@ -382,7 +382,7 @@
             gTable.setAttribute("order", "");
         }
 
-        async function openFile(element) {
+        function openFile(element) {
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
             const file = tr.fileData;
 
@@ -392,7 +392,17 @@
             }
 
             const token = localStorage.getItem('auth_token');
+            const isPdf = file.name.match(/\.pdf$/i);
 
+            if (isPdf) {
+                const fileUrl = `../file/?path=${encodeURIComponent(file.path)}&token=${encodeURIComponent(token)}`;
+                window.open(fileUrl, '_blank');
+            } else {
+                openNonPdfFile(file, token);
+            }
+        }
+
+        async function openNonPdfFile(file, token) {
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',

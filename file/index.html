@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: sans-serif;
+            overflow: hidden;
+        }
+        #toolbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: #323639;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            z-index: 100;
+        }
+        #toolbar .left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        #toolbar button {
+            background: #4d5154;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        #toolbar button:hover {
+            background: #5d6164;
+        }
+        #toolbar button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        #pageInfo {
+            color: #d9d9d9;
+            font-size: 14px;
+        }
+        #viewer {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            background: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        #pdfCanvas {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            max-width: 100%;
+            height: auto;
+        }
+        #loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
+        }
+        #error {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ff6b6b;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <div class="left">
+            <button id="prevPage">◀ Prev</button>
+            <span id="pageInfo">Page 1 of 1</span>
+            <button id="nextPage">Next ▶</button>
+        </div>
+        <div>
+            <button id="zoomOut">-</button>
+            <button id="zoomIn">+</button>
+        </div>
+    </div>
+    <div id="viewer">
+        <canvas id="pdfCanvas"></canvas>
+    </div>
+    <div id="loading">Loading PDF...</div>
+    <div id="error" class="hidden"></div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3000/api/github-proxy'
+            : 'https://notes-api.ysw421.workers.dev';
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.5;
+
+        const canvas = document.getElementById('pdfCanvas');
+        const ctx = canvas.getContext('2d');
+
+        async function loadPDF() {
+            const params = new URLSearchParams(window.location.search);
+            const path = params.get('path');
+            const token = params.get('token');
+
+            if (!path || !token) {
+                showError('Missing path or token in URL');
+                return;
+            }
+
+            const fileName = path.split('/').pop();
+            document.title = fileName;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load file');
+                }
+
+                const fileData = await response.json();
+
+                let pdfData;
+                if (fileData.content && fileData.content.length > 0) {
+                    const binaryString = atob(fileData.content);
+                    const len = binaryString.length;
+                    const bytes = new Uint8Array(len);
+                    for (let i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    pdfData = bytes;
+                } else if (fileData.download_url) {
+                    const dlResponse = await fetch(fileData.download_url);
+                    if (!dlResponse.ok) {
+                        throw new Error('Failed to download file');
+                    }
+                    const arrayBuffer = await dlResponse.arrayBuffer();
+                    pdfData = new Uint8Array(arrayBuffer);
+                } else {
+                    throw new Error('No file content available');
+                }
+
+                pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                document.getElementById('loading').classList.add('hidden');
+                document.getElementById('pageInfo').textContent = `Page ${pageNum} of ${pdfDoc.numPages}`;
+                renderPage(pageNum);
+            } catch (error) {
+                showError('Error: ' + error.message);
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function renderPage(num) {
+            pageRendering = true;
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({ scale: scale });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+
+                const renderTask = page.render(renderContext);
+                renderTask.promise.then(function() {
+                    pageRendering = false;
+                    if (pageNumPending !== null) {
+                        renderPage(pageNumPending);
+                        pageNumPending = null;
+                    }
+                });
+            });
+
+            document.getElementById('pageInfo').textContent = `Page ${num} of ${pdfDoc.numPages}`;
+            updateButtons();
+        }
+
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
+            } else {
+                renderPage(num);
+            }
+        }
+
+        function updateButtons() {
+            document.getElementById('prevPage').disabled = pageNum <= 1;
+            document.getElementById('nextPage').disabled = pageNum >= pdfDoc.numPages;
+        }
+
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (pageNum <= 1) return;
+            pageNum--;
+            queueRenderPage(pageNum);
+        });
+
+        document.getElementById('nextPage').addEventListener('click', function() {
+            if (pageNum >= pdfDoc.numPages) return;
+            pageNum++;
+            queueRenderPage(pageNum);
+        });
+
+        document.getElementById('zoomIn').addEventListener('click', function() {
+            scale += 0.25;
+            queueRenderPage(pageNum);
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', function() {
+            if (scale <= 0.5) return;
+            scale -= 0.25;
+            queueRenderPage(pageNum);
+        });
+
+        loadPDF();
+    </script>
+</body>
+</html>
