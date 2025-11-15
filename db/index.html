@@ -11,72 +11,17 @@
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 </head>
 <body dir="ltr">
-    <!-- Login Section -->
-    <div id="loginSection" style="display:none;">
-        <div class="login-container">
-            <h1>🔒 Private Notes</h1>
-            <p>Enter your credentials</p>
+    <script>
+        async function loadComponents() {
+            const loginResponse = await fetch('../components/login.html');
+            const loginHTML = await loginResponse.text();
+            document.body.insertAdjacentHTML('afterbegin', loginHTML);
 
-            <form id="loginForm">
-                <input
-                    type="text"
-                    id="username"
-                    placeholder="Username"
-                    autocomplete="username"
-                    required
-                >
-                <input
-                    type="password"
-                    id="password"
-                    placeholder="Password"
-                    autocomplete="current-password"
-                    required
-                >
-                <button type="submit">Enter</button>
-            </form>
-
-            <div id="error" class="error"></div>
-        </div>
-    </div>
-
-    <!-- Viewer Section -->
-    <div id="viewerSection" style="display:none;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
-            <h1 id="title" style="margin: 0; border: none; flex: 1;">Index of /</h1>
-            <button class="btn-download-all" onclick="downloadAll()" style="display:none;">
-                <i class="fa-solid fa-download"></i>Download All
-            </button>
-        </div>
-        <div class="profile-container" onclick="toggleProfileMenu()">
-            <div class="profile-circle">
-                <i class="fa-solid fa-user"></i>
-            </div>
-            <div class="profile-menu" id="profileMenu" style="display:none;">
-                <div class="profile-username" id="profileUsername"></div>
-                <button onclick="logout(); event.stopPropagation();">
-                    <i class="fa-solid fa-sign-out-alt"></i>Logout
-                </button>
-            </div>
-        </div>
-        <div style="border-bottom: 1px solid ThreeDLightShadow; margin-bottom: 0.6em;"></div>
-        <p id="UI_goUp" style="display:none">
-          <a class="up" href="#" id="upLink">
-            <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
-          </a>
-        </p>
-        <table id="dirTable" order="">
-         <thead>
-          <tr>
-           <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
-           <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
-           <th>Download</th>
-          </tr>
-         </thead>
-         <tbody id="tbody"></tbody>
-        </table>
-        <div id="contentViewer" class="content-viewer" style="display:none;"></div>
-    </div>
-
+            const viewerResponse = await fetch('../components/viewer.html');
+            const viewerHTML = await viewerResponse.text();
+            document.body.insertAdjacentHTML('beforeend', viewerHTML);
+        }
+    </script>
     <script>
         // Check authentication and show appropriate section
         function checkAuth() {
@@ -448,26 +393,24 @@
             }
 
             try {
-                if (!file.content && !file.download_url) {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token, path: file.path })
-                    });
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: file.path })
+                });
 
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            localStorage.removeItem('auth_token');
-                            checkAuth();
-                            return;
-                        }
-                        throw new Error('Failed to load file');
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        checkAuth();
+                        return;
                     }
-
-                    const fileData = await response.json();
-                    file.content = fileData.content;
-                    file.download_url = fileData.download_url;
+                    throw new Error('Failed to load file');
                 }
+
+                const fileData = await response.json();
+                file.content = fileData.content;
+                file.download_url = fileData.download_url;
 
                 if ((!file.content || file.content.length === 0) && file.download_url) {
                     window.open(file.download_url, '_blank');
@@ -536,26 +479,24 @@
             try {
                 let bytes;
 
-                if (!file.content && !file.download_url) {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token, path: file.path })
-                    });
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: file.path })
+                });
 
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            localStorage.removeItem('auth_token');
-                            checkAuth();
-                            return;
-                        }
-                        throw new Error('Failed to load file');
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        checkAuth();
+                        return;
                     }
-
-                    const fileData = await response.json();
-                    file.content = fileData.content;
-                    file.download_url = fileData.download_url;
+                    throw new Error('Failed to load file');
                 }
+
+                const fileData = await response.json();
+                file.content = fileData.content;
+                file.download_url = fileData.download_url;
 
                 if ((!file.content || file.content.length === 0) && file.download_url) {
                     const response = await fetch(file.download_url);
@@ -627,21 +568,19 @@
                         if (item.type === 'file') {
                             let byteArray;
 
-                            if (!item.content && !item.download_url) {
-                                const response = await fetch(API_URL, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ token, path: item.path })
-                                });
+                            const response = await fetch(API_URL, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ token, path: item.path })
+                            });
 
-                                if (!response.ok) {
-                                    throw new Error(`Failed to load ${item.name}`);
-                                }
-
-                                const fileData = await response.json();
-                                item.content = fileData.content;
-                                item.download_url = fileData.download_url;
+                            if (!response.ok) {
+                                throw new Error(`Failed to load ${item.name}`);
                             }
+
+                            const fileData = await response.json();
+                            item.content = fileData.content;
+                            item.download_url = fileData.download_url;
 
                             if ((!item.content || item.content.length === 0) && item.download_url) {
                                 const response = await fetch(item.download_url);
@@ -775,11 +714,12 @@
             }
         });
 
-        // Initialize on page load
-        checkAuth();
-
-        window.addEventListener('pageshow', function(event) {
+        loadComponents().then(() => {
             checkAuth();
+
+            window.addEventListener('pageshow', function(event) {
+                checkAuth();
+            });
         });
     </script>
 </body>

@@ -1,0 +1,36 @@
+<div id="viewerSection" style="display:none;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h1 id="title" style="margin: 0; border: none; flex: 1;">Index of /</h1>
+        <button class="btn-download-all" onclick="downloadAll()" style="display:none;">
+            <i class="fa-solid fa-download"></i>Download All
+        </button>
+    </div>
+    <div class="profile-container" onclick="toggleProfileMenu()">
+        <div class="profile-circle">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="profile-menu" id="profileMenu" style="display:none;">
+            <div class="profile-username" id="profileUsername"></div>
+            <button onclick="logout(); event.stopPropagation();">
+                <i class="fa-solid fa-sign-out-alt"></i>Logout
+            </button>
+        </div>
+    </div>
+    <div style="border-bottom: 1px solid ThreeDLightShadow; margin-bottom: 0.6em;"></div>
+    <p id="UI_goUp" style="display:none">
+      <a class="up" href="#" id="upLink">
+        <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
+      </a>
+    </p>
+    <table id="dirTable" order="">
+     <thead id="tableHead">
+      <tr>
+       <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
+       <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
+       <th>Download</th>
+      </tr>
+     </thead>
+     <tbody id="tbody"></tbody>
+    </table>
+    <div id="contentViewer" class="content-viewer" style="display:none;"></div>
+</div>
