@@ -413,3 +413,55 @@ td:not(:first-child) {
   font-weight: bold;
   border-bottom: 1px solid #eee;
 }
+
+.pdf-viewer-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10000;
+}
+
+.pdf-viewer-overlay.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdf-viewer-header {
+  background: #333;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pdf-viewer-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.pdf-viewer-close {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pdf-viewer-close:hover {
+  background: #c82333;
+}
+
+.pdf-viewer-content {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: white;
+}

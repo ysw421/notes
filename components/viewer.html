@@ -34,3 +34,13 @@
     </table>
     <div id="contentViewer" class="content-viewer" style="display:none;"></div>
 </div>
+
+<div id="pdfViewerOverlay" class="pdf-viewer-overlay">
+    <div class="pdf-viewer-header">
+        <div class="pdf-viewer-title" id="pdfViewerTitle">PDF Viewer</div>
+        <button class="pdf-viewer-close" onclick="closePdfViewer()">
+            <i class="fa-solid fa-times"></i> Close
+        </button>
+    </div>
+    <iframe id="pdfViewerContent" class="pdf-viewer-content"></iframe>
+</div>

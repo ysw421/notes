@@ -432,6 +432,8 @@
                 }
 
                 let mimeType = 'application/octet-stream';
+                const isPdf = file.name.match(/\.(pdf)$/i);
+
                 if (file.name.match(/\.(txt|md|log)$/i)) {
                     mimeType = 'text/plain';
                 } else if (file.name.match(/\.(html|htm)$/i)) {
@@ -442,7 +444,7 @@
                     mimeType = 'application/json';
                 } else if (file.name.match(/\.(css)$/i)) {
                     mimeType = 'text/css';
-                } else if (file.name.match(/\.(pdf)$/i)) {
+                } else if (isPdf) {
                     mimeType = 'application/pdf';
                 } else if (file.name.match(/\.(png)$/i)) {
                     mimeType = 'image/png';
@@ -458,11 +460,21 @@
 
                 const blob = new Blob([bytes], { type: mimeType });
                 const url = window.URL.createObjectURL(blob);
-                window.open(url, '_blank');
 
-                setTimeout(() => {
-                    window.URL.revokeObjectURL(url);
-                }, 1000);
+                if (isPdf) {
+                    const pdfOverlay = document.getElementById('pdfViewerOverlay');
+                    const pdfTitle = document.getElementById('pdfViewerTitle');
+                    const pdfContent = document.getElementById('pdfViewerContent');
+
+                    pdfTitle.textContent = file.name;
+                    pdfContent.src = url;
+                    pdfOverlay.classList.add('active');
+                } else {
+                    window.open(url, '_blank');
+                    setTimeout(() => {
+                        window.URL.revokeObjectURL(url);
+                    }, 1000);
+                }
             } catch (error) {
                 alert('Failed to open file: ' + error.message);
             }
@@ -700,6 +712,19 @@
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
+        function closePdfViewer() {
+            const pdfOverlay = document.getElementById('pdfViewerOverlay');
+            const pdfContent = document.getElementById('pdfViewerContent');
+
+            pdfOverlay.classList.remove('active');
+            const oldSrc = pdfContent.src;
+            pdfContent.src = '';
+
+            if (oldSrc && oldSrc.startsWith('blob:')) {
+                window.URL.revokeObjectURL(oldSrc);
+            }
+        }
+
         function logout() {
             localStorage.removeItem('auth_token');
             localStorage.removeItem('username');
@@ -713,6 +738,15 @@
             const profileMenu = document.getElementById('profileMenu');
             if (profileMenu && profileContainer && !profileContainer.contains(event.target)) {
                 profileMenu.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const pdfOverlay = document.getElementById('pdfViewerOverlay');
+                if (pdfOverlay && pdfOverlay.classList.contains('active')) {
+                    closePdfViewer();
+                }
             }
         });
 
