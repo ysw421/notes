@@ -68,74 +68,80 @@
 
                 const fileData = await response.json();
 
-                if (fileData.download_url) {
-                    window.location.href = fileData.download_url;
-                } else if (fileData.content && fileData.content.length > 0) {
+                let bytes;
+                if (fileData.content && fileData.content.length > 0) {
                     const binaryString = atob(fileData.content);
                     const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
+                    bytes = new Uint8Array(len);
                     for (let i = 0; i < len; i++) {
                         bytes[i] = binaryString.charCodeAt(i);
                     }
-
-                    let mimeType = 'application/octet-stream';
-                    if (fileName.match(/\.(txt|md|log)$/i)) {
-                        mimeType = 'text/plain';
-                    } else if (fileName.match(/\.(html|htm)$/i)) {
-                        mimeType = 'text/html';
-                    } else if (fileName.match(/\.(js)$/i)) {
-                        mimeType = 'text/javascript';
-                    } else if (fileName.match(/\.(json)$/i)) {
-                        mimeType = 'application/json';
-                    } else if (fileName.match(/\.(css)$/i)) {
-                        mimeType = 'text/css';
-                    } else if (fileName.match(/\.(pdf)$/i)) {
-                        mimeType = 'application/pdf';
-                    } else if (fileName.match(/\.(png)$/i)) {
-                        mimeType = 'image/png';
-                    } else if (fileName.match(/\.(jpg|jpeg)$/i)) {
-                        mimeType = 'image/jpeg';
-                    } else if (fileName.match(/\.(gif)$/i)) {
-                        mimeType = 'image/gif';
-                    } else if (fileName.match(/\.(svg)$/i)) {
-                        mimeType = 'image/svg+xml';
-                    } else if (fileName.match(/\.(webp)$/i)) {
-                        mimeType = 'image/webp';
+                } else if (fileData.download_url) {
+                    const dlResponse = await fetch(fileData.download_url);
+                    if (!dlResponse.ok) {
+                        throw new Error('Failed to download file from URL');
                     }
-
-                    const blob = new Blob([bytes], { type: mimeType });
-                    const url = window.URL.createObjectURL(blob);
-
-                    const content = document.getElementById('content');
-                    const loading = document.getElementById('loading');
-
-                    const isPdf = fileName.match(/\.(pdf)$/i);
-                    const isImage = fileName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
-                    const isText = fileName.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
-
-                    if (isPdf) {
-                        const iframe = document.createElement('iframe');
-                        iframe.src = url;
-                        content.appendChild(iframe);
-                    } else if (isImage) {
-                        const img = document.createElement('img');
-                        img.src = url;
-                        content.appendChild(img);
-                    } else if (isText) {
-                        const text = new TextDecoder().decode(bytes);
-                        const pre = document.createElement('pre');
-                        pre.textContent = text;
-                        content.appendChild(pre);
-                    } else {
-                        window.location.href = url;
-                        return;
-                    }
-
-                    loading.style.display = 'none';
-                    content.style.display = 'block';
+                    const arrayBuffer = await dlResponse.arrayBuffer();
+                    bytes = new Uint8Array(arrayBuffer);
                 } else {
                     throw new Error('File content is empty and no download URL available');
                 }
+
+                let mimeType = 'application/octet-stream';
+                if (fileName.match(/\.(txt|md|log)$/i)) {
+                    mimeType = 'text/plain';
+                } else if (fileName.match(/\.(html|htm)$/i)) {
+                    mimeType = 'text/html';
+                } else if (fileName.match(/\.(js)$/i)) {
+                    mimeType = 'text/javascript';
+                } else if (fileName.match(/\.(json)$/i)) {
+                    mimeType = 'application/json';
+                } else if (fileName.match(/\.(css)$/i)) {
+                    mimeType = 'text/css';
+                } else if (fileName.match(/\.(pdf)$/i)) {
+                    mimeType = 'application/pdf';
+                } else if (fileName.match(/\.(png)$/i)) {
+                    mimeType = 'image/png';
+                } else if (fileName.match(/\.(jpg|jpeg)$/i)) {
+                    mimeType = 'image/jpeg';
+                } else if (fileName.match(/\.(gif)$/i)) {
+                    mimeType = 'image/gif';
+                } else if (fileName.match(/\.(svg)$/i)) {
+                    mimeType = 'image/svg+xml';
+                } else if (fileName.match(/\.(webp)$/i)) {
+                    mimeType = 'image/webp';
+                }
+
+                const blob = new Blob([bytes], { type: mimeType });
+                const url = window.URL.createObjectURL(blob);
+
+                const content = document.getElementById('content');
+                const loading = document.getElementById('loading');
+
+                const isPdf = fileName.match(/\.(pdf)$/i);
+                const isImage = fileName.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
+                const isText = fileName.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
+
+                if (isPdf) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    content.appendChild(iframe);
+                } else if (isImage) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    content.appendChild(img);
+                } else if (isText) {
+                    const text = new TextDecoder().decode(bytes);
+                    const pre = document.createElement('pre');
+                    pre.textContent = text;
+                    content.appendChild(pre);
+                } else {
+                    window.location.href = url;
+                    return;
+                }
+
+                loading.style.display = 'none';
+                content.style.display = 'block';
             } catch (error) {
                 document.getElementById('loading').textContent = 'Error: ' + error.message;
             }
