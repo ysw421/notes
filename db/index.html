@@ -433,6 +433,8 @@
 
                 let mimeType = 'application/octet-stream';
                 const isPdf = file.name.match(/\.(pdf)$/i);
+                const isImage = file.name.match(/\.(png|jpg|jpeg|gif|svg|webp)$/i);
+                const isText = file.name.match(/\.(txt|md|log|js|json|css|html|htm)$/i);
 
                 if (file.name.match(/\.(txt|md|log)$/i)) {
                     mimeType = 'text/plain';
@@ -461,20 +463,39 @@
                 const blob = new Blob([bytes], { type: mimeType });
                 const url = window.URL.createObjectURL(blob);
 
-                if (isPdf) {
-                    const pdfOverlay = document.getElementById('pdfViewerOverlay');
-                    const pdfTitle = document.getElementById('pdfViewerTitle');
-                    const pdfContent = document.getElementById('pdfViewerContent');
+                const overlay = document.getElementById('fileViewerOverlay');
+                const title = document.getElementById('fileViewerTitle');
+                const content = document.getElementById('fileViewerContent');
 
-                    pdfTitle.textContent = file.name;
-                    pdfContent.src = url;
-                    pdfOverlay.classList.add('active');
+                title.textContent = file.name;
+                content.innerHTML = '';
+
+                if (isPdf) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '100%';
+                    iframe.style.border = 'none';
+                    content.appendChild(iframe);
+                } else if (isImage) {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    content.appendChild(img);
+                } else if (isText) {
+                    const text = new TextDecoder().decode(bytes);
+                    const pre = document.createElement('pre');
+                    pre.textContent = text;
+                    content.appendChild(pre);
                 } else {
                     window.open(url, '_blank');
                     setTimeout(() => {
                         window.URL.revokeObjectURL(url);
                     }, 1000);
+                    return;
                 }
+
+                overlay.classList.add('active');
+                overlay.dataset.blobUrl = url;
             } catch (error) {
                 alert('Failed to open file: ' + error.message);
             }
@@ -712,17 +733,19 @@
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
         }
 
-        function closePdfViewer() {
-            const pdfOverlay = document.getElementById('pdfViewerOverlay');
-            const pdfContent = document.getElementById('pdfViewerContent');
+        function closeFileViewer() {
+            const overlay = document.getElementById('fileViewerOverlay');
+            const content = document.getElementById('fileViewerContent');
 
-            pdfOverlay.classList.remove('active');
-            const oldSrc = pdfContent.src;
-            pdfContent.src = '';
+            overlay.classList.remove('active');
 
-            if (oldSrc && oldSrc.startsWith('blob:')) {
-                window.URL.revokeObjectURL(oldSrc);
+            const oldUrl = overlay.dataset.blobUrl;
+            if (oldUrl && oldUrl.startsWith('blob:')) {
+                window.URL.revokeObjectURL(oldUrl);
             }
+
+            content.innerHTML = '';
+            delete overlay.dataset.blobUrl;
         }
 
         function logout() {
@@ -743,9 +766,9 @@
 
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                const pdfOverlay = document.getElementById('pdfViewerOverlay');
-                if (pdfOverlay && pdfOverlay.classList.contains('active')) {
-                    closePdfViewer();
+                const overlay = document.getElementById('fileViewerOverlay');
+                if (overlay && overlay.classList.contains('active')) {
+                    closeFileViewer();
                 }
             }
         });
