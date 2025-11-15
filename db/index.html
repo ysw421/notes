@@ -382,7 +382,7 @@
             gTable.setAttribute("order", "");
         }
 
-        function openFile(element) {
+        async function openFile(element) {
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
             const file = tr.fileData;
 
@@ -392,8 +392,33 @@
             }
 
             const token = localStorage.getItem('auth_token');
-            const fileUrl = `file.html?path=${encodeURIComponent(file.path)}&token=${encodeURIComponent(token)}`;
-            window.open(fileUrl, '_blank');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: file.path })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        checkAuth();
+                        return;
+                    }
+                    throw new Error('Failed to load file');
+                }
+
+                const fileData = await response.json();
+
+                if (fileData.download_url) {
+                    window.open(fileData.download_url, '_blank');
+                } else {
+                    throw new Error('No download URL available');
+                }
+            } catch (error) {
+                alert('Failed to open file: ' + error.message);
+            }
         }
 
         async function downloadFileInline(element) {
