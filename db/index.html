@@ -716,15 +716,18 @@
             try {
                 let bytes;
 
+                const requestBody = token ? { token, path: file.path } : { path: file.path };
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: file.path })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
+                    if (response.status === 401 || response.status === 400) {
+                        if (token) {
+                            localStorage.removeItem('auth_token');
+                        }
                         checkAuth();
                         return;
                     }
@@ -782,15 +785,18 @@
                     let files = directoryCache[dirPath];
 
                     if (!files) {
+                        const requestBody = token ? { token, path: dirPath } : { path: dirPath };
                         const response = await fetch(API_URL, {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ token, path: dirPath })
+                            body: JSON.stringify(requestBody)
                         });
 
                         if (!response.ok) {
-                            if (response.status === 401) {
-                                localStorage.removeItem('auth_token');
+                            if (response.status === 401 || response.status === 400) {
+                                if (token) {
+                                    localStorage.removeItem('auth_token');
+                                }
                                 checkAuth();
                                 throw new Error('Authentication required');
                             }
@@ -805,10 +811,11 @@
                         if (item.type === 'file') {
                             let byteArray;
 
+                            const requestBody = token ? { token, path: item.path } : { path: item.path };
                             const response = await fetch(API_URL, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ token, path: item.path })
+                                body: JSON.stringify(requestBody)
                             });
 
                             if (!response.ok) {
