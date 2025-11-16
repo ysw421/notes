@@ -48,32 +48,44 @@
             color: #007bff;
         }
         .checkbox-col {
-            width: 50px;
+            width: 40px;
+            max-width: 40px;
+            min-width: 40px;
             text-align: center;
             white-space: nowrap;
+            padding: 4px 2px !important;
+            overflow: hidden;
         }
         .checkbox-col input[type="checkbox"] {
             cursor: pointer;
-            width: 16px;
-            height: 16px;
-            margin-left: 3px;
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            display: block;
+            margin: 2px auto 0;
         }
         .checkbox-col i {
-            margin-right: 2px;
+            font-size: 9px;
+            margin: 0;
+            display: block;
+            width: 100%;
+            line-height: 1;
         }
         thead th:nth-child(1) {
             text-align: center;
+            width: 40px;
+            max-width: 40px;
+            padding: 4px 2px !important;
         }
         thead th:nth-child(2) {
             text-align: start;
-            padding-inline-end: 2em;
         }
         thead th:nth-child(3) {
-            text-align: start;
-            padding-inline-end: 1em;
+            text-align: end;
         }
         tbody td:nth-child(1) {
             text-align: center;
+            padding: 4px 2px !important;
         }
         tbody td:nth-child(2) {
             text-align: start !important;
@@ -249,8 +261,18 @@
 
             document.querySelector('.btn-download-all').remove();
 
+            const dirTable = document.getElementById('dirTable');
+            if (dirTable) {
+                dirTable.style.tableLayout = 'fixed';
+            }
+
+            const tableWrapper = document.querySelector('.table-wrapper table');
+            if (tableWrapper) {
+                tableWrapper.style.tableLayout = 'fixed';
+            }
+
             const tableHead = document.getElementById('tableHead');
-            tableHead.innerHTML = `<tr><th class="checkbox-col"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th><th><a href="#" onclick="orderBy(0); return false;">Name</a></th><th><a href="#" onclick="orderBy(1); return false;">Size</a></th></tr>`;
+            tableHead.innerHTML = `<tr><th class="checkbox-col" style="width: 40px; max-width: 40px; min-width: 40px;"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th><th style="width: auto;"><a href="#" onclick="orderBy(0); return false;">Name</a></th><th style="width: 100px;"><a href="#" onclick="orderBy(1); return false;">Size</a></th></tr>`;
         }
     </script>
 
@@ -702,6 +724,17 @@
         function renderFiles(files) {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
+
+            const tbodyTable = tbody.parentElement;
+            if (tbodyTable && !tbodyTable.querySelector('colgroup')) {
+                const colgroup = document.createElement('colgroup');
+                colgroup.innerHTML = `
+                    <col style="width: 40px; max-width: 40px; min-width: 40px;">
+                    <col style="width: auto;">
+                    <col style="width: 100px;">
+                `;
+                tbodyTable.insertBefore(colgroup, tbody);
+            }
 
             files.sort((a, b) => {
                 if (a.type === b.type) return a.name.localeCompare(b.name);

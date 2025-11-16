@@ -81,10 +81,6 @@
             if (!filePath) return;
 
             const token = localStorage.getItem('auth_token');
-            if (!token) {
-                window.location.href = '../db/';
-                return;
-            }
 
             const cacheKey = 'file_' + filePath;
             const cachedData = sessionStorage.getItem(cacheKey);
@@ -99,15 +95,18 @@
             }
 
             try {
+                const requestBody = token ? { token, path: filePath } : { path: filePath };
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: filePath })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
+                    if (response.status === 401 || response.status === 400) {
+                        if (token) {
+                            localStorage.removeItem('auth_token');
+                        }
                         window.location.href = '../db/';
                     }
                     return;
