@@ -92,6 +92,15 @@ async function listUsers(env) {
   return users;
 }
 
+async function getPublicPaths(env) {
+  const data = await env.USERS_KV.get('public:paths');
+  return data ? JSON.parse(data) : [];
+}
+
+async function setPublicPaths(env, paths) {
+  await env.USERS_KV.put('public:paths', JSON.stringify(paths));
+}
+
 export default {
   async fetch(request, env) {
     const GITHUB_TOKEN = env.GITHUB_TOKEN;
@@ -237,6 +246,57 @@ export default {
         });
       }
 
+      if (url.pathname.startsWith('/admin/public')) {
+        const body = await request.json();
+        const { token } = body;
+
+        if (!token) {
+          return new Response(JSON.stringify({ error: 'Token required' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        let decoded;
+        try {
+          decoded = await verifyJWT(token, JWT_SECRET);
+        } catch (error) {
+          return new Response(JSON.stringify({ error: 'Invalid or expired token' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (decoded.role !== 'admin') {
+          return new Response(JSON.stringify({ error: 'Admin access required' }), {
+            status: 403,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (body.action === 'list') {
+          const publicPaths = await getPublicPaths(env);
+          return new Response(JSON.stringify({ publicPaths }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        if (body.action === 'set') {
+          const { paths } = body;
+          await setPublicPaths(env, paths || []);
+          return new Response(JSON.stringify({ success: true }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        return new Response(JSON.stringify({ error: 'Invalid action' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
       if (request.method !== 'POST') {
         return new Response(JSON.stringify({ error: 'Method not allowed' }), {
           status: 405,
@@ -291,7 +351,17 @@ export default {
           });
         }
 
-        const { role, permissions } = decoded;
+        const username = decoded.username;
+        const user = await getUser(env, username);
+
+        if (!user) {
+          return new Response(JSON.stringify({ error: 'User not found' }), {
+            status: 401,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
+        const { role, permissions } = user;
 
         if (role !== 'admin') {
           const normalizedPath = '/' + path;
@@ -304,14 +374,18 @@ export default {
             });
           }
 
-          const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
-            normalizedPath.startsWith(allowedPath)
-          );
+          const isBasePath = normalizedPath === basePath || normalizedPath === basePath.replace(/\/$/, '');
 
-          if (!isExplicitlyAllowed) {
-            const isDenied = permissions.denied.some(deniedPath =>
-              normalizedPath.startsWith(deniedPath)
-            );
+          const isExplicitlyAllowed = permissions.allowed && permissions.allowed.some(allowedPath => {
+            const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+            return normalizedPath.startsWith(normalizedAllowed);
+          });
+
+          if (!isBasePath && !isExplicitlyAllowed) {
+            const isDenied = permissions.denied && permissions.denied.some(deniedPath => {
+              const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+              return normalizedPath.startsWith(normalizedDenied);
+            });
 
             if (isDenied) {
               return new Response(JSON.stringify({ error: 'Access denied to this path' }), {
@@ -336,13 +410,54 @@ export default {
         }
 
         const data = await response.json();
-        return new Response(JSON.stringify(data), {
+
+        const responseData = {
+          files: data,
+          userPermissions: { role, permissions }
+        };
+
+        return new Response(JSON.stringify(responseData), {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
       }
 
       else {
+        const publicPaths = await getPublicPaths(env);
+        const normalizedPath = '/' + path;
+
+        const isPublic = publicPaths.some(publicPath => {
+          const normalizedPublic = publicPath.startsWith('/') ? publicPath : '/' + publicPath;
+          return normalizedPath.startsWith(normalizedPublic);
+        });
+
+        if (isPublic) {
+          const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+          const response = await fetch(url, {
+            headers: {
+              'Authorization': `token ${GITHUB_TOKEN}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'User-Agent': 'Private-Notes-Viewer'
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          const responseData = {
+            files: data,
+            userPermissions: { role: 'public', permissions: {} }
+          };
+
+          return new Response(JSON.stringify(responseData), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+
         return new Response(JSON.stringify({ error: 'Password or token required' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css" id="loginStyle">
     <link rel="stylesheet" href="viewer.css" id="viewerStyle" disabled>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8%2F9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAjFJREFUeNqsU8uOElEQPffR3XQ3ONASdBJCSBxHos5%2B3Bg3rvkCv8PElS78gPkO%2FATjQoUdO2ftrJiRh6aneTb9sOpC4weMN6lcuFV16pxDIfI8x12OYIDhcPiu2Wx%2B%2FHF5CW1Z6Jyegt%2FTNEWSJIjjGFEUIQxDrFYrWFSzXC4%2FdLvd95pRKpXKy%2BpRFZ7nwaWo1%2BsGnQG2240BKJfLKJVKGI1GEEJw7eteryd0v993W63WEwjgxfn5obGYzgCbzcaEbdsIggDj8Riu6z6iUk9SYZMSx8W0LMsM%2FSKK75xnJlIq80anQXdbEp0OhcPJ0eiaJnGRMEyyPDsAKKUM9clkYoDo3SZJzzSdp0VSKYmfV1co%2Bz580kw5KDIM8RbRfEnUf1HzxtQyMAGcaGruTKczMzEIaqhKifV6jd%2BzGQQB5llunF%2FM52BizC2K5sYPYvZcu653tjOM9O93wnYc08gmkgg4VAxixfqFUJT36AYBZGd6PJkFCZnnlBxMp38gqIgLpZB0y4Nph18lyWh5FFbrOSxbl3V4G%2BVB7T4ajYYxTyuLtO%2BCvWGgJE1Mc7JNsJEhvgw%2FQV4fo%2F24nbEsX2u1d5sVyn8sJO0ZAQiIYnFh%2BxrfLz%2Fj29cBS%2FO14zg3i8XigW3ZkErDtmKoeM%2BAJGRMnXeEPGKf0nCD1ydvkDzU9Jbc6OpR7WIw6L8lQ%2B4pQ1%2FlPF0RGM9Ns91Wmptk0GfB4EJkt77vXYj%2F8m%2B8y%2FkrwABHbz2H9V68DQAAAABJRU5ErkJggg%3D%3D">
 </head>
 <body dir="ltr">
@@ -25,7 +24,7 @@
     </script>
     <script>
         // Check authentication and show appropriate section
-        function checkAuth() {
+        async function checkAuth() {
             const token = localStorage.getItem('auth_token');
             const loginSection = document.getElementById('loginSection');
             const viewerSection = document.getElementById('viewerSection');
@@ -39,6 +38,35 @@
                 viewerStyle.disabled = false;
                 initViewer();
             } else {
+                const hash = window.location.hash.slice(1);
+                let path = decodeURIComponent(hash || '');
+                const urlParams = new URLSearchParams(window.location.search);
+                const baseParam = urlParams.get('base');
+
+                if (!path && baseParam) {
+                    path = baseParam.replace(/^\//, '');
+                }
+
+                if (path) {
+                    try {
+                        const response = await fetch(API_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ path })
+                        });
+
+                        if (response.ok) {
+                            loginSection.style.display = 'none';
+                            viewerSection.style.display = 'block';
+                            loginStyle.disabled = true;
+                            viewerStyle.disabled = false;
+                            initViewer();
+                            return;
+                        }
+                    } catch (error) {
+                    }
+                }
+
                 loginSection.style.display = 'block';
                 viewerSection.style.display = 'none';
                 loginStyle.disabled = false;
@@ -68,7 +96,7 @@
 
                 try {
                     const apiUrl = window.location.hostname === 'localhost'
-                        ? 'http://localhost:3000/api/github-proxy'
+                        ? 'http://localhost:8787'
                         : 'https://notes-api.ysw421.workers.dev';
 
                     const response = await fetch(apiUrl, {
@@ -84,6 +112,7 @@
                         localStorage.setItem('auth_token', data.token);
                         localStorage.setItem('username', username);
                         directoryCache = {};
+                        latestPermissions = null;
                         checkAuth();
                     } else {
                         errorDiv.textContent = '❌ Incorrect username or password';
@@ -97,15 +126,17 @@
 
         // Viewer functionality
         const API_URL = window.location.hostname === 'localhost'
-            ? 'http://localhost:3000/api/github-proxy'
+            ? 'http://localhost:8787'
             : 'https://notes-api.ysw421.workers.dev';
         let currentPath = '';
         let gRows = [];
         let gOrderBy = -1;
         let gTable;
         let gTBody;
+        let gTBodyTable;
         let directoryCache = {};
         let currentFileData = null;
+        let latestPermissions = null;
 
         const FILE_ICONS = {
             'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
@@ -151,10 +182,37 @@
         function initViewer() {
             gTable = document.getElementById("dirTable");
             gTBody = document.getElementById("tbody");
+            gTBodyTable = gTBody.parentElement;
 
             window.removeEventListener('hashchange', handleHashChange);
             window.addEventListener('hashchange', handleHashChange);
+
+            window.removeEventListener('popstate', handlePopState);
+            window.addEventListener('popstate', handlePopState);
+
             handleHashChange();
+        }
+
+        function handlePopState(event) {
+            if (event.state && event.state.showLogin) {
+                return;
+            }
+
+            const hash = window.location.hash.slice(1);
+            if (hash === 'login') {
+                const loginSection = document.getElementById('loginSection');
+                const viewerSection = document.getElementById('viewerSection');
+                const loginStyle = document.getElementById('loginStyle');
+                const viewerStyle = document.getElementById('viewerStyle');
+
+                loginSection.style.display = 'block';
+                viewerSection.style.display = 'none';
+                loginStyle.disabled = false;
+                viewerStyle.disabled = true;
+                initLogin();
+            } else {
+                checkAuth();
+            }
         }
 
         function handleHashChange() {
@@ -162,60 +220,126 @@
             let path = decodeURIComponent(hash || '');
 
             const token = localStorage.getItem('auth_token');
+            const urlParams = new URLSearchParams(window.location.search);
+            const baseParam = urlParams.get('base');
+
             if (token) {
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
                     const { role, permissions } = payload;
 
-                    if (role !== 'admin' && !path) {
+                    if (baseParam) {
+                        const base = baseParam.replace(/^\//, '');
+                        if (!path) {
+                            path = base;
+                        } else {
+                            path = base + '/' + path;
+                        }
+                    } else if (role !== 'admin') {
                         const basePath = permissions.basePath.replace(/^\//, '');
-                        path = basePath;
+                        if (!path) {
+                            path = basePath;
+                        } else {
+                            path = basePath + '/' + path;
+                        }
                     }
                 } catch (error) {
-                    console.error('Failed to decode token:', error);
+                    return;
+                }
+                loadFiles(path);
+            } else {
+                if (baseParam) {
+                    if (!path) {
+                        path = baseParam.replace(/^\//, '');
+                    } else {
+                        path = baseParam.replace(/^\//, '') + '/' + path;
+                    }
+                }
+
+                if (path) {
+                    loadFiles(path);
+                } else {
+                    checkAuth();
                 }
             }
-
-            loadFiles(path);
         }
 
         async function loadFiles(path) {
             const token = localStorage.getItem('auth_token');
-            if (!token) {
-                checkAuth();
-                return;
-            }
 
             const tbody = document.getElementById('tbody');
             const title = document.getElementById('title');
             const goUp = document.getElementById('UI_goUp');
             const upLink = document.getElementById('upLink');
             const contentViewer = document.getElementById('contentViewer');
+            const profileContainer = document.querySelector('.profile-container');
+            const loginButton = document.querySelector('.login-button');
 
             contentViewer.style.display = 'none';
             gTable.style.display = 'table';
+            gTBodyTable.style.display = 'table';
             currentFileData = null;
+
+            let role = 'public';
+            let permissions = {};
+
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                role = payload.role;
+                permissions = payload.permissions;
+                if (profileContainer) {
+                    profileContainer.style.display = 'block';
+                }
+                if (loginButton) {
+                    loginButton.style.display = 'none';
+                }
+            } else {
+                if (profileContainer) {
+                    profileContainer.style.display = 'none';
+                }
+                if (loginButton) {
+                    loginButton.style.display = 'inline-flex';
+                }
+            }
+
+            // For non-admin users, redirect to basePath if trying to access root or unauthorized path
+            if (role !== 'admin' && role !== 'public' && !path && permissions.basePath) {
+                const basePath = permissions.basePath.replace(/^\//, '');
+                path = basePath;
+            }
 
             currentPath = path;
 
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            const { role, permissions } = payload;
+            const urlParams = new URLSearchParams(window.location.search);
+            const baseParam = urlParams.get('base');
+            let effectiveBase = '';
 
-            title.textContent = 'Index of /' + path;
+            if (baseParam) {
+                effectiveBase = baseParam.replace(/^\//, '');
+            } else if (role !== 'admin' && role !== 'public' && permissions.basePath) {
+                effectiveBase = permissions.basePath.replace(/^\//, '');
+            }
+
+            let displayPath = path;
+            if (effectiveBase && path.startsWith(effectiveBase)) {
+                displayPath = path.substring(effectiveBase.length).replace(/^\//, '');
+            }
+
+            title.textContent = 'Index of /' + displayPath;
 
             if (path) {
                 const parentPath = path.split('/').slice(0, -1).join('/');
-                upLink.href = '#' + encodeURIComponent(parentPath);
 
-                if (role !== 'admin') {
-                    const basePath = permissions.basePath.replace(/^\//, '');
-                    if (path === basePath) {
-                        goUp.style.display = 'none';
-                    } else {
-                        goUp.style.display = 'block';
-                    }
+                let parentHash = parentPath;
+                if (effectiveBase && parentPath.startsWith(effectiveBase)) {
+                    parentHash = parentPath.substring(effectiveBase.length).replace(/^\//, '');
+                }
+
+                if (effectiveBase && path === effectiveBase) {
+                    goUp.style.display = 'none';
                 } else {
                     goUp.style.display = 'block';
+                    upLink.href = '#' + encodeURIComponent(parentHash);
                 }
             } else {
                 goUp.style.display = 'none';
@@ -223,7 +347,7 @@
 
             const downloadAllBtn = document.querySelector('.btn-download-all');
 
-            if (directoryCache[path]) {
+            if (directoryCache[path] && latestPermissions) {
                 renderFiles(directoryCache[path]);
                 prefetchSubfolders(directoryCache[path]);
                 return;
@@ -237,22 +361,46 @@
             tbody.innerHTML = '<tr style="height:0;visibility:hidden;"><td></td><td></td><td></td></tr><tr><td colspan="3">Loading...</td></tr>';
 
             try {
+                const requestBody = token ? { token, path } : { path };
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path })
+                    body: JSON.stringify(requestBody)
                 });
 
                 if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
-                        checkAuth();
-                        return;
+                    if (token) {
+                        if (response.status === 401) {
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('username');
+                            checkAuth();
+                            return;
+                        }
+                        if (response.status === 403) {
+                            alert('Your permissions have been changed. Please log in again.');
+                            localStorage.removeItem('auth_token');
+                            localStorage.removeItem('username');
+                            checkAuth();
+                            return;
+                        }
                     }
                     throw new Error('Request failed');
                 }
 
-                const files = await response.json();
+                const data = await response.json();
+                const files = data.files || data;
+                const serverPermissions = data.userPermissions;
+
+                if (serverPermissions) {
+                    const prevPermissions = latestPermissions ? JSON.stringify(latestPermissions.permissions) : null;
+                    const newPermissions = JSON.stringify(serverPermissions.permissions);
+
+                    if (prevPermissions && prevPermissions !== newPermissions) {
+                        directoryCache = {};
+                    }
+
+                    latestPermissions = serverPermissions;
+                }
 
                 directoryCache[path] = files;
 
@@ -267,10 +415,50 @@
 
         async function prefetchSubfolders(files) {
             const token = localStorage.getItem('auth_token');
+            if (!token) return; // Don't prefetch if not authenticated
+
+            // Get user permissions
+            let permissions = null;
+            let role = null;
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                role = payload.role;
+                permissions = payload.permissions;
+            } catch (error) {
+                return;
+            }
+
             const folders = files.filter(f => f.type === 'dir');
 
             for (const folder of folders) {
                 if (!directoryCache[folder.path]) {
+                    if (role !== 'admin' && permissions && permissions.basePath) {
+                        const normalizedPath = '/' + folder.path;
+                        const basePath = permissions.basePath;
+
+                        if (!normalizedPath.startsWith(basePath)) {
+                            continue;
+                        }
+
+                        const isBasePath = normalizedPath === basePath || normalizedPath === basePath.replace(/\/$/, '');
+
+                        const isExplicitlyAllowed = permissions.allowed && permissions.allowed.some(allowedPath => {
+                            const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+                            return normalizedPath.startsWith(normalizedAllowed);
+                        });
+
+                        if (!isBasePath && !isExplicitlyAllowed) {
+                            const isDenied = permissions.denied && permissions.denied.some(deniedPath => {
+                                const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+                                return normalizedPath.startsWith(normalizedDenied);
+                            });
+
+                            if (isDenied) {
+                                continue;
+                            }
+                        }
+                    }
+
                     try {
                         const response = await fetch(API_URL, {
                             method: 'POST',
@@ -279,9 +467,12 @@
                         });
 
                         if (response.ok) {
-                            const subFiles = await response.json();
+                            const data = await response.json();
+                            const subFiles = data.files || data;
                             directoryCache[folder.path] = subFiles;
                             await prefetchSubfolders(subFiles);
+                        } else if (response.status === 403 || response.status === 401) {
+                            continue;
                         }
                     } catch (error) {
                     }
@@ -295,7 +486,44 @@
             if (!currentPath) return;
 
             const token = localStorage.getItem('auth_token');
+            if (!token) return; // Don't prefetch if not authenticated
+
             const parentPath = currentPath.split('/').slice(0, -1).join('/');
+
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const { role, permissions } = payload;
+
+                if (role !== 'admin' && permissions && permissions.basePath) {
+                    const basePath = permissions.basePath.replace(/^\//, '');
+                    const normalizedParent = '/' + parentPath;
+                    const normalizedBase = permissions.basePath;
+
+                    if (!parentPath || !normalizedParent.startsWith(normalizedBase)) {
+                        return;
+                    }
+
+                    const isBasePath = normalizedParent === normalizedBase || normalizedParent === normalizedBase.replace(/\/$/, '');
+
+                    const isExplicitlyAllowed = permissions.allowed && permissions.allowed.some(allowedPath => {
+                        const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+                        return normalizedParent.startsWith(normalizedAllowed);
+                    });
+
+                    if (!isBasePath && !isExplicitlyAllowed) {
+                        const isDenied = permissions.denied && permissions.denied.some(deniedPath => {
+                            const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+                            return normalizedParent.startsWith(normalizedDenied);
+                        });
+
+                        if (isDenied) {
+                            return;
+                        }
+                    }
+                }
+            } catch (error) {
+                return;
+            }
 
             if (!directoryCache[parentPath]) {
                 try {
@@ -306,8 +534,11 @@
                     });
 
                     if (response.ok) {
-                        const parentFiles = await response.json();
+                        const data = await response.json();
+                        const parentFiles = data.files || data;
                         directoryCache[parentPath] = parentFiles;
+                    } else if (response.status === 403 || response.status === 401) {
+                        return;
                     }
                 } catch (error) {
                 }
@@ -331,9 +562,22 @@
                 return a.type === 'dir' ? -1 : 1;
             });
 
-            const token = localStorage.getItem('auth_token');
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            const { role, permissions } = payload;
+            let role = 'user';
+            let permissions = null;
+
+            if (latestPermissions) {
+                role = latestPermissions.role;
+                permissions = latestPermissions.permissions;
+            } else {
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                    try {
+                        const payload = JSON.parse(atob(token.split('.')[1]));
+                        role = payload.role;
+                        permissions = payload.permissions;
+                    } catch (e) {}
+                }
+            }
 
             files.forEach(file => {
                 const tr = document.createElement('tr');
@@ -345,27 +589,52 @@
                 let hasAccess = true;
                 let fileName = file.name;
 
-                if (role !== 'admin') {
-                    const filePath = '/' + file.path;
+                if (role !== 'admin' && role !== 'public' && permissions && permissions.basePath) {
+                    const normalizedPath = '/' + file.path;
+                    const basePath = permissions.basePath;
 
-                    const isExplicitlyAllowed = permissions.allowed.some(allowedPath =>
-                        filePath === allowedPath || filePath.startsWith(allowedPath + '/')
-                    );
+                    if (!normalizedPath.startsWith(basePath)) {
+                        hasAccess = false;
+                        fileName = '🔒 Locked';
+                    } else {
+                        const isBasePath = normalizedPath === basePath || normalizedPath === basePath.replace(/\/$/, '');
 
-                    if (!isExplicitlyAllowed) {
-                        const isDenied = permissions.denied.some(deniedPath =>
-                            filePath === deniedPath || filePath.startsWith(deniedPath + '/')
-                        );
+                        const isExplicitlyAllowed = permissions.allowed && permissions.allowed.some(allowedPath => {
+                            const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+                            return normalizedPath.startsWith(normalizedAllowed);
+                        });
 
-                        if (isDenied) {
-                            hasAccess = false;
-                            fileName = '🔒 Locked';
+                        if (!isBasePath && !isExplicitlyAllowed) {
+                            const isDenied = permissions.denied && permissions.denied.some(deniedPath => {
+                                const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+                                return normalizedPath.startsWith(normalizedDenied);
+                            });
+
+                            if (isDenied) {
+                                hasAccess = false;
+                                fileName = '🔒 Locked';
+                            }
                         }
                     }
                 }
 
-                const linkHref = hasAccess ? (isDir ? '#' + encodeURIComponent(file.path) : '#') : '#';
-                const clickHandler = hasAccess ? (isDir ? '' : `onclick="openFile(this); return false;"`) : 'onclick="return false;"';
+                let hashPath = file.path;
+                const urlParams = new URLSearchParams(window.location.search);
+                const baseParam = urlParams.get('base');
+                let effectiveBase = '';
+
+                if (baseParam) {
+                    effectiveBase = baseParam.replace(/^\//, '');
+                } else if (role !== 'admin' && role !== 'public' && permissions && permissions.basePath) {
+                    effectiveBase = permissions.basePath.replace(/^\//, '');
+                }
+
+                if (effectiveBase && file.path.startsWith(effectiveBase)) {
+                    hashPath = file.path.substring(effectiveBase.length).replace(/^\//, '');
+                }
+
+                const linkHref = hasAccess ? (isDir ? (hashPath ? '#' + encodeURIComponent(hashPath) : 'javascript:void(0)') : '#') : '#';
+                const clickHandler = hasAccess ? (isDir ? (hashPath ? '' : 'onclick="return false;"') : `onclick="openFile(this); return false;"`) : 'onclick="return false;"';
                 const linkStyle = hasAccess ? '' : 'style="cursor: not-allowed; opacity: 0.5;"';
 
                 const downloadBtn = (isDir || !hasAccess)
@@ -383,13 +652,6 @@
             gTable.setAttribute("order", "");
         }
 
-        let pdfDoc = null;
-        let pdfPageNum = 1;
-        let pdfPageRendering = false;
-        let pdfPageNumPending = null;
-        let pdfScale = 1.5;
-
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         async function openFile(element) {
             const tr = element.closest('table.ellipsis').parentElement.parentElement;
@@ -400,141 +662,11 @@
                 return;
             }
 
-            const token = localStorage.getItem('auth_token');
-            const isPdf = file.name.match(/\.pdf$/i);
-
-            if (isPdf) {
-                await openPdfFile(file, token);
-            } else {
-                await openNonPdfFile(file, token);
-            }
-        }
-
-        async function openPdfFile(file, token) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: file.path })
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
-                        checkAuth();
-                        return;
-                    }
-                    throw new Error('Failed to load file');
-                }
-
-                const fileData = await response.json();
-
-                let pdfData;
-                if (fileData.content && fileData.content.length > 0) {
-                    const binaryString = atob(fileData.content);
-                    const len = binaryString.length;
-                    const bytes = new Uint8Array(len);
-                    for (let i = 0; i < len; i++) {
-                        bytes[i] = binaryString.charCodeAt(i);
-                    }
-                    pdfData = bytes;
-                } else if (fileData.download_url) {
-                    const dlResponse = await fetch(fileData.download_url);
-                    if (!dlResponse.ok) {
-                        throw new Error('Failed to download PDF');
-                    }
-                    const arrayBuffer = await dlResponse.arrayBuffer();
-                    pdfData = new Uint8Array(arrayBuffer);
-                } else {
-                    throw new Error('No PDF content available');
-                }
-
-                pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
-                pdfPageNum = 1;
-                pdfScale = 1.5;
-
-                document.getElementById('pdfViewerTitle').textContent = file.name;
-                document.getElementById('pdfViewerOverlay').classList.add('active');
-                renderPdfPage(pdfPageNum);
-            } catch (error) {
-                alert('Failed to open PDF: ' + error.message);
-            }
-        }
-
-        function renderPdfPage(num) {
-            pdfPageRendering = true;
-            const canvas = document.getElementById('pdfCanvas');
-            const ctx = canvas.getContext('2d');
-
-            pdfDoc.getPage(num).then(function(page) {
-                const viewport = page.getViewport({ scale: pdfScale });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-
-                const renderTask = page.render(renderContext);
-                renderTask.promise.then(function() {
-                    pdfPageRendering = false;
-                    if (pdfPageNumPending !== null) {
-                        renderPdfPage(pdfPageNumPending);
-                        pdfPageNumPending = null;
-                    }
-                });
+            const params = new URLSearchParams({
+                path: file.path,
+                name: file.name
             });
-
-            document.getElementById('pdfPageInfo').textContent = `${num} / ${pdfDoc.numPages}`;
-            updatePdfButtons();
-        }
-
-        function queueRenderPdfPage(num) {
-            if (pdfPageRendering) {
-                pdfPageNumPending = num;
-            } else {
-                renderPdfPage(num);
-            }
-        }
-
-        function updatePdfButtons() {
-            document.getElementById('pdfPrevPage').disabled = pdfPageNum <= 1;
-            document.getElementById('pdfNextPage').disabled = pdfPageNum >= pdfDoc.numPages;
-        }
-
-        function closePdfViewer() {
-            document.getElementById('pdfViewerOverlay').classList.remove('active');
-            pdfDoc = null;
-        }
-
-        async function openNonPdfFile(file, token) {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token, path: file.path })
-                });
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        localStorage.removeItem('auth_token');
-                        checkAuth();
-                        return;
-                    }
-                    throw new Error('Failed to load file');
-                }
-
-                const fileData = await response.json();
-
-                if (fileData.download_url) {
-                    window.open(fileData.download_url, '_blank');
-                } else {
-                    throw new Error('No download URL available');
-                }
-            } catch (error) {
-                alert('Failed to open file: ' + error.message);
-            }
+            window.open(`../file/?${params.toString()}`, '_blank');
         }
 
         async function downloadFileInline(element) {
@@ -732,7 +864,7 @@
 
             gRows.sort(compareRows);
 
-            gTable.removeChild(gTBody);
+            gTBodyTable.removeChild(gTBody);
             gTable.setAttribute("order", order);
             gTable.setAttribute("order-by", column);
 
@@ -742,7 +874,7 @@
                 gRows.reverse().forEach(row => gTBody.appendChild(row));
             }
 
-            gTable.appendChild(gTBody);
+            gTBodyTable.appendChild(gTBody);
         }
 
         function toggleProfileMenu() {
@@ -750,6 +882,8 @@
             const username = localStorage.getItem('username');
             const token = localStorage.getItem('auth_token');
             const usernameDiv = document.getElementById('profileUsername');
+            const adminButton = document.getElementById('adminButton');
+            const filesButton = document.getElementById('filesButton');
 
             if (usernameDiv && username) {
                 let isAdmin = false;
@@ -765,8 +899,24 @@
                 usernameDiv.innerHTML = isAdmin
                     ? username + ' <i class="fa-solid fa-circle-check" style="color: #1da1f2;"></i>'
                     : username;
+
+                if (adminButton) {
+                    adminButton.style.display = isAdmin ? 'flex' : 'none';
+                }
+
+                if (filesButton) {
+                    filesButton.style.display = 'none';
+                }
             }
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function goToFiles() {
+            window.location.href = '../db/';
+        }
+
+        function goToAdmin() {
+            window.location.href = '../admin/';
         }
 
         function logout() {
@@ -774,7 +924,26 @@
             localStorage.removeItem('username');
             window.location.hash = '';
             directoryCache = {};
+            latestPermissions = null;
             checkAuth();
+        }
+
+        function showLoginForm() {
+            const currentHash = window.location.hash;
+            const currentSearch = window.location.search;
+
+            history.pushState({ showLogin: true, previousHash: currentHash, previousSearch: currentSearch }, '', window.location.pathname + currentSearch + '#login');
+
+            const loginSection = document.getElementById('loginSection');
+            const viewerSection = document.getElementById('viewerSection');
+            const loginStyle = document.getElementById('loginStyle');
+            const viewerStyle = document.getElementById('viewerStyle');
+
+            loginSection.style.display = 'block';
+            viewerSection.style.display = 'none';
+            loginStyle.disabled = false;
+            viewerStyle.disabled = true;
+            initLogin();
         }
 
         document.addEventListener('click', function(event) {
@@ -790,48 +959,6 @@
 
             window.addEventListener('pageshow', function(event) {
                 checkAuth();
-            });
-
-            document.getElementById('pdfPrevPage').addEventListener('click', function() {
-                if (pdfPageNum <= 1) return;
-                pdfPageNum--;
-                queueRenderPdfPage(pdfPageNum);
-            });
-
-            document.getElementById('pdfNextPage').addEventListener('click', function() {
-                if (pdfPageNum >= pdfDoc.numPages) return;
-                pdfPageNum++;
-                queueRenderPdfPage(pdfPageNum);
-            });
-
-            document.getElementById('pdfZoomIn').addEventListener('click', function() {
-                pdfScale += 0.25;
-                queueRenderPdfPage(pdfPageNum);
-            });
-
-            document.getElementById('pdfZoomOut').addEventListener('click', function() {
-                if (pdfScale <= 0.5) return;
-                pdfScale -= 0.25;
-                queueRenderPdfPage(pdfPageNum);
-            });
-
-            document.addEventListener('keydown', function(event) {
-                const overlay = document.getElementById('pdfViewerOverlay');
-                if (overlay && overlay.classList.contains('active')) {
-                    if (event.key === 'Escape') {
-                        closePdfViewer();
-                    } else if (event.key === 'ArrowLeft') {
-                        if (pdfPageNum > 1) {
-                            pdfPageNum--;
-                            queueRenderPdfPage(pdfPageNum);
-                        }
-                    } else if (event.key === 'ArrowRight') {
-                        if (pdfPageNum < pdfDoc.numPages) {
-                            pdfPageNum++;
-                            queueRenderPdfPage(pdfPageNum);
-                        }
-                    }
-                }
             });
         });
     </script>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: sans-serif;
+            background: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="fileIframe"></iframe>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:8787'
+            : 'https://notes-api.ysw421.workers.dev';
+
+        function getMimeType(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const mimeTypes = {
+                'pdf': 'application/pdf',
+                'txt': 'text/plain',
+                'md': 'text/plain',
+                'html': 'text/html',
+                'htm': 'text/html',
+                'css': 'text/css',
+                'js': 'text/javascript',
+                'json': 'application/json',
+                'xml': 'application/xml',
+                'png': 'image/png',
+                'jpg': 'image/jpeg',
+                'jpeg': 'image/jpeg',
+                'gif': 'image/gif',
+                'svg': 'image/svg+xml',
+                'webp': 'image/webp',
+                'bmp': 'image/bmp',
+                'ico': 'image/x-icon',
+                'mp3': 'audio/mpeg',
+                'wav': 'audio/wav',
+                'ogg': 'audio/ogg',
+                'mp4': 'video/mp4',
+                'webm': 'video/webm',
+                'avi': 'video/x-msvideo',
+                'mov': 'video/quicktime',
+                'doc': 'application/msword',
+                'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'xls': 'application/vnd.ms-excel',
+                'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'ppt': 'application/vnd.ms-powerpoint',
+                'pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'zip': 'application/zip',
+                'rar': 'application/x-rar-compressed',
+                '7z': 'application/x-7z-compressed',
+                'tar': 'application/x-tar',
+                'gz': 'application/gzip',
+            };
+            return mimeTypes[ext] || 'application/octet-stream';
+        }
+
+        (async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filePath = urlParams.get('path');
+            const fileName = urlParams.get('name') || filePath;
+
+            if (!filePath) return;
+
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = '../db/';
+                return;
+            }
+
+            const cacheKey = 'file_' + filePath;
+            const cachedData = sessionStorage.getItem(cacheKey);
+
+            if (cachedData) {
+                const bytes = Uint8Array.from(atob(cachedData), c => c.charCodeAt(0));
+                const mimeType = getMimeType(fileName);
+                const blob = new Blob([bytes], { type: mimeType });
+                const url = window.URL.createObjectURL(blob);
+                document.getElementById('fileIframe').src = url;
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, path: filePath })
+                });
+
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('auth_token');
+                        window.location.href = '../db/';
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                const fileData = data.files || data;
+
+                let fileBytes;
+                if (fileData.content && fileData.content.length > 0) {
+                    const binaryString = atob(fileData.content);
+                    const len = binaryString.length;
+                    const bytes = new Uint8Array(len);
+                    for (let i = 0; i < len; i++) {
+                        bytes[i] = binaryString.charCodeAt(i);
+                    }
+                    fileBytes = bytes;
+                } else if (fileData.download_url) {
+                    const dlResponse = await fetch(fileData.download_url);
+                    if (!dlResponse.ok) return;
+                    const arrayBuffer = await dlResponse.arrayBuffer();
+                    fileBytes = new Uint8Array(arrayBuffer);
+                } else {
+                    return;
+                }
+
+                const mimeType = getMimeType(fileName);
+                const blob = new Blob([fileBytes], { type: mimeType });
+                const url = window.URL.createObjectURL(blob);
+
+                let binary = '';
+                const chunkSize = 8192;
+                for (let i = 0; i < fileBytes.length; i += chunkSize) {
+                    const chunk = fileBytes.subarray(i, i + chunkSize);
+                    binary += String.fromCharCode(...chunk);
+                }
+                const base64Data = btoa(binary);
+                try {
+                    sessionStorage.setItem(cacheKey, base64Data);
+                } catch (e) {
+                    console.warn('Could not cache file:', e);
+                }
+
+                document.getElementById('fileIframe').src = url;
+            } catch (error) {
+                console.error(error);
+            }
+        })();
+    </script>
+</body>
+</html>

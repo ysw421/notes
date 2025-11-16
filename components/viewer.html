@@ -11,18 +11,27 @@
         </div>
         <div class="profile-menu" id="profileMenu" style="display:none;">
             <div class="profile-username" id="profileUsername"></div>
+            <button id="filesButton" onclick="goToFiles(); event.stopPropagation();" style="display:none;">
+                <i class="fa-solid fa-folder-open"></i>Files
+            </button>
+            <button id="adminButton" onclick="goToAdmin(); event.stopPropagation();" style="display:none;">
+                <i class="fa-solid fa-user-shield"></i>Admin
+            </button>
             <button onclick="logout(); event.stopPropagation();">
                 <i class="fa-solid fa-sign-out-alt"></i>Logout
             </button>
         </div>
     </div>
-    <div style="border-bottom: 1px solid ThreeDLightShadow; margin-bottom: 0.6em;"></div>
+    <button class="login-button" onclick="showLoginForm()" style="display:none;">
+        <i class="fa-solid fa-sign-in-alt" style="margin-right: 6px;"></i>Login
+    </button>
+    <div style="border-bottom: 1px solid #ddd; margin-bottom: 0.6em;"></div>
     <p id="UI_goUp" style="display:none">
       <a class="up" href="#" id="upLink">
         <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
       </a>
     </p>
-    <table id="dirTable" order="">
+    <table id="dirTable" order="" style="margin-bottom: 0;">
      <thead id="tableHead">
       <tr>
        <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
@@ -30,26 +39,11 @@
        <th>Download</th>
       </tr>
      </thead>
-     <tbody id="tbody"></tbody>
     </table>
-    <div id="contentViewer" class="content-viewer" style="display:none;"></div>
-</div>
-
-<div id="pdfViewerOverlay" class="pdf-viewer-overlay">
-    <div class="pdf-viewer-header">
-        <div class="pdf-viewer-title" id="pdfViewerTitle">PDF Viewer</div>
-        <div class="pdf-viewer-controls">
-            <button id="pdfPrevPage">◀</button>
-            <span id="pdfPageInfo">1 / 1</span>
-            <button id="pdfNextPage">▶</button>
-            <button id="pdfZoomOut">-</button>
-            <button id="pdfZoomIn">+</button>
-        </div>
-        <button class="pdf-viewer-close" onclick="closePdfViewer()">
-            <i class="fa-solid fa-times"></i> Close
-        </button>
-    </div>
-    <div class="pdf-viewer-content">
-        <canvas id="pdfCanvas"></canvas>
+    <div class="table-wrapper">
+        <table style="width: 90%; margin: 0 auto;">
+         <tbody id="tbody"></tbody>
+        </table>
+        <div id="contentViewer" class="content-viewer" style="display:none;"></div>
     </div>
 </div>

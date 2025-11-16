@@ -48,13 +48,59 @@
             color: #007bff;
         }
         .checkbox-col {
-            width: 40px;
+            width: 50px;
             text-align: center;
+            white-space: nowrap;
         }
         .checkbox-col input[type="checkbox"] {
             cursor: pointer;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
+            margin-left: 3px;
+        }
+        .checkbox-col i {
+            margin-right: 2px;
+        }
+        thead th:nth-child(1) {
+            text-align: center;
+        }
+        thead th:nth-child(2) {
+            text-align: start;
+            padding-inline-end: 2em;
+        }
+        thead th:nth-child(3) {
+            text-align: start;
+            padding-inline-end: 1em;
+        }
+        tbody td:nth-child(1) {
+            text-align: center;
+        }
+        tbody td:nth-child(2) {
+            text-align: start !important;
+            width: auto;
+        }
+        tbody td:nth-child(2) table {
+            text-align: start !important;
+        }
+        tbody td:nth-child(2) table td {
+            text-align: start !important;
+        }
+        tbody td:nth-child(3) {
+            width: 0;
+            text-align: end !important;
+            padding-inline-end: 1em;
+        }
+        .file {
+            display: inline-block;
+            margin-inline-start: 20px;
+        }
+        .file i {
+            margin-inline-end: 4px;
+            margin-inline-start: -20px;
+            width: 16px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
         }
         .permission-modal {
             display: none;
@@ -166,16 +212,32 @@
                     <div class="admin-controls">
                         <label>
                             <strong>User:</strong>
-                            <select id="userSelect">
+                            <select id="userSelect" onchange="handleUserChange()">
                                 <option value="">Select user...</option>
                             </select>
                         </label>
+                        <div id="basePathInfo" style="display:none; margin-left: 15px;">
+                            <strong>Base Path:</strong>
+                            <span id="basePathText" style="color: #007bff; font-weight: bold;"></span>
+                            <button onclick="goToBasePath()" style="margin-left: 5px; padding: 4px 8px;">
+                                <i class="fa-solid fa-arrow-right"></i> Go
+                            </button>
+                        </div>
                         <span class="selected-count">Selected: <span id="selectedCount">0</span> items</span>
                         <button onclick="setPermissions('allow')">
                             <i class="fa-solid fa-check"></i> Allow Selected
                         </button>
                         <button onclick="setPermissions('deny')" class="btn-danger">
                             <i class="fa-solid fa-ban"></i> Deny Selected
+                        </button>
+                        <button id="makePublicBtn" onclick="setPublicAccess(true)" style="display:none; background:#17a2b8;">
+                            <i class="fa-solid fa-globe" style="margin-right: 6px;"></i>Make Public
+                        </button>
+                        <button id="makePrivateBtn" onclick="setPublicAccess(false)" style="display:none; background:#6c757d;">
+                            <i class="fa-solid fa-lock" style="margin-right: 6px;"></i>Make Private
+                        </button>
+                        <button onclick="manualValidatePermissions()">
+                            <i class="fa-solid fa-shield-halved"></i> Validate Permissions
                         </button>
                         <button onclick="showUserManagement()">
                             <i class="fa-solid fa-users"></i> Manage Users
@@ -188,15 +250,7 @@
             document.querySelector('.btn-download-all').remove();
 
             const tableHead = document.getElementById('tableHead');
-            tableHead.innerHTML = `
-                <tr>
-                    <th class="checkbox-col">
-                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
-                    </th>
-                    <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
-                    <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
-                </tr>
-            `;
+            tableHead.innerHTML = `<tr><th class="checkbox-col"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th><th><a href="#" onclick="orderBy(0); return false;">Name</a></th><th><a href="#" onclick="orderBy(1); return false;">Size</a></th></tr>`;
         }
     </script>
 
@@ -228,17 +282,16 @@
 
     <script>
         const API_URL = window.location.hostname === 'localhost'
-            ? 'http://localhost:3000/api/github-proxy'
-            : 'https://notes-api.ysw421.workers.dev';
-
-        const ADMIN_API_URL = window.location.hostname === 'localhost'
             ? 'http://localhost:8787'
             : 'https://notes-api.ysw421.workers.dev';
+
+        const ADMIN_BASE_URL = API_URL;
 
         let currentPath = '';
         let allUsers = {};
         let selectedPaths = new Set();
         let currentUserPermissions = {};
+        let publicPaths = [];
 
         async function checkAuth() {
             const token = localStorage.getItem('auth_token');
@@ -252,6 +305,7 @@
                 viewerSection.style.display = 'none';
                 loginStyle.disabled = false;
                 viewerStyle.disabled = true;
+                initLogin();
                 return;
             }
 
@@ -279,43 +333,179 @@
             }
         }
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorDiv = document.getElementById('error');
+        function initLogin() {
+            const form = document.getElementById('loginForm');
+            if (!form) return;
 
+            form.onsubmit = async (e) => {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const errorDiv = document.getElementById('error');
+
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        const payload = JSON.parse(atob(data.token.split('.')[1]));
+
+                        if (payload.role !== 'admin') {
+                            errorDiv.textContent = '❌ Admin access required';
+                            return;
+                        }
+
+                        localStorage.setItem('auth_token', data.token);
+                        localStorage.setItem('username', username);
+                        checkAuth();
+                    } else {
+                        errorDiv.textContent = '❌ Invalid credentials';
+                    }
+                } catch (error) {
+                    errorDiv.textContent = '❌ Connection error';
+                }
+            };
+        }
+
+        async function checkPathExists(path) {
+            const token = localStorage.getItem('auth_token');
             try {
-                const response = await fetch(ADMIN_API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ token, path })
                 });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
 
-                if (response.ok) {
-                    const data = await response.json();
-                    const payload = JSON.parse(atob(data.token.split('.')[1]));
+        async function validateAndCleanUserPermissions(username, userData, reportChanges = false) {
+            const token = localStorage.getItem('auth_token');
+            if (userData.role === 'admin') return { deleted: false, changes: [] };
 
-                    if (payload.role !== 'admin') {
-                        errorDiv.textContent = '❌ Admin access required';
-                        return;
+            const permissions = userData.permissions;
+            if (!permissions) return { deleted: false, changes: [] };
+
+            let needsUpdate = false;
+            const changes = [];
+            const basePath = permissions.basePath?.replace(/^\//, '') || '';
+
+            const basePathExists = await checkPathExists(basePath);
+            if (!basePathExists && basePath) {
+                const message = `User ${username}: basePath "${basePath}" does not exist - deleting user`;
+                changes.push(message);
+                try {
+                    await fetch(`${ADMIN_BASE_URL}/admin/users`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token, action: 'delete', username })
+                    });
+                    return { deleted: true, changes };
+                } catch (error) {
+                }
+                return { deleted: false, changes };
+            }
+
+            if (permissions.allowed && permissions.allowed.length > 0) {
+                const validAllowed = [];
+                for (const path of permissions.allowed) {
+                    const normalizedPath = path.replace(/^\//, '');
+                    if (await checkPathExists(normalizedPath)) {
+                        validAllowed.push(path);
+                    } else {
+                        const message = `User ${username}: allowed path "${path}" removed (doesn't exist)`;
+                        changes.push(message);
+                        needsUpdate = true;
                     }
+                }
+                permissions.allowed = validAllowed;
+            }
 
-                    localStorage.setItem('auth_token', data.token);
-                    localStorage.setItem('username', username);
-                    checkAuth();
+            if (permissions.denied && permissions.denied.length > 0) {
+                const validDenied = [];
+                for (const path of permissions.denied) {
+                    const normalizedPath = path.replace(/^\//, '');
+                    if (await checkPathExists(normalizedPath)) {
+                        validDenied.push(path);
+                    } else {
+                        const message = `User ${username}: denied path "${path}" removed (doesn't exist)`;
+                        changes.push(message);
+                        needsUpdate = true;
+                    }
+                }
+                permissions.denied = validDenied;
+            }
+
+            if (needsUpdate) {
+                try {
+                    await fetch(`${ADMIN_BASE_URL}/admin/users`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token,
+                            action: 'update',
+                            username,
+                            permissions
+                        })
+                    });
+                } catch (error) {
+                }
+            }
+
+            return { deleted: false, changes };
+        }
+
+        async function manualValidatePermissions() {
+            if (!confirm('This will check all user permissions and remove invalid paths. Continue?')) {
+                return;
+            }
+
+            const button = event.target.closest('button');
+            button.disabled = true;
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Validating...';
+
+            try {
+                let totalChanges = [];
+                let deletedUsers = [];
+
+                const usernames = Object.keys(allUsers);
+                for (const username of usernames) {
+                    const result = await validateAndCleanUserPermissions(username, allUsers[username], true);
+                    if (result.deleted) {
+                        deletedUsers.push(username);
+                        delete allUsers[username];
+                    }
+                    totalChanges = totalChanges.concat(result.changes);
+                }
+
+                // Show results
+                if (totalChanges.length === 0) {
+                    alert('✅ All user permissions are valid. No changes needed.');
                 } else {
-                    errorDiv.textContent = '❌ Invalid credentials';
+                    const message = `Validation complete:\n\n${totalChanges.join('\n')}\n\nTotal changes: ${totalChanges.length}`;
+                    alert(message);
+
+                    // Reload users to reflect changes
+                    await loadUsers();
                 }
             } catch (error) {
-                errorDiv.textContent = '❌ Connection error';
+                alert('Error during validation: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Validate Permissions';
             }
-        });
+        }
 
         async function loadUsers() {
             const token = localStorage.getItem('auth_token');
             try {
-                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
+                const response = await fetch(`${ADMIN_BASE_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, action: 'list' })
@@ -326,27 +516,105 @@
                     allUsers = data.users;
 
                     const userSelect = document.getElementById('userSelect');
+                    if (!userSelect) {
+                        return;
+                    }
                     userSelect.innerHTML = '<option value="">Select user...</option>';
+                    userSelect.innerHTML += '<option value="__public__">🌐 Public Access</option>';
                     Object.keys(allUsers).forEach(username => {
                         const option = document.createElement('option');
                         option.value = username;
                         option.textContent = `${username} (${allUsers[username].role})`;
                         userSelect.appendChild(option);
                     });
+
+                    await loadPublicPaths();
+                } else if (response.status === 401) {
+                    localStorage.removeItem('auth_token');
+                    localStorage.removeItem('username');
+                    checkAuth();
+                } else {
+                    alert('Failed to load users.');
                 }
             } catch (error) {
-                console.error('Error loading users:', error);
+                alert('Error loading users: ' + error.message);
             }
         }
 
-        document.getElementById('userSelect').addEventListener('change', (e) => {
-            const username = e.target.value;
-            if (username && allUsers[username]) {
+        async function loadPublicPaths() {
+            const token = localStorage.getItem('auth_token');
+            try {
+                const response = await fetch(`${ADMIN_BASE_URL}/admin/public`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, action: 'list' })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    publicPaths = data.publicPaths || [];
+                }
+            } catch (error) {
+            }
+        }
+
+        function initUserSelect() {
+        }
+
+        function handleUserChange() {
+            const userSelect = document.getElementById('userSelect');
+            const username = userSelect.value;
+            const basePathInfo = document.getElementById('basePathInfo');
+            const basePathText = document.getElementById('basePathText');
+            const allowBtn = document.querySelector('button[onclick="setPermissions(\'allow\')"]');
+            const denyBtn = document.querySelector('button[onclick="setPermissions(\'deny\')"]');
+            const makePublicBtn = document.getElementById('makePublicBtn');
+            const makePrivateBtn = document.getElementById('makePrivateBtn');
+
+            if (username === '__public__') {
+                currentUserPermissions = {};
+                basePathInfo.style.display = 'none';
+                if (allowBtn) allowBtn.style.display = 'none';
+                if (denyBtn) denyBtn.style.display = 'none';
+                if (makePublicBtn) makePublicBtn.style.display = 'inline-flex';
+                if (makePrivateBtn) makePrivateBtn.style.display = 'inline-flex';
+                loadFiles(currentPath);
+            } else if (username && allUsers[username]) {
                 currentUserPermissions = allUsers[username].permissions;
+
+                if (allUsers[username].role !== 'admin' && currentUserPermissions.basePath) {
+                    basePathText.textContent = currentUserPermissions.basePath;
+                    basePathInfo.style.display = 'block';
+                } else {
+                    basePathInfo.style.display = 'none';
+                }
+
+                if (allowBtn) allowBtn.style.display = 'inline-flex';
+                if (denyBtn) denyBtn.style.display = 'inline-flex';
+                if (makePublicBtn) makePublicBtn.style.display = 'none';
+                if (makePrivateBtn) makePrivateBtn.style.display = 'none';
+
+                loadFiles(currentPath);
             } else {
                 currentUserPermissions = {};
+                basePathInfo.style.display = 'none';
+                if (allowBtn) allowBtn.style.display = 'inline-flex';
+                if (denyBtn) denyBtn.style.display = 'inline-flex';
+                if (makePublicBtn) makePublicBtn.style.display = 'none';
+                if (makePrivateBtn) makePrivateBtn.style.display = 'none';
+                loadFiles(currentPath);
             }
-        });
+        }
+
+        function goToBasePath() {
+            const userSelect = document.getElementById('userSelect');
+            const username = userSelect.value;
+
+            if (username && allUsers[username] && allUsers[username].permissions.basePath) {
+                const basePath = allUsers[username].permissions.basePath.replace(/^\//, '');
+                loadFiles(basePath);
+            }
+        }
 
         async function loadFiles(path) {
             currentPath = path;
@@ -367,7 +635,7 @@
             }
 
             try {
-                const response = await fetch(ADMIN_API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, path })
@@ -375,31 +643,129 @@
 
                 if (!response.ok) throw new Error('Failed to load files');
 
-                const files = await response.json();
+                const data = await response.json();
+                const files = data.files || data;
                 renderFiles(files);
             } catch (error) {
                 alert('Error loading files: ' + error.message);
             }
         }
 
+        const FILE_ICONS = {
+            'pdf': 'fa-file-pdf', 'doc': 'fa-file-word', 'docx': 'fa-file-word',
+            'txt': 'fa-file-lines', 'md': 'fa-file-lines', 'rtf': 'fa-file-word',
+            'js': 'fa-file-code', 'jsx': 'fa-file-code', 'ts': 'fa-file-code',
+            'tsx': 'fa-file-code', 'py': 'fa-file-code', 'java': 'fa-file-code',
+            'cpp': 'fa-file-code', 'c': 'fa-file-code', 'html': 'fa-file-code',
+            'css': 'fa-file-code', 'php': 'fa-file-code', 'go': 'fa-file-code',
+            'rs': 'fa-file-code', 'rb': 'fa-file-code', 'tex': 'fa-file-code',
+            'png': 'fa-file-image', 'jpg': 'fa-file-image', 'jpeg': 'fa-file-image',
+            'gif': 'fa-file-image', 'svg': 'fa-file-image', 'webp': 'fa-file-image',
+            'bmp': 'fa-file-image', 'ico': 'fa-file-image',
+            'zip': 'fa-file-zipper', 'tar': 'fa-file-zipper', 'gz': 'fa-file-zipper',
+            'rar': 'fa-file-zipper', '7z': 'fa-file-zipper', 'bz2': 'fa-file-zipper',
+            'json': 'fa-file-code', 'xml': 'fa-file-code', 'csv': 'fa-file-csv',
+            'xlsx': 'fa-file-excel', 'xls': 'fa-file-excel',
+            'mp3': 'fa-file-audio', 'wav': 'fa-file-audio', 'ogg': 'fa-file-audio',
+            'flac': 'fa-file-audio', 'mp4': 'fa-file-video', 'avi': 'fa-file-video',
+            'mov': 'fa-file-video', 'mkv': 'fa-file-video',
+            'log': 'fa-file-lines', 'bib': 'fa-file-lines', 'aux': 'fa-file',
+            'out': 'fa-file', 'toc': 'fa-file-lines', 'idx': 'fa-file',
+            'ind': 'fa-file', 'fls': 'fa-file', 'fdb_latexmk': 'fa-file',
+            'ilg': 'fa-file', 'synctex': 'fa-file',
+        };
+
+        const FILE_COLORS = {
+            'fa-file-pdf': '#F44336', 'fa-file-word': '#2196F3',
+            'fa-file-code': '#4CAF50', 'fa-file-image': '#9C27B0',
+            'fa-file-zipper': '#FF9800', 'fa-file-excel': '#217346',
+            'fa-file-csv': '#4CAF50', 'fa-file-audio': '#E91E63',
+            'fa-file-video': '#673AB7', 'fa-file-lines': '#607D8B',
+        };
+
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return FILE_ICONS[ext] || 'fa-file';
+        }
+
+        function getIconColor(iconClass) {
+            return FILE_COLORS[iconClass] || '#757575';
+        }
+
+        function formatSize(bytes) {
+            if (bytes === 0) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+            return Math.round(bytes / (1024 * 1024)) + ' MB';
+        }
+
         function renderFiles(files) {
             const tbody = document.getElementById('tbody');
             tbody.innerHTML = '';
 
+            files.sort((a, b) => {
+                if (a.type === b.type) return a.name.localeCompare(b.name);
+                return a.type === 'dir' ? -1 : 1;
+            });
+
+            const userSelect = document.getElementById('userSelect');
+            const selectedUsername = userSelect ? userSelect.value : '';
+            const selectedUser = selectedUsername && selectedUsername !== '__public__' ? allUsers[selectedUsername] : null;
+
             files.forEach(file => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="checkbox-col">
-                        <input type="checkbox" class="file-checkbox" data-path="${file.path}" onchange="updateSelectedCount()">
-                    </td>
-                    <td>
-                        ${file.type === 'dir'
-                            ? `<i class="fa-solid fa-folder"></i> <a href="#" onclick="loadFiles('${file.path}'); return false;">${file.name}/</a>`
-                            : `<i class="fa-solid fa-file"></i> ${file.name}`
+                const isDir = file.type === 'dir';
+                const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
+                const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
+                const size = file.size ? formatSize(file.size) : '';
+
+                const nameHtml = isDir
+                    ? `<a class="dir" href="#" onclick="loadFiles('${file.path}'); return false;"><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}/</a>`
+                    : `<span class="file"><i class="fa-solid ${iconClass}" style="color:${iconColor}"></i>${file.name}</span>`;
+
+                let permissionIcon = '';
+
+                if (selectedUsername === '__public__') {
+                    const isPublic = publicPaths.some(publicPath => {
+                        const normalizedPublic = publicPath.startsWith('/') ? publicPath : '/' + publicPath;
+                        const normalizedFile = '/' + file.path;
+                        return normalizedFile.startsWith(normalizedPublic);
+                    });
+
+                    if (isPublic) {
+                        permissionIcon = '<i class="fa-solid fa-globe" style="color:#17a2b8;" title="Public"></i> ';
+                    } else {
+                        permissionIcon = '<i class="fa-solid fa-lock" style="color:#6c757d;" title="Private"></i> ';
+                    }
+                } else if (selectedUser && selectedUser.role !== 'admin') {
+                    const permissions = selectedUser.permissions;
+                    const normalizedPath = '/' + file.path;
+                    const basePath = permissions.basePath;
+
+                    if (!normalizedPath.startsWith(basePath)) {
+                        permissionIcon = '<i class="fa-solid fa-ban" style="color:#dc3545;" title="Outside basePath"></i> ';
+                    } else {
+                        const isExplicitlyAllowed = permissions.allowed && permissions.allowed.some(allowedPath => {
+                            const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+                            return normalizedPath.startsWith(normalizedAllowed);
+                        });
+
+                        const isDenied = permissions.denied && permissions.denied.some(deniedPath => {
+                            const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+                            return normalizedPath.startsWith(normalizedDenied);
+                        });
+
+                        if (isExplicitlyAllowed) {
+                            permissionIcon = '<i class="fa-solid fa-check-circle" style="color:#28a745;" title="Explicitly Allowed"></i> ';
+                        } else if (isDenied) {
+                            permissionIcon = '<i class="fa-solid fa-times-circle" style="color:#dc3545;" title="Denied"></i> ';
+                        } else {
+                            permissionIcon = '<i class="fa-solid fa-circle" style="color:#6c757d;" title="Default (Allowed)"></i> ';
                         }
-                    </td>
-                    <td>${file.size || ''}</td>
-                `;
+                    }
+                }
+
+                tr.innerHTML = `<td class="checkbox-col">${permissionIcon}<input type="checkbox" class="file-checkbox" data-path="${file.path}" onchange="updateSelectedCount()"></td><td sortable-data="${isDir ? '1' : '2'}${file.name.toLowerCase()}"><table class="ellipsis"><tbody><tr><td>${nameHtml}</td></tr></tbody></table></td><td sortable-data="${file.size || 0}">${size}</td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -418,8 +784,63 @@
             document.getElementById('selectedCount').textContent = selectedPaths.size;
         }
 
+        async function setPublicAccess(isPublic) {
+            if (selectedPaths.size === 0) {
+                alert('Please select at least one file or folder');
+                return;
+            }
+
+            const token = localStorage.getItem('auth_token');
+            const paths = Array.from(selectedPaths);
+
+            let updatedPublicPaths = [...publicPaths];
+
+            for (const newPath of paths) {
+                const normalizedNew = newPath.startsWith('/') ? newPath : '/' + newPath;
+
+                if (isPublic) {
+                    if (!updatedPublicPaths.includes(newPath)) {
+                        updatedPublicPaths.push(newPath);
+                    }
+                } else {
+                    updatedPublicPaths = updatedPublicPaths.filter(publicPath => {
+                        const normalizedPublic = publicPath.startsWith('/') ? publicPath : '/' + publicPath;
+                        return !(normalizedPublic === normalizedNew || normalizedPublic.startsWith(normalizedNew + '/'));
+                    });
+                }
+            }
+
+            try {
+                const response = await fetch(`${ADMIN_BASE_URL}/admin/public`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        token,
+                        action: 'set',
+                        paths: updatedPublicPaths
+                    })
+                });
+
+                if (response.ok) {
+                    await loadPublicPaths();
+                    await loadFiles(currentPath);
+                    selectedPaths.clear();
+                    document.querySelectorAll('.file-checkbox').forEach(cb => cb.checked = false);
+                    document.getElementById('selectAll').checked = false;
+                    updateSelectedCount();
+                    alert(`Successfully ${isPublic ? 'made public' : 'made private'} ${paths.length} path(s)`);
+                } else {
+                    const data = await response.json();
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
         async function setPermissions(type) {
-            const username = document.getElementById('userSelect').value;
+            const userSelect = document.getElementById('userSelect');
+            const username = userSelect.value;
             if (!username) {
                 alert('Please select a user first');
                 return;
@@ -435,17 +856,35 @@
             const paths = Array.from(selectedPaths);
 
             const permissions = { ...user.permissions };
+            permissions.allowed = permissions.allowed || [];
+            permissions.denied = permissions.denied || [];
 
-            if (type === 'allow') {
-                permissions.allowed = [...new Set([...(permissions.allowed || []), ...paths])];
-                permissions.denied = (permissions.denied || []).filter(p => !paths.includes(p));
-            } else {
-                permissions.denied = [...new Set([...(permissions.denied || []), ...paths])];
-                permissions.allowed = (permissions.allowed || []).filter(p => !paths.includes(p));
+            for (const newPath of paths) {
+                const normalizedNew = newPath.startsWith('/') ? newPath : '/' + newPath;
+
+                if (type === 'allow') {
+                    if (!permissions.allowed.includes(newPath)) {
+                        permissions.allowed.push(newPath);
+                    }
+
+                    permissions.denied = permissions.denied.filter(deniedPath => {
+                        const normalizedDenied = deniedPath.startsWith('/') ? deniedPath : '/' + deniedPath;
+                        return normalizedDenied !== normalizedNew;
+                    });
+                } else {
+                    if (!permissions.denied.includes(newPath)) {
+                        permissions.denied.push(newPath);
+                    }
+
+                    permissions.allowed = permissions.allowed.filter(allowedPath => {
+                        const normalizedAllowed = allowedPath.startsWith('/') ? allowedPath : '/' + allowedPath;
+                        return !(normalizedAllowed === normalizedNew || normalizedAllowed.startsWith(normalizedNew + '/'));
+                    });
+                }
             }
 
             try {
-                const response = await fetch(`${ADMIN_API_URL}/admin/users`, {
+                const response = await fetch(`${ADMIN_BASE_URL}/admin/users`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -457,12 +896,17 @@
                 });
 
                 if (response.ok) {
-                    alert(`Successfully ${type === 'allow' ? 'allowed' : 'denied'} ${paths.length} path(s) for ${username}`);
                     await loadUsers();
+                    userSelect.value = username;
+                    if (allUsers[username]) {
+                        currentUserPermissions = allUsers[username].permissions;
+                    }
+                    await loadFiles(currentPath);
                     selectedPaths.clear();
                     document.querySelectorAll('.file-checkbox').forEach(cb => cb.checked = false);
                     document.getElementById('selectAll').checked = false;
                     updateSelectedCount();
+                    alert(`Successfully ${type === 'allow' ? 'allowed' : 'denied'} ${paths.length} path(s) for ${username}`);
                 } else {
                     const data = await response.json();
                     alert('Error: ' + data.error);
@@ -481,6 +925,8 @@
             const username = localStorage.getItem('username');
             const token = localStorage.getItem('auth_token');
             const usernameDiv = document.getElementById('profileUsername');
+            const adminButton = document.getElementById('adminButton');
+            const filesButton = document.getElementById('filesButton');
 
             if (usernameDiv && username) {
                 let isAdmin = false;
@@ -493,8 +939,24 @@
                 usernameDiv.innerHTML = isAdmin
                     ? username + ' <i class="fa-solid fa-circle-check" style="color: #1da1f2;"></i>'
                     : username;
+
+                if (adminButton) {
+                    adminButton.style.display = 'none';
+                }
+
+                if (filesButton) {
+                    filesButton.style.display = 'flex';
+                }
             }
             menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function goToFiles() {
+            window.location.href = '../db/';
+        }
+
+        function goToAdmin() {
+            window.location.href = '../admin/';
         }
 
         function logout() {
@@ -512,6 +974,7 @@
         });
 
         loadComponents().then(() => {
+            initUserSelect();
             checkAuth();
         });
     </script>
