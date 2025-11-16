@@ -26,22 +26,30 @@
         <i class="fa-solid fa-sign-in-alt" style="margin-right: 6px;"></i>Login
     </button>
     <div style="border-bottom: 1px solid #ddd; margin-bottom: 0.6em;"></div>
+    <p id="UI_showHidden" style="display:none;">
+      <label><input type="checkbox" checked onchange="updateHidden()">Show hidden objects</label>
+    </p>
     <p id="UI_goUp" style="display:none">
       <a class="up" href="#" id="upLink">
         <i class="fa-solid fa-level-up-alt"></i>Up to higher level directory
       </a>
     </p>
-    <table id="dirTable" order="" style="margin-bottom: 0;">
+    <table id="dirTable" order="" style="margin-bottom: 0; width: 90%; margin: 0 auto; table-layout: fixed;">
      <thead id="tableHead">
       <tr>
-       <th><a href="#" onclick="orderBy(0); return false;">Name</a></th>
-       <th><a href="#" onclick="orderBy(1); return false;">Size</a></th>
-       <th>Download</th>
+       <th style="width: auto;"><a href="#" onclick="orderBy(0); return false;">Name</a></th>
+       <th style="width: 100px;"><a href="#" onclick="orderBy(1); return false;">Size</a></th>
+       <th style="width: 100px;">Download</th>
       </tr>
      </thead>
     </table>
     <div class="table-wrapper">
-        <table style="width: 90%; margin: 0 auto;">
+        <table style="width: 90%; margin: 0 auto; table-layout: fixed;">
+         <colgroup>
+          <col style="width: auto;">
+          <col style="width: 100px;">
+          <col style="width: 100px;">
+         </colgroup>
          <tbody id="tbody"></tbody>
         </table>
         <div id="contentViewer" class="content-viewer" style="display:none;"></div>

@@ -6,29 +6,32 @@
   color-scheme: light dark;
 }
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-}
-
 body {
   border: 1px solid #ccc;
   border-radius: 10px;
-  padding: 3em;
+  padding: 2em;
   min-width: 30em;
-  max-width: 65em;
-  margin: 4em auto;
+  max-width: 60em;
+  margin: 2em auto;
   background-color: white;
   color: #333;
-  max-height: calc(100vh - 8em);
-  overflow-y: hidden;
+}
+
+.table-wrapper {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 h1 {
-  font-size: 160%;
-  margin: 0 0 0.6em;
+  font-size: 140%;
+  margin: 0 0 0.5em;
   border-bottom: 1px solid #ddd;
   font-weight: normal;
+}
+
+table.remove-hidden > tbody > tr.hidden-object {
+  display: none;
 }
 
 img {
@@ -96,10 +99,16 @@ table.ellipsis > tbody > tr > td {
 
 th:first-child {
   padding-inline-end: 2em;
+  text-align: start;
 }
 
 th:first-child + th {
   padding-inline-end: 1em;
+  text-align: end;
+}
+
+th:first-child + th + th {
+  text-align: center;
 }
 
 td:first-child + td {
@@ -150,7 +159,7 @@ td:first-child > a {
 }
 
 p {
-  font-size: 110%;
+  font-size: 100%;
 }
 
 #UI_goUp {
@@ -158,11 +167,10 @@ p {
   float: inline-start;
 }
 
-.table-wrapper {
-  max-height: calc(100vh - 350px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  clear: both;
+#UI_showHidden {
+  margin-top: 0;
+  float: inline-end;
+  font-size: 95%;
 }
 
 table {
@@ -172,7 +180,11 @@ table {
 }
 
 thead {
-  font-size: 130%;
+  font-size: 110%;
+}
+
+tbody {
+  font-size: 95%;
 }
 
 th:last-child {
@@ -304,13 +316,13 @@ td:not(:first-child) {
 }
 
 .btn-download-all {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: #2196F3;
   color: white;
   border: 1px solid #2196F3;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
   transition: all 0.2s;
   display: inline-flex;
   align-items: center;

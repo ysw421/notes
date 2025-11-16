@@ -396,7 +396,13 @@
                     const newPermissions = JSON.stringify(serverPermissions.permissions);
 
                     if (prevPermissions && prevPermissions !== newPermissions) {
+                        alert('Your permissions have been changed. Please log in again.');
+                        localStorage.removeItem('auth_token');
+                        localStorage.removeItem('username');
                         directoryCache = {};
+                        latestPermissions = null;
+                        checkAuth();
+                        return;
                     }
 
                     latestPermissions = serverPermissions;
@@ -579,12 +585,19 @@
                 }
             }
 
+            let hasHiddenObjects = false;
+
             files.forEach(file => {
                 const tr = document.createElement('tr');
                 const isDir = file.type === 'dir';
                 const iconClass = isDir ? 'fa-folder' : getFileIcon(file.name);
                 const iconColor = isDir ? '#FFA726' : getIconColor(iconClass);
                 const size = file.size ? formatSize(file.size) : '';
+
+                if (file.name.startsWith('.')) {
+                    tr.className = 'hidden-object';
+                    hasHiddenObjects = true;
+                }
 
                 let hasAccess = true;
                 let fileName = file.name;
@@ -648,8 +661,29 @@
                 tbody.appendChild(tr);
             });
 
+            const showHiddenUI = document.getElementById('UI_showHidden');
+            if (hasHiddenObjects && showHiddenUI) {
+                showHiddenUI.style.display = 'block';
+            } else if (showHiddenUI) {
+                showHiddenUI.style.display = 'none';
+            }
+
             if (gRows.length < 2) return;
             gTable.setAttribute("order", "");
+        }
+
+        function updateHidden() {
+            const showHiddenUI = document.getElementById('UI_showHidden');
+            if (!showHiddenUI) return;
+
+            const checkbox = showHiddenUI.querySelector('input[type="checkbox"]');
+            if (!checkbox) return;
+
+            if (checkbox.checked) {
+                gTBodyTable.classList.remove('remove-hidden');
+            } else {
+                gTBodyTable.classList.add('remove-hidden');
+            }
         }
 
 
