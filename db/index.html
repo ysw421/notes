@@ -734,7 +734,8 @@
                     throw new Error('Failed to load file');
                 }
 
-                const fileData = await response.json();
+                const data = await response.json();
+                const fileData = data.files || data;
                 file.content = fileData.content;
                 file.download_url = fileData.download_url;
 
@@ -803,11 +804,13 @@
                             throw new Error(`Failed to load directory: ${dirPath}`);
                         }
 
-                        files = await response.json();
+                        const data = await response.json();
+                        files = data.files || data;
                         directoryCache[dirPath] = files;
                     }
 
-                    for (const item of files) {
+                    const itemsArray = Array.isArray(files) ? files : [files];
+                    for (const item of itemsArray) {
                         if (item.type === 'file') {
                             let byteArray;
 
@@ -822,7 +825,8 @@
                                 throw new Error(`Failed to load ${item.name}`);
                             }
 
-                            const fileData = await response.json();
+                            const data = await response.json();
+                            const fileData = data.files || data;
                             item.content = fileData.content;
                             item.download_url = fileData.download_url;
 

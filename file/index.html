@@ -86,11 +86,16 @@
             const cachedData = sessionStorage.getItem(cacheKey);
 
             if (cachedData) {
-                const bytes = Uint8Array.from(atob(cachedData), c => c.charCodeAt(0));
                 const mimeType = getMimeType(fileName);
-                const blob = new Blob([bytes], { type: mimeType });
-                const url = window.URL.createObjectURL(blob);
-                document.getElementById('fileIframe').src = url;
+                const iframe = document.getElementById('fileIframe');
+                if (mimeType === 'application/pdf') {
+                    iframe.src = 'data:application/pdf;base64,' + cachedData;
+                } else {
+                    const bytes = Uint8Array.from(atob(cachedData), c => c.charCodeAt(0));
+                    const blob = new Blob([bytes], { type: mimeType });
+                    const url = window.URL.createObjectURL(blob);
+                    iframe.src = url;
+                }
                 return;
             }
 
@@ -107,7 +112,8 @@
                         if (token) {
                             localStorage.removeItem('auth_token');
                         }
-                        window.location.href = '../db/';
+                        const dirPath = filePath.split('/').slice(0, -1).join('/');
+                        window.location.href = '../db/#' + encodeURIComponent(dirPath);
                     }
                     return;
                 }
@@ -134,8 +140,6 @@
                 }
 
                 const mimeType = getMimeType(fileName);
-                const blob = new Blob([fileBytes], { type: mimeType });
-                const url = window.URL.createObjectURL(blob);
 
                 let binary = '';
                 const chunkSize = 8192;
@@ -150,7 +154,14 @@
                     console.warn('Could not cache file:', e);
                 }
 
-                document.getElementById('fileIframe').src = url;
+                const iframe = document.getElementById('fileIframe');
+                if (mimeType === 'application/pdf') {
+                    iframe.src = 'data:application/pdf;base64,' + base64Data;
+                } else {
+                    const blob = new Blob([fileBytes], { type: mimeType });
+                    const url = window.URL.createObjectURL(blob);
+                    iframe.src = url;
+                }
             } catch (error) {
                 console.error(error);
             }
