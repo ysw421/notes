@@ -8,3 +8,4 @@ id = "ecb99da83ceb4daabd3e382f9265f4b3"
 preview_id = "c31908c6a09f47acb7e922be508ac243"
 
 [vars]
+ALLOWED_ORIGINS = "https://ysw421.github.io,http://localhost:3000"
