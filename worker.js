@@ -1,4 +1,4 @@
-const REPO_OWNER = 'ysw421';
+const REPO_OWNER = 'siwonyun';
 const REPO_NAME = 'private-notes';
 const GITHUB_API = 'https://api.github.com';
 const PBKDF2_ITERATIONS = 100000;

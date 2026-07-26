@@ -26,24 +26,3 @@ Thumbs.db
 
 # Wrangler
 .wrangler/
-
-# LaTeX files
-*.aux
-*.bbl
-*.bcf
-*.blg
-*.fdb_latexmk
-*.fls
-*.idx
-*.ilg
-*.ind
-*.log
-*.out
-*.run.xml
-*.synctex.gz
-*.toc
-*.pdf
-*.dvi
-*.ps
-a.out
-latex.out/
