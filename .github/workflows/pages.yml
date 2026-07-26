@@ -1,0 +1,53 @@
+# Publishes the viewer to https://siwonyun.github.io/db/.
+#
+# This repo used to be the Jekyll notes site, so Pages was built by
+# jekyll-gh-pages.yml. That workflow moved out with the notes, which left Pages
+# serving a frozen copy of the old Jekyll build — the app was only reachable at
+# the nested /db/db/. This replaces it with a plain static deploy.
+name: Deploy to Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # Copy only what the browser needs. Uploading the repo wholesale would
+      # publish worker.js, wrangler.toml and the local .wrangler/ KV state at
+      # public URLs.
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp -R index.html style.css viewer.css viewer.html admin components file _site/
+          find _site -name '.DS_Store' -delete
+          ls -R _site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
